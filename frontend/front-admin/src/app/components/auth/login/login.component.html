@@ -140,16 +140,15 @@
                                   <ng-template ngbNavContent>
                                     <div class="tab-pane fade active show" id="account" role="tabpanel"
                                     aria-labelledby="account-tab">
-                                    <form [formGroup]="loginForm" 
-                                        class="form-horizontal auth-form" novalidate="">
+                                    <form [formGroup]="loginForm"  class="form-horizontal auth-form" novalidate="" >
                                         <div class="form-group">
                                             <input required="" name="login[username]" type="email"
                                                 class="form-control" placeholder="Username"
-                                                id="exampleInputEmail1">
+                                                id="exampleInputEmail1" formControlName="username">
                                         </div>
                                         <div class="form-group">
                                             <input required="" name="login[password]" type="password"
-                                                class="form-control" placeholder="Password">
+                                                class="form-control" placeholder="Password" formControlName="password">
                                         </div>
                                         <div class="form-terms">
                                             <div class="custom-control custom-checkbox d-flex align-items-center flex-wrap">
@@ -162,7 +161,7 @@
                                             </div>
                                         </div>
                                         <div class="form-button">
-                                            <a [routerLink]="'/dashboard/default'"> <button class="btn btn-primary" type="submit"> Login</button></a>
+                                             <button class="btn btn-primary" type="button" (click)="loginUser()"> Login</button>
                                         </div>
                                         <div class="form-footer">
                                             <span>Or Login up with social platforms</span>
@@ -205,7 +204,7 @@
                                         </div>
                                     </div>
                                     <div class="form-button">
-                                        <a [routerLink]="'/dashboard/default'">  <button class="btn btn-primary" type="submit">Register</button></a>
+                                        <a [routerLink]="'/dashboard/default'">  <button class="btn btn-primary" type="button" (click)="registerUser()">Register</button></a>
                                     </div>
                                     <div class="form-footer">
                                         <span>Or Sign up with social platforms</span>

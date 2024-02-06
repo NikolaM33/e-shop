@@ -5,11 +5,13 @@ import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.data.annotation.*;
-import org.springframework.data.annotation.Version;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 
 import javax.persistence.*;
 import javax.persistence.Id;
+import javax.persistence.Version;
 import java.io.Serializable;
 import java.time.Instant;
 

@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### documents ###
+src/main/resources/documnets/
+src/main/resources/documnets/*

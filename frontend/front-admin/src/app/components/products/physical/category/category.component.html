@@ -12,7 +12,7 @@
                             data-target="#exampleModal" (click)="open(content)">Add Category</button>
                         <ng-template #content let-modal>
                             <div class="modal-header">
-                                <h5 class="modal-title f-w-600" id="exampleModalLabel">Add Physical Product</h5>
+                                <h5 class="modal-title f-w-600" id="exampleModalLabel">Add Category</h5>
                                 <button type="button" class="close" aria-label="Close"
                                     (click)="modal.dismiss('Cross click')">
                                     <span aria-hidden="true">&times;</span>
@@ -21,19 +21,47 @@
                             <div class="modal-body">
                                 <form class="needs-validation">
                                     <div class="form">
+                                        <div class="base-info">
                                         <div class="form-group">
-                                            <label for="validationCustom01" class="mb-1">Category Name :</label>
-                                            <input class="form-control" id="validationCustom01" type="text">
+                                            <input class="form-control" id="validationCustom01" type="text" placeholder="Category name" name="categoryName" [(ngModel)]="categoryName" required="true">
+                                            <div class="form-group row status-wrapper">
+                                                <div class="col-md-7 status">
+                                                    <select #status class="custom-select form-select" required="true" [value]="true" (change)="onSelectionChange(status.value)">
+                                                        <option value="true">ACTIVE</option>
+                                                        <option value="false">INACTIVE</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                            
                                         </div>
                                         <div class="form-group mb-0">
-                                            <label for="validationCustom02" class="mb-1">Category Image :</label>
-                                            <input class="form-control" id="validationCustom02" type="file">
+            
+                                            <ngx-dropzone  [accept]="'image/*'"[multiple]="false"   (change)="onFileUploadSuccess($event)">
+                                                <ngx-dropzone-label *ngIf="categoryImage==null">Click here to add file</ngx-dropzone-label>
+                                                <ngx-dropzone-image-preview  *ngIf="categoryImage!=null" ngProjectAs="ngx-dropzone-preview"  [file]="categoryImage" [removable]="true" (removed)="onRemoveFile()">
+                                                </ngx-dropzone-image-preview>
+                                            </ngx-dropzone>
+                                        </div>
+                                    </div>
+                                        <div class="specification">
+                                            <button type="button" class="btn btn-primary add-specification-btn" (click)="addSpecifiaction()">Add Specification</button>
+                                            <form [formGroup]="formGroupArray">
+                                                <div formArrayName="inputArray" class="input-array">
+                                                  <div *ngFor="let inputControl of inputArray.controls; let i = index">
+                                                    <div class="input-element-group">
+                                                    <input [formControlName]="i" class="form-control" type="text" placeholder="Specfication">
+                                                    <a href="javascript:void(0)" class="delete-element-btn"  (click)="removeSpecification(i)"><i class="fa fa-trash-o"></i></a>
+                                                </div>
+                                                  </div>
+                                                </div>
+                                              </form>
+                                              
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-primary" (click)="saveNewCategory()">Save</button>
                                 <button class="btn btn-secondary" type="button" data-dismiss="modal"
                                     (click)="modal.dismiss('Cross click')">Close</button>
                             </div>
@@ -41,24 +69,22 @@
                     </div>
                     <div id="batchDelete" class="category-table custom-datatable">
                         <div class="table-responsive">
-                            <!-- <form>
+                            <form>
                                 <div class="mb-3 row">
                                     <label for="table-complete-search" class="col-xs-3 col-sm-auto col-form-label">Full text search:</label>
                                     <div class="col-xs-3 col-sm-auto">
-                                      <input id="table-complete-search" type="text" class="form-control" name="searchTerm"  [(ngModel)]="searchText" autocomplete="off">
+                                      <input id="table-complete-search" type="text" class="form-control" name="searchTerm"  [(ngModel)]="searchText" autocomplete="off" (ngModelChange)="onSearchChange()">
                                     </div>
                                 </div>
-                              </form> -->
+                              </form>
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col" sortable="img"  (sort)="onSort($event)">Image</th>
-                                    <th scope="col" sortable="product_name" (sort)="onSort($event)">Name</th>
-                                    <th scope="col" sortable="price" (sort)="onSort($event)" >Price</th>
-                                    <th scope="col" sortable="status" (sort)="onSort($event)">Status</th>
-                                    <th scope="col" sortable="category" (sort)="onSort($event)">Category</th>
-                                    <th scope="col" sortable="population" (sort)="onSort($event)">Actions</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col" sortable="name" (sort)="onSort($event)">Name</th>
+                                    <th scope="col" sortable="active" (sort)="onSort($event)">Status</th>
+                                    <th scope="col" >Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -67,21 +93,25 @@
                                 <td>
                                     <img [src]="catgory.img" class="imgTable" style="width: 20px">
                                 </td>
-                                    <td>{{ catgory.product_name }}</td>
-                                <td>{{ catgory.price }}</td>
-                                <td><i class='fa fa-circle {{catgory.status}} f-12'></i></td>
-                                <td>{{ catgory.category}}</td>
+                                    <td>{{ catgory.name }}</td>
+                                <td><i class='fa fa-circle {{catgory.active}} f-12'></i></td>
                                 <td>
-                                    <a href="javascript:void(0)"><i class='fa fa-edit f-12'></i></a>&nbsp;
-                                    <a href="javascript:void(0)"><i class="fa fa-trash-o"></i></a>
+                                    <a href="javascript:void(0)" ><i class='fa fa-edit f-12' (click)="open(content,catgory)"></i></a>&nbsp;
+                                    <a href="javascript:void(0)"><i class="fa fa-trash-o"  (click)="deleteCategory(catgory.id)"></i></a>
                                 </td>
                                 </tr>
                                 </tbody>
                             </table>
-                            <div class="d-flex justify-content-center p-2">
+                        
+                            <div class="d-flex justify-content-space-beetwen p-2">
                                 <ngb-pagination
-                                   [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize">
+                                   [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize"  (pageChange)="onPageChange($event)"  (pageSizeChange)="onPageChange($event)">
                                    </ngb-pagination>
+                                   <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize"  (ngModelChange)="onPageSizeChange()">
+                                    <option [value]="10" [selected] ="true" [ngValue]="5">5 items per page</option>
+                                    <option [ngValue]="10">10 items per page</option>
+                                    <option [ngValue]="15">15 items per page</option>
+                                  </select>
                              </div> 
                         </div>
                     </div>

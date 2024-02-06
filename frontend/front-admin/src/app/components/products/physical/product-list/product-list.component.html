@@ -28,9 +28,9 @@
                         <div class="rating"><i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
                                 class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i></div>
                         <a href="javascript:void(0)">
-                            <h6>{{product.product_title}}</h6>
+                            <h6>{{product.name}}</h6>
                         </a>
-                        <h4>{{product.discount}} <del>{{product.price}}</del></h4>
+                        <h4>{{product.discount}} <del>{{product.price}}$</del></h4>
                         <ul class="color-variant">
                             <li class="bg-light0"></li>
                             <li class="bg-light1"></li>
@@ -41,4 +41,14 @@
             </div>
         </div>
     </div>
+    <div class="d-flex justify-content-space-beetwen p-2">
+        <ngb-pagination
+           [collectionSize]="totalElements" [(page)]='page' [pageSize]="pageSize"  (pageChange)="onPageChange($event)"  (pageSizeChange)="onPageChange($event)">
+           </ngb-pagination>
+           <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize"  (ngModelChange)="onPageSizeChange()">
+            <option [value]="10" [selected] ="true" [ngValue]="5">5 items per page</option>
+            <option [ngValue]="10">10 items per page</option>
+            <option [ngValue]="15">15 items per page</option>
+          </select>
+     </div> 
 </div>

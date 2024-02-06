@@ -21,10 +21,16 @@ import { InvoiceModule } from './components/invoice/invoice.module';
 import { SettingModule } from './components/setting/setting.module';;
 import { ReportsModule } from './components/reports/reports.module';
 import { AuthModule } from './components/auth/auth.module';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { SnackBarErrorMessageComponent } from './error/snack-bar-error-message/snack-bar-error-message.component';
+import { TokenInterceptor } from './components/interceptor/token.interceptor';
+import { DropzoneModule } from 'ngx-dropzone-wrapper';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   declarations: [
     AppComponent,
+    SnackBarErrorMessageComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -45,9 +51,11 @@ import { AuthModule } from './components/auth/auth.module';
     MediaModule,
     MenusModule,
     UsersModule,
-    AgGridModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    AgGridModule,
+    HttpClientModule,
+    DropzoneModule,
+    ],
+  providers: [ { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },],
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

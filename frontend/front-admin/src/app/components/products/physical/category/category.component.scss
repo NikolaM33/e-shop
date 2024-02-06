@@ -1,2 +1,55 @@
 @import "ag-grid-community/dist/styles/ag-grid.css";
 @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+
+.base-info {
+  display: flex;
+  place-content: space-between;
+}
+
+.form-group{
+  display: flex;
+  flex-direction: column;
+  place-content: space-between;
+}
+
+.specification{
+  margin-top: 10px;
+  padding: 1%;
+}
+
+.add-specification-btn{
+  width: 100%;
+  margin-bottom: 10px
+}
+.input-array{
+  padding: 1%;
+}
+.input-element-group{
+  display: flex;
+  place-content: space-between;
+  flex-direction: row;
+  align-items: center;
+}
+
+.delete-element-btn{
+  width: 15%;
+  padding-left: 5%;
+  font-size: 30px;
+}
+.status-wrapper{
+  width: 100%;
+}
+.status {
+  width: 100%;
+  padding: 0px;
+}
+.justify-content-space-beetwen{
+justify-content: space-between;
+}
+.true {
+    color: rgb(6, 185, 6);
+  }
+
+.false {
+    color: black;
+}

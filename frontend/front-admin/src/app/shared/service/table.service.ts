@@ -43,7 +43,7 @@ export class TableService {
     userData;
 
     private _state: State = {
-        page: 1,
+        page: 0,
         pageSize: 10,
         searchTerm: '',
         sortColumn: '',
@@ -54,12 +54,12 @@ export class TableService {
         this._search$.pipe(
             tap(() => this._loading$.next(true)),
             debounceTime(200),
-            switchMap(() => this._search()),
+          //  switchMap(() => this._search()),
             delay(200),
             tap(() => this._loading$.next(false))
         ).subscribe(result => {
-            this._tableItem$.next(result.tableItem);
-            this._total$.next(result.total);
+           // this._tableItem$.next(result.tableItem);
+            // this._total$.next(result.total);
         });
 
         this._search$.next();
@@ -71,6 +71,8 @@ export class TableService {
     get page() { return this._state.page; }
     get pageSize() { return this._state.pageSize; }
     get searchTerm() { return this._state.searchTerm; }
+    get sortColumn() {return this._state.sortColumn; }
+    get sortDirection() {return this._state.sortDirection; }
 
     set page(page: number) {
         this._set({ page });
@@ -81,9 +83,8 @@ export class TableService {
     set sortDirection(sortDirection: SortDirection) { this._set({ sortDirection }); }
 
     setUserData(val: object) {
-        console.log("val", val);
-
         this.userData = val;
+        this._tableItem$.next(this.userData);
     }
 
     
@@ -110,5 +111,8 @@ export class TableService {
         return of({ tableItem, total });
     }
 
+    setTotalElements(totalCount: number) {
+        this._total$.next(totalCount);
+      }
 }
 
