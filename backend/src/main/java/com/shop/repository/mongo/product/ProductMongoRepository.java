@@ -6,5 +6,5 @@ import com.shop.repository.AbstractMongoStatusEntityRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductMongoRepository extends AbstractMongoStatusEntityRepository<Product,String> {
+public interface ProductMongoRepository extends AbstractMongoStatusEntityRepository<Product, String> {
 }

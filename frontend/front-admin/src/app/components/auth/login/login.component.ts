@@ -64,11 +64,9 @@ export class LoginComponent implements OnInit {
   
 
   loginUser(){
-    console.log("RADFI")
     let email=this.loginForm.controls['username'].value;
     let password=this.loginForm.controls['password'].value;
     const formData = this.loginForm.getRawValue();
-    console.log(email,password)
     
     this.authService.login(formData).subscribe((response)=>{
       this.authService.setToken(response.token);
@@ -80,7 +78,6 @@ export class LoginComponent implements OnInit {
     let user= new User();
     user.email=this.registerForm.controls['userName'].value;
     user.password= this.registerForm.controls['password'].value;
-    console.log(this.registerForm)
     // this.authService.registerUser(user).subscribe((res)=>{
     //   console.log(res)
     // });

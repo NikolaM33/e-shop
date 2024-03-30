@@ -14,4 +14,8 @@ public interface ProductService {
     Boolean createNewProduct (ProductDTO productDTO, List<MultipartFile> images);
 
     Page<ProductDTO> getProducts (Optional<String> state, Optional<String> categoryId, Pageable pageable);
+
+    ProductDTO getProduct (String productId);
+
+    ProductDTO updateProduct (String productId, ProductDTO productDTO, List<MultipartFile> images);
 }

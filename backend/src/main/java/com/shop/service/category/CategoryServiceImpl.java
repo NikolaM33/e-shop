@@ -8,6 +8,7 @@ import com.shop.repository.mongo.category.CategoryMongoRepository;
 import com.shop.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -127,7 +128,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDTO> getAllCategories() {
         return categoryMongoRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(category -> CategoryDTO.builder()
-                .id(category.getId())
+                .id(category.getId().toString())
                 .name(category.getName()).specification(category.getSpecification()).build()).collect(Collectors.toList());
     }
 

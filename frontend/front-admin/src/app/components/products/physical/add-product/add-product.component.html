@@ -149,7 +149,7 @@
             
                     <h4>Specification</h4>
                     <div class="specification col-xl-8 col-sm-7" formArrayName="specifications">
-                      <button type="button" class="btn btn-primary add-specification-btn" >Add Specification</button>
+                      <button type="button" class="btn btn-primary add-specification-btn" (click)="addNewSpecifiaction()">Add Specification</button>
                       <!-- <form [formGroup]="specificationForm"> -->
                         <div *ngFor="let control of specifications.controls; let i = index" class="row-wrapper">
                           <label class="row-label">{{specification[i]  }}</label>

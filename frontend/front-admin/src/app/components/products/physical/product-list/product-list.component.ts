@@ -5,6 +5,7 @@ import { productDB } from 'src/app/shared/tables/product-list';
 import { ProductService } from '../../product.service';
 import { HttpResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
@@ -19,7 +20,8 @@ export class ProductListComponent implements OnInit {
 
   public product_list = []
 
-  constructor(private productService: ProductService) {
+  constructor(private productService: ProductService,
+    private router: Router) {
 
     this.product_list = productDB.product;
     this.fetchData();
@@ -57,5 +59,13 @@ export class ProductListComponent implements OnInit {
 
    onPageSizeChange(){
     this.fetchData();
+   }
+
+   openProductDetail(productId:string){
+    this.router.navigate(['products/physical/product-detail/',productId])
+   }
+   editProduct(productId:string){
+    this.router.navigate(['products/physical/edit-product/',productId])
+
    }
 }

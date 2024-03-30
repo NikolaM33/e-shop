@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { PageService } from '../page.service';
 import { UtilService } from '../util.service';
 import { environment } from 'src/environments/environment';
+import { env } from 'process';
+import { Environment } from 'ag-grid-community';
 
 @Injectable({
   providedIn: 'root'
@@ -71,4 +73,13 @@ export class ProductService {
 
       })
     }
+    getProduct (productId: string){
+      return this.http.get(environment.apiUrl+'/product/'+productId)
+    }
+
+    updateProduct(productId:string, data:FormData){
+      return this.http.put(environment.apiUrl+"/product/"+productId,data);
+    }
+
+  
 }

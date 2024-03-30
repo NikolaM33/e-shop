@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryMongoRepository extends AbstractMongoStatusEntityRepository<Category,String> {
+public interface CategoryMongoRepository extends AbstractMongoStatusEntityRepository<Category, String> {
 
     Page<Category> findByEntityStatusAndNameLikeIgnoreCase(EntityStatus entityStatus, String name, Pageable pageable);
 }
