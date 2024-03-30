@@ -11,7 +11,7 @@ CREATE TABLE `category` (
       `file_system_identifier`  varchar(36) UNIQUE,
       `image_type` varchar(15),
       `active` BIT(1) DEFAULT b'1',
-      `specification` MEDIUMTEXT
+      `specification` MEDIUMTEXT,
       PRIMARY KEY (`id`)
 );
 

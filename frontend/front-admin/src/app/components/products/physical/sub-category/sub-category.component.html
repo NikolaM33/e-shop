@@ -1,132 +1,301 @@
 <!-- Container-fluid starts-->
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Products Sub Category</h5>
-                </div>
-                <div class="card-body">
-                    <div class="btn-popup pull-right">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-original-title="test"
-                            data-target="#exampleModal" (click)="open(content)">Add Sub Category</button>
-                            <ng-template #content let-modal>
-                                <div class="modal-header">
-                                    <h5 class="modal-title f-w-600" id="exampleModalLabel">Add Sub Category</h5>
-                                    <button type="button" class="close" aria-label="Close"
-                                        (click)="modal.dismiss('Cross click')">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form class="needs-validation">
-                                        <div class="form">
-                                            <div class="base-info">
-                                            <div class="form-group">
-                                                <input class="form-control" id="validationCustom01" type="text" placeholder="Category name" name="categoryName" [(ngModel)]="subCategoryName" required="true">
-                                                <div class="form-group row category-wrapper">
-                                                    <div class="col-md-7 status">
-                                                        <select #category class="custom-select form-select" required="true" [(ngModel)]="categoryId"  name="category">
-                                                            <option disabled selected value="">Select Category</option>
-                                                            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row status-wrapper">
-                                                    <div class="col-md-7 status">
-                                                        <select #status class="custom-select form-select" required="true" [value]="true" [(ngModel)]="active" name="status">
-                                                            <option value="true">ACTIVE</option>
-                                                            <option value="false">INACTIVE</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                
-                                            </div>
-                                            <div class="form-group mb-0">
-                
-                                                <ngx-dropzone  [accept]="'image/*'"[multiple]="false"   (change)="onFileUploadSuccess($event)">
-                                                    <ngx-dropzone-label *ngIf="subCategoryImage==null">Click here to add file</ngx-dropzone-label>
-                                                    <ngx-dropzone-image-preview  *ngIf="subCategoryImage!=null" ngProjectAs="ngx-dropzone-preview"  [file]="subCategoryImage" [removable]="true" (removed)="onRemoveFile()">
-                                                    </ngx-dropzone-image-preview>
-                                                </ngx-dropzone>
-                                            </div>
-                                        </div>
-                                            <div class="specification">
-                                                <button type="button" class="btn btn-primary add-specification-btn" (click)="addSpecifiaction()">Add Specification</button>
-                                                <form [formGroup]="formGroupArray">
-                                                    <div formArrayName="inputArray" class="input-array">
-                                                      <div *ngFor="let inputControl of inputArray.controls; let i = index">
-                                                        <div class="input-element-group">
-                                                        <input [formControlName]="i" class="form-control" type="text" placeholder="Specfication">
-                                                        <a href="javascript:void(0)" class="delete-element-btn"  (click)="removeSpecification(i)"><i class="fa fa-trash-o"></i></a>
-                                                    </div>
-                                                      </div>
-                                                    </div>
-                                                  </form>
-                                                  
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" (click)="saveNewSubCategory()">Save</button>
-                                    <button class="btn btn-secondary" type="button" data-dismiss="modal"
-                                        (click)="modal.dismiss('Cross click')">Close</button>
-                                </div>
-                            </ng-template>
-                    </div>
-                    <div id="batchDelete" class="category-table custom-datatable">
-                        <div class="table-responsive">
-                            <form>
-                                <div class="mb-3 row">
-                                    <label for="table-complete-search" class="col-xs-3 col-sm-auto col-form-label">Full text search:</label>
-                                    <div class="col-xs-3 col-sm-auto">
-                                      <input id="table-complete-search" type="text" class="form-control" name="searchTerm"  [(ngModel)]="searchText" autocomplete="off">
-                                    </div>
-                                </div>
-                              </form>
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col" >Image</th>
-                                    <th scope="col" sortable="name" (sort)="onSort($event)">Name</th>
-                                    <th scope="col" sortable="category.name" (sort)="onSort($event)" >Category</th>
-                                    <th scope="col" sortable="active" (sort)="onSort($event)">Status</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngFor = 'let subcategory of tableItem$ | async | filter:searchText'>
-                                <th scope="row">{{ subcategory.id }}</th>
-                                <td>
-                                    <img [src]="subcategory.img" class="imgTable" style="width: 20px">
-                                </td>
-                                    <td>{{ subcategory.name }}</td>
-                                <td>{{ subcategory.categoryName }}</td>
-                                <td><i class='fa fa-circle {{subcategory.active}} f-12'></i></td>                                <td>
-                                    <a href="javascript:void(0)"><i (click)="open(content,subcategory)" class='fa fa-edit f-12'></i></a>&nbsp;
-                                    <a href="javascript:void(0)"><i (click)="deleteSubCategory(subcategory.id)" class="fa fa-trash-o"></i></a>
-                                </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                           
-                            <div class="d-flex justify-content-space-beetwen p-2">
-                                <ngb-pagination
-                                   [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize"  (pageChange)="onPageChange($event)"  (pageSizeChange)="onPageChange($event)">
-                                   </ngb-pagination>
-                                   <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize"  (ngModelChange)="onPageSizeChange()">
-                                    <option [value]="10" [selected] ="true" [ngValue]="5">5 items per page</option>
-                                    <option [ngValue]="10">10 items per page</option>
-                                    <option [ngValue]="15">15 items per page</option>
-                                  </select>
-                             </div> 
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Products Sub Category</h5>
         </div>
+        <div class="card-body">
+          <div class="btn-popup pull-right">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-toggle="modal"
+              data-original-title="test"
+              data-target="#exampleModal"
+              (click)="open(content)"
+            >
+              Add Sub Category
+            </button>
+            <ng-template #content let-modal>
+              <div class="modal-header">
+                <h5 class="modal-title f-w-600" id="exampleModalLabel">
+                  Add Sub Category
+                </h5>
+                <button
+                  type="button"
+                  class="close"
+                  aria-label="Close"
+                  (click)="modal.dismiss('Cross click')"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form class="needs-validation">
+                  <div class="form">
+                    <div class="base-info">
+                      <div class="form-group">
+                        <input
+                          class="form-control"
+                          id="validationCustom01"
+                          type="text"
+                          placeholder="Subcategory name"
+                          name="SubcategoryName"
+                          [(ngModel)]="subCategoryName"
+                          required="true"
+                          #validationCustom01="ngModel"
+                          ngModel
+                          maxlength="50"
+                        />
+                        <div style="margin-right: 2.5rem">
+                          <small
+                            *ngIf="
+                              validationCustom01.invalid &&
+                              (validationCustom01.dirty ||
+                                validationCustom01.touched)
+                            "
+                          >
+                            <span *ngIf="validationCustom01.errors.required"
+                              >Subcategory name is required.</span
+                            >
+                            <span
+                              *ngIf="validationCustom01.errors.maxlength"
+                            ></span>
+                          </small>
+                        </div>
+                        <div class="form-group row category-wrapper">
+                          <div class="col-md-7 status">
+                            <select
+                              #category
+                              class="custom-select form-select"
+                              required="true"
+                              [(ngModel)]="categoryId"
+                              name="category"
+                            >
+                              <option disabled selected value="">
+                                Select Category
+                              </option>
+                              <option
+                                *ngFor="let category of categories"
+                                [value]="category.id"
+                              >
+                                {{ category.name }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group row status-wrapper">
+                          <div class="col-md-7 status">
+                            <select
+                              #status
+                              class="custom-select form-select"
+                              required="true"
+                              [value]="true"
+                              [(ngModel)]="active"
+                              name="status"
+                            >
+                              <option value="true">ACTIVE</option>
+                              <option value="false">INACTIVE</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group mb-0">
+                        <ngx-dropzone
+                          [accept]="'image/*'"
+                          [multiple]="false"
+                          (change)="onFileUploadSuccess($event)"
+                        >
+                          <ngx-dropzone-label *ngIf="subCategoryImage == null"
+                            >Click here to add file<br /><small
+                              ><strong style="color: red; opacity: 70%"
+                                >Required</strong
+                              ></small
+                            ></ngx-dropzone-label
+                          >
+                          <ngx-dropzone-image-preview
+                            *ngIf="subCategoryImage != null"
+                            ngProjectAs="ngx-dropzone-preview"
+                            [file]="subCategoryImage"
+                            [removable]="true"
+                            (removed)="onRemoveFile()"
+                          >
+                          </ngx-dropzone-image-preview>
+                        </ngx-dropzone>
+                      </div>
+                    </div>
+                    <div class="specification">
+                      <button
+                        type="button"
+                        class="btn btn-primary add-specification-btn"
+                        (click)="addSpecifiaction()"
+                      >
+                        Add Specification
+                      </button>
+                      <form [formGroup]="formGroupArray">
+                        <div formArrayName="inputArray" class="input-array">
+                          <div
+                            *ngFor="
+                              let inputControl of inputArray.controls;
+                              let i = index
+                            "
+                          >
+                            <div class="input-element-group">
+                              <input
+                                [formControlName]="i"
+                                class="form-control"
+                                type="text"
+                                placeholder="Specfication"
+                              />
+                              <a
+                                href="javascript:void(0)"
+                                class="delete-element-btn"
+                                (click)="removeSpecification(i)"
+                                ><i class="fa fa-trash-o"></i
+                              ></a>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="
+                    validationCustom01.invalid ||
+                    subCategoryImage == null ||
+                    !categoryId
+                  "
+                  (click)="saveNewSubCategory()"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  data-dismiss="modal"
+                  (click)="modal.dismiss('Cross click')"
+                >
+                  Close
+                </button>
+              </div>
+            </ng-template>
+          </div>
+          <div id="batchDelete" class="category-table custom-datatable">
+            <div class="table-responsive">
+              <form>
+                <div class="mb-3 row">
+                  <label
+                    for="table-complete-search"
+                    class="col-xs-3 col-sm-auto col-form-label"
+                    >Full text search:</label
+                  >
+                  <div class="col-xs-3 col-sm-auto">
+                    <input
+                      id="table-complete-search"
+                      type="text"
+                      class="form-control"
+                      name="searchTerm"
+                      [(ngModel)]="searchText"
+                      autocomplete="off"
+                    />
+                  </div>
+                </div>
+              </form>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Image</th>
+                    <th scope="col" sortable="name" (sort)="onSort($event)">
+                      Name
+                    </th>
+                    <th
+                      scope="col"
+                      sortable="category.name"
+                      (sort)="onSort($event)"
+                    >
+                      Category
+                    </th>
+                    <th scope="col" sortable="active" (sort)="onSort($event)">
+                      Status
+                    </th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let subcategory of tableItem$
+                        | async
+                        | filter : searchText
+                    "
+                  >
+                    <th scope="row">{{ subcategory.id }}</th>
+                    <td>
+                      <img
+                        [src]="subcategory.img"
+                        class="imgTable"
+                        style="width: 20px"
+                      />
+                    </td>
+                    <td>{{ subcategory.name }}</td>
+                    <td>{{ subcategory.categoryName }}</td>
+                    <td>
+                      <i class="fa fa-circle {{ subcategory.active }} f-12"></i>
+                    </td>
+                    <td>
+                      <a href="javascript:void(0)"
+                        ><i
+                          (click)="open(content, subcategory)"
+                          class="fa fa-edit f-12"
+                        ></i></a
+                      >&nbsp;
+                      <a href="javascript:void(0)"
+                        ><i
+                          (click)="deleteSubCategory(subcategory.id)"
+                          class="fa fa-trash-o"
+                        ></i
+                      ></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="d-flex justify-content-space-beetwen p-2">
+                <ngb-pagination
+                  [collectionSize]="(total$ | async)!"
+                  [(page)]="service.page"
+                  [pageSize]="service.pageSize"
+                  (pageChange)="onPageChange($event)"
+                  (pageSizeChange)="onPageChange($event)"
+                >
+                </ngb-pagination>
+                <select
+                  class="form-select"
+                  style="width: auto"
+                  name="pageSize"
+                  [(ngModel)]="service.pageSize"
+                  (ngModelChange)="onPageSizeChange()"
+                >
+                  <option [value]="10" [selected]="true" [ngValue]="5">
+                    5 items per page
+                  </option>
+                  <option [ngValue]="10">10 items per page</option>
+                  <option [ngValue]="15">15 items per page</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 <!-- Container-fluid Ends-->
