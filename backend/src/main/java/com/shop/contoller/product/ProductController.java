@@ -5,6 +5,7 @@ package com.shop.contoller.product;
 import com.shop.domain.dto.product.ProductDTO;
 import com.shop.service.product.ProductService;
 import com.shop.util.ResponseUtil;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -38,5 +39,15 @@ public class ProductController {
         return ResponseUtil.page(productService.getProducts(state,categoryId,pageable));
     }
 
+    @GetMapping("/{productId}")
+    ResponseEntity<ProductDTO> getProduct (@PathVariable String productId){
+        return new ResponseEntity<>(productService.getProduct(productId),HttpStatus.OK);
+    }
+
+    @PutMapping("/{productId}")
+    ResponseEntity<ProductDTO> updateProduct (@PathVariable String productId, @RequestPart(value = "productData") ProductDTO productDTO,
+                                              @RequestPart (value = "images", required = false) List<MultipartFile> images){
+        return new ResponseEntity<>(productService.updateProduct(productId,productDTO,images),HttpStatus.OK);
+    }
 
 }

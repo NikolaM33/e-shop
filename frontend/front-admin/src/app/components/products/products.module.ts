@@ -25,13 +25,14 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { EditProductComponent } from './physical/edit-product/edit-product.component';
 // import { NgbdSortableHeader } from "src/app/shared/directives/NgbdSortableHeader";
 // import {  } from '../../directives/shorting.directive/';
 
 
 @NgModule({
   declarations: [CategoryComponent, SubCategoryComponent, ProductListComponent, AddProductComponent, DigitalCategoryComponent, DigitalSubCategoryComponent, DigitalListComponent, 
-    DigitalAddComponent, ProductDetailComponent
+    DigitalAddComponent, ProductDetailComponent, EditProductComponent
   ],
   imports: [
     Ng2SearchPipeModule,

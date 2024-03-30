@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { Image } from '@ks89/angular-modal-gallery';
 import { NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProductService } from '../../product.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -13,6 +15,8 @@ export class ProductDetailComponent implements OnInit {
   public closeResult: string;
   public counter: number = 1;
   currentRate = 8;
+  productId:string;
+  product: any;
 
   public imagesRect: Image[] = [
     new Image(0, { img: 'assets/images/pro3/2.jpg' }, { img: 'assets/images/pro3/1.jpg' }),
@@ -20,10 +24,18 @@ export class ProductDetailComponent implements OnInit {
     new Image(2, { img: 'assets/images/pro3/1.jpg' }, { img: 'assets/images/pro3/1.jpg' }),
     new Image(3, { img: 'assets/images/pro3/2.jpg' }, { img: 'assets/images/pro3/2.jpg' })]
 
-  constructor(private modalService: NgbModal, config: NgbRatingConfig) {
+  constructor(private modalService: NgbModal, config: NgbRatingConfig,
+    private activeRoute: ActivatedRoute, private productService: ProductService) {
     config.max = 5;
     config.readonly = false;
+      activeRoute.params.subscribe((data)=>{
+      this.productId=data.id;
+    })
+    this.productService.getProduct(this.productId).subscribe((data)=>{
+      this.product=data;
+    })
   }
+
 
   open(content) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {

@@ -8,6 +8,7 @@ import com.shop.repository.mongo.subcategory.SubCategoryMongoRepository;
 import com.shop.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -125,14 +126,14 @@ public class SubCategoryServiceImpl implements SubCategoryService {
      */
     @Override
     public List<SubCategoryDTO> findSubCategoryOfCategory(String categoryId) {
-        return subCategoryMongoRepository.findByCategory_IdAndEntityStatus(categoryId,EntityStatus.REGULAR).stream().map(subCategory -> SubCategoryDTO.builder().name(subCategory.getName())
+        return subCategoryMongoRepository.findByCategoryIdAndEntityStatus(categoryId,EntityStatus.REGULAR).stream().map(subCategory -> SubCategoryDTO.builder().name(subCategory.getName())
                 .id(subCategory.getId()).specification(subCategory.getSpecification()).build()).collect(Collectors.toList());
     }
 
     private SubCategoryDTO convertToSubCategoryDTO(SubCategory subCategory){
         SubCategoryDTO subCategoryDTO= new SubCategoryDTO();
-        subCategoryDTO.setId(subCategory.getId());
-        subCategoryDTO.setCategoryId(subCategory.getCategory().getId());
+        subCategoryDTO.setId(subCategory.getId().toString());
+        subCategoryDTO.setCategoryId(subCategory.getCategory().getId().toString());
         subCategoryDTO.setName(subCategory.getName());
         subCategoryDTO.setActive(subCategory.getActive());
         subCategoryDTO.setSpecification(subCategory.getSpecification());

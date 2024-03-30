@@ -12,12 +12,16 @@
                             <div class="product-hover">
                                 <ul>
                                     <li>
-                                        <button class="btn" type="button" data-original-title="" title=""><i
+                                        <button class="btn" type="button" data-original-title="Edit" title="Edit" (click)="editProduct(product.id)"><i
                                                 class="icon-pencil-alt"></i></button>
                                     </li>
                                     <li>
+                                        <button class="btn" type="button" data-original-title="Open" title="Open" (click)="openProductDetail(product.id)"><i
+                                                class="icon-new-window" ></i></button>
+                                    </li>
+                                    <li>
                                         <button class="btn" type="button" data-toggle="modal"
-                                            data-target="#exampleModalCenter" data-original-title="" title=""><i
+                                            data-target="#exampleModalCenter" data-original-title="" title="Edit"><i
                                                 class="icon-trash"></i></button>
                                     </li>
                                 </ul>

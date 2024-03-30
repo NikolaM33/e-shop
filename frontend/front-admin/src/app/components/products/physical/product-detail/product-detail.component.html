@@ -9,7 +9,7 @@
             </div>
             <div class="col-xl-8">
                 <div class="product-page-details product-right mb-0">
-                    <h2>WOMEN PINK SHIRT</h2>
+                    <h2>{{product.name}}</h2>
                     <ngb-rating class="ratings-sec"  [(rate)]="currentRate">
                         <ng-template let-fill="fill" let-index="index">
                             <span class="star" [class.filled]="fill === 100" [class.bad]="index < 3"><i class='fa fa-star'></i> </span>
@@ -17,12 +17,9 @@
                       </ngb-rating>
                     <hr>
                     <h6 class="product-title">product details</h6>
-                    <p class="mb-0">Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium
-                        doloremque
-                        laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto
-                        beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem,</p>
+                    <p class="mb-0">{{product.description}}</p>
                     <div class="product-price digits mt-2">
-                        <h3>$26.00 <del>$350.00</del></h3>
+                        <h3>${{product.price}} <del>$350.00</del></h3>
                     </div>
                     <ul class="color-variant">
                         <li class="bg-light0"></li>

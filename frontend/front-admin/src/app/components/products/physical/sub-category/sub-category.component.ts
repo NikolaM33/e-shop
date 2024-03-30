@@ -171,8 +171,6 @@ export class SubCategoryComponent {
 
    saveNewSubCategory(){
     const subCategoryData: FormData= new FormData ();
-    console.log(this.categoryId)
-    console.log(this.categories)
     const data={
       name: this.subCategoryName,
       active: this.active, 

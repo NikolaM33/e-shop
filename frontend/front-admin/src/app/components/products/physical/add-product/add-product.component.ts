@@ -103,7 +103,6 @@ export class AddProductComponent implements OnInit {
   }
 
   onCategoryChange(){
-    console.log(this.categories)
     this.categoryId=this.productForm.get('categoryId').value;
     this.subCategoryId=null;
     this.productForm.get('subCategoryId').setValue("");
@@ -137,10 +136,7 @@ export class AddProductComponent implements OnInit {
       this.specification = this.specification.concat(subCategorySpecification);
     }
 
-    if(oldSpecification.length>0){
-      if(this.specification[0])
-      console.log(oldSpecification)
-    }
+
 
     // Initialize form controls for each specification
     this.specification.forEach(field => {
@@ -154,7 +150,6 @@ export class AddProductComponent implements OnInit {
   }
 
   setActiveNavItem(item: number){
-    console.log("THUIS")
     this.active=item;
     if(this.active===2){
       this.setupSpecification();
@@ -174,12 +169,9 @@ for (let i = 0; i < this.specification.length; i++) {
     let value = this.specifications.at(i).value;
     specObject[key] = value;
     // Add key-value pair to the Map
-    console.log('map', name , value)
 }
 
-   // console.log(JSON.stringify(specValue))
     data.specifications=specObject;
-    console.log(data);
     // Append product data as a JSON string
     productData.append('productData', JSON.stringify(data));
 
@@ -188,9 +180,13 @@ for (let i = 0; i < this.specification.length; i++) {
       productData.append('images', this.images[i]);
    }
 
-   console.log(productData.get('productData'))
    this.productService.addProduct(productData).subscribe((data)=>{
     console.log(data);
    })
+  }
+
+  addNewSpecifiaction(){
+    const newInput = new FormControl('');
+    this.specifications.push(newInput)
   }
 }

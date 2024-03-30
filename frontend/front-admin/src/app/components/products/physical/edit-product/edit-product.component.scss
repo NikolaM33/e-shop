@@ -1,0 +1,22 @@
+.input-element-group{
+    display: flex;
+    place-content: space-between;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .row-wrapper {
+    display: flex;
+    min-width: 90%;
+    place-content: center space-around;
+    align-items: center;
+    margin-bottom: 5%;
+  }
+
+  .row-label {
+    width: 35%;
+  }
+  
+  .row-input {
+    width: 35%;
+  }
