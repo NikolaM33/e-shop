@@ -22,7 +22,7 @@ export class LeftMenuComponent implements OnInit {
   }
 
   leftMenuToggle(): void {
-    this.navServices.leftMenuToggle = !this.navServices.leftMenuToggle;
+    // this.navServices.leftMenuToggle = !this.navServices.leftMenuToggle;
   }
 
   // Click Toggle menu (Mobile)

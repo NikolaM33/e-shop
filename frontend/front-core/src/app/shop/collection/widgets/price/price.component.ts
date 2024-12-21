@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, Input, EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Options } from 'ng5-slider';
+import { ProductService } from 'src/app/shared/services/product.service';
 
 @Component({
   selector: 'app-price',
@@ -26,7 +27,8 @@ export class PriceComponent implements OnInit {
     ceil: 1000
   };
   
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,
+  private productService: ProductService) { 
     if (isPlatformBrowser(this.platformId)) {
       this.isBrowser = true; // for ssr
     }
@@ -37,7 +39,8 @@ export class PriceComponent implements OnInit {
   // Range Changed
   appliedFilter(event: any) {
     this.price = { minPrice: event.value, maxPrice: event.highValue };
-    this.priceFilter.emit(this.price);
+    // this.priceFilter.emit(this.price);
+    this.productService.updatePriceFilter(this.price.minPrice, this.price.maxPrice);
   }
 
 }

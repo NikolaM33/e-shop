@@ -10,4 +10,8 @@ public class ErrorMessageConstants {
     public static final String SUBCATEGORY_NOT_FOUND="SUBCATEGORY_NOT_FOUND";
 
     public static final String PRODUCT_NOT_FOUND="PRODUCT_NOT_FOUND";
+
+    public static final String PRODUCT_TAG_NOT_FOUND = "PRODUCT_TAG_NOT_FOUND";
+
+    public static final String USER_NOT_FOUND = "USER_NOT_FOUND";
 }

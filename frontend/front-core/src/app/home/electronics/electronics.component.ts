@@ -46,7 +46,7 @@ export class ElectronicsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Change color for this layout
-    document.documentElement.style.setProperty('--theme-deafult', '#6d7e87');
+    document.documentElement.style.setProperty('--theme-deafult', '#ff4c3b');
   }
 
   ngOnDestroy(): void {

@@ -31,8 +31,8 @@ public class AuthorizationController {
 
     @PostMapping("/authenticate")
     public AuthResponse login(@RequestBody AuthRequest authRequest) {
-        AuthResponse response = userService.generateAuthResponse(authRequest.getUsername());
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        AuthResponse response = userService.generateAuthResponse(authRequest.getEmail());
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         return response;
     }
 }

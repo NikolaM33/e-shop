@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Product } from '../../../../shared/classes/product';
+import { ProductService } from 'src/app/shared/services/product.service';
 
 @Component({
   selector: 'app-brands',
@@ -15,29 +16,24 @@ export class BrandsComponent implements OnInit {
   
   public collapse: boolean = true;
 
-  constructor() { 
+  constructor(private productService:ProductService) { 
   }
 
   ngOnInit(): void {
+    this.productService.getProductBrands().subscribe((data:any[])=>{
+      console.log(data)
+      this.brands=data;
+    })
   }
 
-  get filterbyBrand() {
-    const uniqueBrands = [];
-    this.products.filter((product) => {
-      if (product.brand) {
-        const index = uniqueBrands.indexOf(product.brand)
-        if (index === -1) uniqueBrands.push(product.brand)
-      }
-    })
-    return uniqueBrands
-  }
+  
 
   appliedFilter(event) {
     let index = this.brands.indexOf(event.target.value);  // checked and unchecked value
-    if (event.target.checked)   
-      this.brands.push(event.target.value); // push in array cheked value
-    else 
-      this.brands.splice(index,1);  // removed in array unchecked value  
+    // if (event.target.checked)   
+    //   this.brands.push(event.target.value); // push in array cheked value
+    // else 
+    //   this.brands.splice(index,1);  // removed in array unchecked value  
     
     let brands = this.brands.length ? { brand: this.brands.join(",") } : { brand: null };
     this.brandsFilter.emit(brands);

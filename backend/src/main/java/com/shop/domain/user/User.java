@@ -1,43 +1,45 @@
 package com.shop.domain.user;
 
 
-import com.shop.domain.entity.AbstractStatusEntity;
-import lombok.AllArgsConstructor;
+import com.shop.domain.entity.mongo.AbstractMongoStatusEntity;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.Column;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import javax.persistence.Entity;
-import javax.persistence.Table;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "user")
-@Slf4j
-public class User extends AbstractStatusEntity {
+@Document(collection = "user")
+public class User extends AbstractMongoStatusEntity {
 
     private static final long serialVersionUID = 1L;
-
-    @Column(name = "first_name", nullable = false)
+    @NotBlank
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @NotBlank
     private String lastName;
 
-    @Column(name = "email", nullable = false)
+    @NotBlank
+    @Email
+    @Indexed(unique = true)
     private String email;
 
-    @Column(name = "username", nullable = false)
-    private String username;
-
-    @Column(name = "password")
+    @NotBlank
     private String password;
+
+    @NotNull
+    private UserType userType;
 
     private String getFullName (){
        return  this.firstName+ " "+ this.lastName;

@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ViewportScroller } from '@angular/common';
 import { ProductService } from "../../../shared/services/product.service";
-import { Product } from '../../../shared/classes/product';
+import { Product, Images } from '../../../shared/classes/product';
+import { environment } from 'src/environments/environment';
+import { FilterParams } from '../../product/domain/FillterParams';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-collection-left-sidebar',
@@ -27,11 +30,15 @@ export class CollectionLeftSidebarComponent implements OnInit {
   public mobileSidebar: boolean = false;
   public loader: boolean = true;
 
+  filterParams = this.productService.filterParams;
+
+  // Assuming sortParams is an Observable that emits the current sort criteria
+  params = new BehaviorSubject<any>({}); 
+
   constructor(private route: ActivatedRoute, private router: Router,
     private viewScroller: ViewportScroller, public productService: ProductService) {   
       // Get Query params..
       this.route.queryParams.subscribe(params => {
-
         this.brands = params.brand ? params.brand.split(",") : [];
         this.colors = params.color ? params.color.split(",") : [];
         this.size  = params.size ? params.size.split(",")  : [];
@@ -44,24 +51,73 @@ export class CollectionLeftSidebarComponent implements OnInit {
         this.pageNo = params.page ? params.page : this.pageNo;
 
         // Get Filtered Products..
-        this.productService.filterProducts(this.tags).subscribe(response => {         
-          // Sorting Filter
-          this.products = this.productService.sortProducts(response, this.sortBy);
-          // Category Filter
-          if(params.category)
-            this.products = this.products.filter(item => item.type == this.category);
-          // Price Filter
-          this.products = this.products.filter(item => item.price >= this.minPrice && item.price <= this.maxPrice) 
-          // Paginate Products
-          this.paginate = this.productService.getPager(this.products.length, +this.pageNo);     // get paginate object from service
-          this.products = this.products.slice(this.paginate.startIndex, this.paginate.endIndex + 1); // get current page of items
-        })
+        // this.productService.filterProducts(this.tags).subscribe(response => {         
+        //   // Sorting Filter
+        //   this.products = this.productService.sortProducts(response, this.sortBy);
+        //   // Category Filter
+        //   if(params.category)
+        //     this.products = this.products.filter(item => item.type == this.category);
+        //   // Price Filter
+        //   this.products = this.products.filter(item => item.price >= this.minPrice && item.price <= this.maxPrice) 
+        //   // Paginate Products
+        //   this.paginate = this.productService.getPager(this.products.length, +this.pageNo);     // get paginate object from service
+        //   this.products = this.products.slice(this.paginate.startIndex, this.paginate.endIndex + 1); // get current page of items
+        // })
+        if(this.category){
+          this.productService.updateCategoryFilter(this.category)
+        }
       })
   }
 
   ngOnInit(): void {
+    combineLatest([this.filterParams, this.params])
+    .subscribe(([filters, params]) => {
+      // Fetch products with the latest filters and sort
+      this.fetchProducts(filters, params);
+    });
+    // this.productService.filterParams.subscribe(filters=>{
+    //   this.fetchProducts(filters);
+    
+    // })
   }
 
+  fetchProducts(filters:any, params:any){
+
+    this.productService.getProductsFilter(filters, params).subscribe((data:any[])=>{
+
+      const products: Product[] = data.map(item => ({
+        id: item.id,
+        title: item.name,
+        description: item.description,
+        type: item.type,
+        brand: item.brand,
+        collection: item.collection, // Assuming collection is already in the right format
+        category: item.category,
+        price: item.price,
+        sale: item.sale,
+        discount: item.discount,
+        stock: item.stock,
+        new: item.new,
+        quantity: item.quantity,
+        tags: item.tags, // Assuming tags are already in the right format
+        images: this.setProductImages(item)
+    
+    }));
+      this.products=products;
+  })
+  }
+
+  private setProductImages (product:any):Images[]{
+    let images:Images[]=[];
+    for (let i=1; i<=6; i++){
+      let img: Images={
+      src:`${environment.publicS3Url}/product/${product[`image${i}FileIdentifier`]}`
+      }
+      images.push(img);
+    }
+
+    return images;
+  }
 
   // Append filter value to Url
   updateFilter(tags: any) {
@@ -79,15 +135,12 @@ export class CollectionLeftSidebarComponent implements OnInit {
 
   // SortBy Filter
   sortByFilter(value) {
-    this.router.navigate([], { 
-      relativeTo: this.route,
-      queryParams: { sortBy: value ? value : null},
-      queryParamsHandling: 'merge', // preserve the existing query params in the route
-      skipLocationChange: false  // do trigger navigation
-    }).finally(() => {
-      this.viewScroller.setOffset([120, 120]);
-      this.viewScroller.scrollToAnchor('products'); // Anchore Link
-    });
+    
+    const sortParams= {
+      sortActive: (value === 'a-z' || value ==='z-a')? 'name': 'price',
+      sortDirection: (value === 'a-z' || value==='low')? 'asc': 'dsc'
+    }
+    this.params.next(sortParams);
   }
 
   // Remove Tag

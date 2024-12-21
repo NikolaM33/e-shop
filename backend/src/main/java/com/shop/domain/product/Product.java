@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Entity;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 
@@ -40,8 +41,6 @@ public class Product extends AbstractMongoStatusEntity {
 
     private String brand;
 
-    private String color;
-
     private String image1FileIdentifier;
 
     private String image2FileIdentifier;
@@ -59,7 +58,16 @@ public class Product extends AbstractMongoStatusEntity {
 
     ProductState state;
 
+    @DBRef
+    private ProductTag productTag;
 
+    private Integer discount;
+
+    private LocalDateTime discountStartDate;
+
+    private LocalDateTime discountEndDate;
+
+    private LocalDateTime publishedDate;
 
 
 

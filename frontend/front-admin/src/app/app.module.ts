@@ -21,11 +21,19 @@ import { InvoiceModule } from './components/invoice/invoice.module';
 import { SettingModule } from './components/setting/setting.module';;
 import { ReportsModule } from './components/reports/reports.module';
 import { AuthModule } from './components/auth/auth.module';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { SnackBarErrorMessageComponent } from './error/snack-bar-error-message/snack-bar-error-message.component';
 import { TokenInterceptor } from './components/interceptor/token.interceptor';
 import { DropzoneModule } from 'ngx-dropzone-wrapper';
-import { ColorPickerModule } from 'ngx-color-picker';
+import { ToastrModule } from 'ngx-toastr';
+import { TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, "./assets/i18n/", ".json");
+}
 
 @NgModule({
   declarations: [
@@ -54,6 +62,20 @@ import { ColorPickerModule } from 'ngx-color-picker';
     AgGridModule,
     HttpClientModule,
     DropzoneModule,
+    TranslateModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      progressBar: false,
+      enableHtml: true,
+      positionClass: 'toast-top-right',
+    }),
+    TranslateModule.forRoot({
+        loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient]
+        }
+    })
     ],
   providers: [ { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },],
   bootstrap: [AppComponent],

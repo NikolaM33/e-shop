@@ -3,9 +3,9 @@ package com.shop.contoller.product;
 
 
 import com.shop.domain.dto.product.ProductDTO;
+import com.shop.domain.dto.product.ProductTagDTO;
 import com.shop.service.product.ProductService;
 import com.shop.util.ResponseUtil;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -49,5 +49,7 @@ public class ProductController {
                                               @RequestPart (value = "images", required = false) List<MultipartFile> images){
         return new ResponseEntity<>(productService.updateProduct(productId,productDTO,images),HttpStatus.OK);
     }
+
+
 
 }

@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, FormGroup, FormArray, FormControl } from '@angular/forms';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { ProductService } from '../../product.service';
-import { ColorPickerService, Cmyk } from 'ngx-color-picker';
-import { element } from 'protractor';
+import { validateHorizontalPosition } from '@angular/cdk/overlay';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
+
+
 
 @Component({
   selector: 'app-add-product',
@@ -45,8 +48,10 @@ export class AddProductComponent implements OnInit {
   specificationForm: UntypedFormGroup;
   inputArray: FormArray;
   specification:any []=[];
+  tags:any[]=[];
+  formatter = inject(NgbDateParserFormatter);
 
-  constructor(private fb: UntypedFormBuilder, private productService:ProductService) {
+  constructor(private fb: UntypedFormBuilder, private productService:ProductService,private toastrService: ToastrService) {
    
     this.productService.getAllCategories().subscribe((data)=>{
       this.categories=data;
@@ -56,22 +61,39 @@ export class AddProductComponent implements OnInit {
   }
   createProductForm() {
     this.productForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+[a-zA-Z]$')]],
-      price: ['', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+[a-zA-Z]$')]],
-      code: ['', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+[a-zA-Z]$')]],
-      size: ['', Validators.required],
+      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z0-9 ]*[a-zA-Z0-9]$')]],
+      price: ['', [Validators.required, Validators.min(0),Validators.max(100000)]],
+      code: ['', [Validators.required]],
+      brand: ['', Validators.required],
       quantity:[1],
+      publish: [false, Validators.required],
       categoryId: ['',Validators.required],
       subCategoryId: ['',Validators.required],
+      discount: [Validators.max(100), Validators.min(0)],
+      discountStartDate: [{value: null, disabled: true}],
+      discountEndDate: [{value: null, disabled: true}],
+      tagId: [''],
+      description:[],
       specifications: this.fb.array([]),
-    })
+    }, { validator: this.dateRangeValidator })
+    this.productForm.get('discount')?.valueChanges.subscribe(value => {
+      if (value) {
+        // Enable date controls if discount has a value
+        this.productForm.get('discountStartDate')?.enable();
+        this.productForm.get('discountEndDate')?.enable();
+      } else {
+        // Disable date controls if discount is empty
+        this.productForm.get('discountStartDate')?.disable();
+        this.productForm.get('discountEndDate')?.disable();
+      }
+    });
   }
   increment() {
-    this.counter += 1;
+    this.productForm.get('quantity').setValue(this.productForm.get('quantity').value + 1);
   }
 
   decrement() {
-    this.counter -= 1;
+    this.productForm.get('quantity').setValue(this.productForm.get('quantity').value - 1);
   }
 
   //FileUpload
@@ -96,8 +118,11 @@ export class AddProductComponent implements OnInit {
   }
 
   ngOnInit() {
-   
+   this.productService.getAllTags().subscribe((data:any[])=>{
+      this.tags=data;
+   })
   }
+
   get specifications(): FormArray {
     return this.productForm.get('specifications') as FormArray;
   }
@@ -159,7 +184,10 @@ export class AddProductComponent implements OnInit {
   addNewProduct (){
     const  productData:FormData = new FormData();
      const data=this.productForm.getRawValue();
-     
+     data.discountEndDate=this.formatter.format(data.discountEndDate);
+     data.discountStartDate=this.formatter.format(data.discountStartDate);
+   
+
   
     let specMap = new Map<string, string>();
     let specObject: { [key: string]: string } = {};
@@ -171,7 +199,8 @@ for (let i = 0; i < this.specification.length; i++) {
     // Add key-value pair to the Map
 }
 
-    data.specifications=specObject;
+    data.specifications= specObject;
+    data.discountStartDate= data.discountStartDate
     // Append product data as a JSON string
     productData.append('productData', JSON.stringify(data));
 
@@ -181,6 +210,7 @@ for (let i = 0; i < this.specification.length; i++) {
    }
 
    this.productService.addProduct(productData).subscribe((data)=>{
+    this.toastrService.success('Product has been added!')
     console.log(data);
    })
   }
@@ -188,5 +218,32 @@ for (let i = 0; i < this.specification.length; i++) {
   addNewSpecifiaction(){
     const newInput = new FormControl('');
     this.specifications.push(newInput)
+  }
+
+  test(){
+    this.toastrService.success('Product has been added!')
+
+    console.log(this.productForm.valid, this.productForm)
+  }
+
+  dateRangeValidator(group: FormGroup) {
+    const startDate = group.get('discountStartDate')?.value;
+    const endDate = group.get('discountEndDate')?.value;
+
+    if (startDate && endDate) {
+      if (startDate > endDate) {
+        return { invalidDateRange: true };
+      }
+    }
+
+    return null;
+  }
+
+  goToNextTab (){
+    if (this.active==1){
+      this.setupSpecification();
+    }else {
+      this.active=3;
+    }
   }
 }

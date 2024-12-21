@@ -43,7 +43,9 @@ export class ProductListComponent implements OnInit {
           id: item.id,
           img: `${environment.publicS3Url}/product/${item.image1FileIdentifier}`,
           name: item.name,
-          price: item.price
+          price: item.price,
+          tagTitle: item.tagTitle,
+          priceWithDiscount: item.priceWithDiscount
         };
       });
       return transformedData;

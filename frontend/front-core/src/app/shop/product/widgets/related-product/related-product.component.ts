@@ -9,17 +9,20 @@ import { ProductService } from '../../../../shared/services/product.service';
 })
 export class RelatedProductComponent implements OnInit {
   
-  @Input() type: string
+  @Input() categoryId: string
 
   public products: Product[] = [];
 
   constructor(public productService: ProductService) { 
-    this.productService.getProducts.subscribe(response => 
-      this.products = response.filter(item => item.type == this.type)
-    );
+  
   }
 
   ngOnInit(): void {
+    console.log(this.categoryId)
+    this.productService.getRelatedProducts(this.categoryId).subscribe((data:any) => 
+      this.products = data
+  
+    );
   }
 
 }

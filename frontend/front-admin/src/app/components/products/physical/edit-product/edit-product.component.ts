@@ -1,7 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import {
   FormArray,
   FormControl,
+  FormGroup,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
@@ -11,6 +12,7 @@ import * as ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { ActivatedRoute } from "@angular/router";
 import { element } from "protractor";
 import { environment } from "src/environments/environment";
+import { NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: "app-edit-product",
@@ -42,6 +44,8 @@ export class EditProductComponent implements OnInit {
   categoryChanged: boolean = false;
   subCategoryChanged: boolean = false;
   oldSubCateogryId: any;
+  tags:any[]=[];
+  formatter = inject(NgbDateParserFormatter);
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -56,43 +60,46 @@ export class EditProductComponent implements OnInit {
     this.productService.getAllCategories().subscribe((data) => {
       this.categories = data;
     });
+    this.productService.getAllTags().subscribe((data:any[])=>{
+      this.tags=data;
+   })
   }
   createProductForm() {
     this.productForm = this.fb.group({
-      name: [
-        "",
-        [
-          Validators.required,
-          Validators.pattern("[a-zA-Z][a-zA-Z ]+[a-zA-Z]$"),
-        ],
-      ],
-      price: [
-        "",
-        [
-          Validators.required,
-          Validators.pattern("[a-zA-Z][a-zA-Z ]+[a-zA-Z]$"),
-        ],
-      ],
-      code: [
-        "",
-        [
-          Validators.required,
-          Validators.pattern("[a-zA-Z][a-zA-Z ]+[a-zA-Z]$"),
-        ],
-      ],
-      size: ["", Validators.required],
-      quantity: [1],
-      categoryId: ["", Validators.required],
-      subCategoryId: ["", Validators.required],
+      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z0-9 ]*[a-zA-Z0-9]$')]],
+      price: ['', [Validators.required, Validators.min(0),Validators.max(100000)]],
+      code: ['', [Validators.required]],
+      brand: ['', Validators.required],
+      quantity:[1],
+      publish: [false, Validators.required],
+      categoryId: ['',Validators.required],
+      subCategoryId: ['',Validators.required],
+      discount: [Validators.max(100), Validators.min(0)],
+      discountStartDate: [{value: null, disabled: true}],
+      discountEndDate: [{value: null, disabled: true}],
+      tagId: [''],
+      description:[],
       specifications: this.fb.array([]),
+    }, { validator: this.dateRangeValidator });
+    this.productForm.get('discount')?.valueChanges.subscribe(value => {
+      if (value) {
+        // Enable date controls if discount has a value
+        this.productForm.get('discountStartDate')?.enable();
+        this.productForm.get('discountEndDate')?.enable();
+      } else {
+        // Disable date controls if discount is empty
+        this.productForm.get('discountStartDate')?.disable();
+        this.productForm.get('discountEndDate')?.disable();
+      }
     });
   }
+
   increment() {
-    this.counter += 1;
+    this.productForm.get('quantity').setValue(this.productForm.get('quantity').value + 1);
   }
 
   decrement() {
-    this.counter -= 1;
+    this.productForm.get('quantity').setValue(this.productForm.get('quantity').value - 1);
   }
 
   //FileUpload
@@ -214,6 +221,9 @@ export class EditProductComponent implements OnInit {
   updateProduct() {
     const productData: FormData = new FormData();
     const data = this.productForm.getRawValue();
+
+    data.discountEndDate=this.formatter.format(data.discountEndDate);
+    data.discountStartDate=this.formatter.format(data.discountStartDate);
     const specificationObject: { [key: string]: string } = {};
 
     for (let i = 0; i < this.specificationsArray.length; i++) {
@@ -261,6 +271,14 @@ export class EditProductComponent implements OnInit {
     this.productForm.get("price").setValue(this.product.price);
     this.productForm.get("code").setValue(this.product.code);
     this.productForm.get("quantity").setValue(this.product.quantity);
+    this.productForm.get("brand").setValue(this.product.brand);
+    this.productForm.get("publish").setValue(this.product.publish);
+    this.productForm.get("description").setValue(this.product.description);
+    this.productForm.get("tagId").setValue(this.product.tagId);
+    this.productForm.get("discount").setValue(this.product.discount);
+    this.productForm.get("discountStartDate").setValue(this.formatter.parse(this.product.discountStartDate));
+    this.productForm.get("discountEndDate").setValue(this.formatter.parse(this.product.discountEndDate));
+
 
     this.specificationsArray = Object.entries(this.product.specifications).map(
       ([key, value]) => ({ key, value })
@@ -280,6 +298,31 @@ export class EditProductComponent implements OnInit {
       } else {
         this.url.push({ ["img"]: "assets/images/user.png" });
       }
+    }
+  };
+
+  test(){
+    console.log(this.productForm.valid, this.productForm)
+  };
+
+  dateRangeValidator(group: FormGroup) {
+    const startDate = group.get('discountStartDate')?.value;
+    const endDate = group.get('discountEndDate')?.value;
+
+    if (startDate && endDate) {
+      if (startDate > endDate) {
+        return { invalidDateRange: true };
+      }
+    }
+
+    return null;
+  }
+
+  goToNextTab (){
+    if (this.active==1){
+      this.setupSpecification();
+    }else {
+      this.active=3;
     }
   }
 }
