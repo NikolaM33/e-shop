@@ -8,8 +8,6 @@ import { ShopRoutingModule } from './shop-routing.module';
 
 // Product Details Components
 import { ProductLeftSidebarComponent } from './product/sidebar/product-left-sidebar/product-left-sidebar.component';
-import { ProductRightSidebarComponent } from './product/sidebar/product-right-sidebar/product-right-sidebar.component';
-import { ProductNoSidebarComponent } from './product/sidebar/product-no-sidebar/product-no-sidebar.component';
 import { FourImageComponent } from './product/four-image/four-image.component';
 import { ThreeColumnComponent } from './product/three-column/three-column.component';
 import { BundleProductComponent } from './product/bundle-product/bundle-product.component';
@@ -24,9 +22,6 @@ import { RelatedProductComponent } from './product/widgets/related-product/relat
 
 // Collection Components
 import { CollectionLeftSidebarComponent } from './collection/collection-left-sidebar/collection-left-sidebar.component';
-import { CollectionRightSidebarComponent } from './collection/collection-right-sidebar/collection-right-sidebar.component';
-import { CollectionNoSidebarComponent } from './collection/collection-no-sidebar/collection-no-sidebar.component';
-import { CollectionInfinitescrollComponent } from './collection/collection-infinitescroll/collection-infinitescroll.component';
 
 // Collection Widgets
 import { GridComponent } from './collection/widgets/grid/grid.component';
@@ -48,8 +43,6 @@ import {RouterModule} from '@angular/router';
 @NgModule({
   declarations: [
     ProductLeftSidebarComponent, 
-    ProductRightSidebarComponent,
-    ProductNoSidebarComponent,
     ThreeColumnComponent,
     FourImageComponent,
     BundleProductComponent,
@@ -60,9 +53,6 @@ import {RouterModule} from '@angular/router';
     StockInventoryComponent,
     RelatedProductComponent,
     CollectionLeftSidebarComponent,
-    CollectionRightSidebarComponent,
-    CollectionNoSidebarComponent,
-    CollectionInfinitescrollComponent,
     GridComponent,
     PaginationComponent,
     BrandsComponent,

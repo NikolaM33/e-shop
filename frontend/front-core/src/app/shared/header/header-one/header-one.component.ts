@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
+import { AccountService } from 'src/app/pages/account/account.service';
 
 @Component({
   selector: 'app-header-one',
@@ -13,10 +15,16 @@ export class HeaderOneComponent implements OnInit {
   @Input() sticky: boolean = false; // Default false
   
   public stick: boolean = false;
-
-  constructor() { }
+  loggedUser: boolean = false;
+  constructor(private accountService:AccountService,
+   private  router :Router
+  ) { }
 
   ngOnInit(): void {
+    this.accountService.currentUser.subscribe(user=>{
+      this.loggedUser = user!=null ? true : false;
+    })
+
   }
 
   // @HostListener Decorator
@@ -29,5 +37,15 @@ export class HeaderOneComponent implements OnInit {
   	  this.stick = false;
   	}
   }
+  logoutUser(){
+    this.accountService.logout();
+  }
 
+  navigateToLogin(){
+    this.router.navigateByUrl("/shop/login")
+  }
+
+  navigateToRegister(){
+    this.router.navigateByUrl("/shop/register")
+  }
 }

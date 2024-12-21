@@ -4,6 +4,8 @@ import { Image } from '@ks89/angular-modal-gallery';
 import { NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../product.service';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-product-detail',
@@ -17,7 +19,7 @@ export class ProductDetailComponent implements OnInit {
   currentRate = 8;
   productId:string;
   product: any;
-
+  active:number=1;
   public imagesRect: Image[] = [
     new Image(0, { img: 'assets/images/pro3/2.jpg' }, { img: 'assets/images/pro3/1.jpg' }),
     new Image(1, { img: 'assets/images/pro3/27.jpg' }, { img: 'assets/images/pro3/27.jpg' }),

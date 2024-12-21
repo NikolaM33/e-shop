@@ -13,14 +13,18 @@ export class ProductBoxVerticalSliderComponent implements OnInit {
   @Input() title: string = 'New Product'; // Default
   @Input() type: string = 'fashion'; // Default Fashion
 
-  public products : Product[] = [];
+  public products : Product[] ;
 
   public NewProductSliderConfig: any = NewProductSlider;
 
   constructor(public productService: ProductService) { 
-    this.productService.getProducts.subscribe(response => 
-      this.products = response.filter(item => item.type == this.type)
-    );
+    this.productService.getNewProducts().subscribe((response: any[]) => {
+      // Process each product to add the new field
+      this.products = response.map(product => ({
+        ...product,
+        images: productService.setProductImages(product) 
+      }));
+    });
   }
 
   ngOnInit(): void {

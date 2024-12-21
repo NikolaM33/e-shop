@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavService, Menu } from '../../services/nav.service';
 import { Router } from '@angular/router';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-menu',
@@ -10,8 +11,9 @@ import { Router } from '@angular/router';
 export class MenuComponent implements OnInit {
 
   public menuItems: Menu[];
+  public categories: any;
 
-  constructor(private router: Router, public navServices: NavService) {
+  constructor(private router: Router, public navServices: NavService, private productService: ProductService) {
     this.navServices.items.subscribe(menuItems => this.menuItems = menuItems );
     this.router.events.subscribe((event) => {
       this.navServices.mainMenuToggle = false;
@@ -19,6 +21,11 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.productService.getCategories().subscribe(data=>{
+      this.categories = data;
+      this.addCategoryToManu(this.categories);
+
+   })
   }
 
   mainMenuToggle(): void {
@@ -30,4 +37,14 @@ export class MenuComponent implements OnInit {
     item.active = !item.active;
   }
 
+  addCategoryToManu (categories: any){
+    const menuCategory: Menu[] =[];
+
+    categories.forEach(element => {
+      let item:Menu = {path: `/shop/collection/left/sidebar`, queryParams: {category: element.id}, title: element.name, type: 'link'}
+      menuCategory.push(item)
+    });
+    this.menuItems.at(1).children = menuCategory;
+    this.navServices.items.next(this.menuItems)
+  }
 }

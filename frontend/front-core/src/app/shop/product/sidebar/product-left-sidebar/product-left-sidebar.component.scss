@@ -1,0 +1,15 @@
+.specfication-list{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.label-key{
+    min-width: 50%;
+    background-color: #dee0e0;
+    padding: 1%;
+}
+.label-value{
+    padding: 1%;
+}

@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductDetailsMainSlider, ProductDetailsThumbSlider } from '../../../../shared/data/slider';
-import { Product } from '../../../../shared/classes/product';
+import { Images, Product } from '../../../../shared/classes/product';
 import { ProductService } from '../../../../shared/services/product.service';
 import { SizeModalComponent } from "../../../../shared/components/modal/size-modal/size-modal.component";
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-product-left-sidebar',
@@ -19,39 +20,53 @@ export class ProductLeftSidebarComponent implements OnInit {
   public mobileSidebar: boolean = false;
   public active = 1;
 
+  public productId:string;
   @ViewChild("sizeChart") SizeChart: SizeModalComponent;
-
+  public productSpecfications: { key: string; value: string }[];
   public ProductDetailsMainSliderConfig: any = ProductDetailsMainSlider;
   public ProductDetailsThumbConfig: any = ProductDetailsThumbSlider;
 
   constructor(private route: ActivatedRoute, private router: Router,
     public productService: ProductService) {
-    this.route.data.subscribe(response => this.product = response.data);
+    this.route.paramMap.subscribe(params =>  this.productId = params.get('slug')
+  );
+    
   }
 
   ngOnInit(): void {
-    console.log("dddd", this.product)
+    this.route.paramMap.subscribe(params=>
+      {this.productId = params.get('slug');
+        this.fetchData();
+      }
+    )
+
+  }
+
+  fetchData (){
+    this.productService.getProductById(this.productId).subscribe((data:any)=>{
+      this.product=data;
+    });
   }
 
   // Get Product Color
   Color(variants) {
     const uniqColor = []
-    for (let i = 0; i < Object.keys(variants).length; i++) {
-      if (uniqColor.indexOf(variants[i].color) === -1 && variants[i].color) {
-        uniqColor.push(variants[i].color)
-      }
-    }
+    // for (let i = 0; i < Object.keys(variants).length; i++) {
+    //   if (uniqColor.indexOf(variants[i].color) === -1 && variants[i].color) {
+    //     uniqColor.push(variants[i].color)
+    //   }
+    // }
     return uniqColor
   }
 
   // Get Product Size
   Size(variants) {
     const uniqSize = []
-    for (let i = 0; i < Object.keys(variants).length; i++) {
-      if (uniqSize.indexOf(variants[i].size) === -1 && variants[i].size) {
-        uniqSize.push(variants[i].size)
-      }
-    }
+    // for (let i = 0; i < Object.keys(variants).length; i++) {
+    //   if (uniqSize.indexOf(variants[i].size) === -1 && variants[i].size) {
+    //     uniqSize.push(variants[i].size)
+    //   }
+    // }
     return uniqSize
   }
 
@@ -93,6 +108,19 @@ export class ProductLeftSidebarComponent implements OnInit {
   // Toggle Mobile Sidebar
   toggleMobileSidebar() {
     this.mobileSidebar = !this.mobileSidebar;
+  }
+
+  private setProductImages (product:any):Images[]{
+    let images:Images[]=[];
+    for (let i=1; i<=6; i++){
+      let img: Images={
+      src:`${environment.publicS3Url}/product/${product[`image${i}FileIdentifier`]}`,
+      alt: `Image ${i}`
+      }
+      images.push(img);
+    }
+
+    return images;
   }
 
 }

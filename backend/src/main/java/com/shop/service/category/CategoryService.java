@@ -25,4 +25,6 @@ public interface CategoryService {
 
     Category getOneCategory(String categoryId);
 
+    List<CategoryDTO> getCategoriesForShop ();
+
 }

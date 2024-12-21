@@ -67,6 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/reset-password").permitAll()
                 .antMatchers("/user/send-reset-password-email").permitAll()
                 .antMatchers("/local/user-profile-image/**").permitAll()
+                .antMatchers("/user").permitAll()
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",
@@ -74,6 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html",
                         "/webjars/**").permitAll()
                 .antMatchers("/local/logo/**").permitAll()
+                .antMatchers("/shop/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().exceptionHandling()

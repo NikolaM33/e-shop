@@ -5839,15 +5839,21 @@ ngx-loading-bar {
                     font-size: 16px;
                     text-transform: capitalize;
                     line-height: 18px;
-                    a {
-                        color: $grey;
-                        padding-bottom: 10px;
-                    }
+                    cursor: pointer;
+                    padding-bottom: 10px;
+                   
                     &:last-child {
-                        a {
-                            padding-bottom: 0;
-                        }
-                    }
+                        padding-bottom: 0;
+                      }
+                  
+                      &.active {
+                        color:#ff4c3b ; /* Color for the chosen category */
+                        font-weight: 600;
+                      }
+                  
+                      &:hover {
+                        color:  #ff4c3b /* Color when hovered */
+                      }
                 }
             }
             .collection-filter-checkbox {

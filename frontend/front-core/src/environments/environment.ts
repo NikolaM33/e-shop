@@ -4,6 +4,8 @@
 
 export const environment = {
   production: false,
+  apiUrl: 'http://localhost:8080',
+  publicS3Url: 'http://localhost:8080/local',
   stripe_token: 'STRIPE_TOKEN',
   paypal_token: 'PAYPAL_TOKEN'
 };

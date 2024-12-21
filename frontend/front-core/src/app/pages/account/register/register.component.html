@@ -4,34 +4,35 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h3>create account</h3>
+                <h3>Create Account</h3>
                 <div class="theme-card">
-                    <form class="theme-form">
+                    <form [formGroup]="registerForm" (ngSubmit)="createUser()">
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="email">First Name</label>
-                                <input type="text" class="form-control" id="fname" placeholder="First Name" required="">
+                                <label for="fname">First Name</label>
+                                <input type="text" class="form-control" id="fname" formControlName="firstName" placeholder="First Name" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="review">Last Name</label>
-                                <input type="password" class="form-control" id="lname" placeholder="Last Name" required="">
+                                <label for="lname">Last Name</label>
+                                <input type="text" class="form-control" id="lname" formControlName="lastName" placeholder="Last Name" required>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row margin-bottom-10">
                             <div class="col-md-6">
-                                <label for="email">email</label>
-                                <input type="text" class="form-control" id="email" placeholder="Email" required="">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="review">Password</label>
-                                <input type="password" class="form-control" id="review" placeholder="Enter your password" required="">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" formControlName="password" placeholder="Enter your password" required>
                             </div>
                         </div>
-                        <button class="btn btn-solid">create Account</button>
+                        <button type="submit" class="btn btn-solid" [disabled]="!registerForm.valid">Create Account</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
 <!--Section ends-->

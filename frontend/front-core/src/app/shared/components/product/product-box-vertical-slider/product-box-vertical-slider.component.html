@@ -6,14 +6,14 @@
             <ng-template carouselSlide>
                 <div>
                   <div class="d-flex align-items-center" *ngFor="let product of products | slice:0:3 ">
-                    <a [routerLink]="['/shop/product/left/sidebar/', product.title.replace(' ', '-')]">
+                    <a [routerLink]="['/shop/product/left/sidebar/', product.id]">
                       <img class="img-fluid w-auto"
                            [defaultImage]="'assets/images/product/placeholder.jpg'" 
                            [lazyLoad]="product.images[0].src" alt="">
                     </a>
                     <div class="media-body align-self-center">
                       <!-- <bar-rating [rate]="5" [readOnly]="true"></bar-rating> -->
-                      <a [routerLink]="['/shop/product/left/sidebar/', product.title.replace(' ', '-')]">
+                      <a [routerLink]="['/shop/product/left/sidebar/', product.id]">
                       <h6>{{ product.title | titlecase }}</h6></a>
                       <h4>
                         {{ product?.price * productService.Currency?.price | discount:product | currency:productService.Currency?.currency:'symbol' }}
@@ -30,14 +30,14 @@
             <ng-template carouselSlide>
                 <div>
                   <div class="d-flex align-items-center" *ngFor="let product of products | slice:3:6 ">
-                    <a [routerLink]="['/shop/product/left/sidebar/', product.title.replace(' ', '-')]">
+                    <a [routerLink]="['/shop/product/left/sidebar/', product.id]">
                       <img class="img-fluid w-auto" 
                            [defaultImage]="'assets/images/product/placeholder.jpg'" 
                            [lazyLoad]="product.images[0].src" alt="">
                     </a>
                     <div class="media-body align-self-center">
                       <!-- <bar-rating [rate]="5" [readOnly]="true"></bar-rating> -->
-                      <a [routerLink]="['/shop/product/left/sidebar/', product.title.replace(' ', '-')]">
+                      <a [routerLink]="['/shop/product/left/sidebar/', product.id]">
                       <h6>{{ product.title | titlecase }}</h6></a>
                       <h4>
                         {{ product?.price * productService.Currency?.price | discount:product | currency:productService.Currency?.currency:'symbol' }}

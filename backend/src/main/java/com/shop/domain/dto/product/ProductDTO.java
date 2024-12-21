@@ -2,6 +2,7 @@ package com.shop.domain.dto.product;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 
 @Getter
@@ -45,5 +46,17 @@ public class ProductDTO {
 
     private HashMap<String,String> specifications;
 
-    private boolean published;
+    private boolean publish;
+
+    private Integer discount;
+
+    private String tagId;
+
+    private LocalDate discountStartDate;
+
+    private LocalDate discountEndDate;
+
+    private String tagTitle;
+
+    private Double priceWithDiscount;
 }

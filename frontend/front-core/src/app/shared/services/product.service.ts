@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith, delay } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { Product } from '../classes/product';
+import { Images, Product } from '../classes/product';
+import { environment } from 'src/environments/environment';
+import { FilterParams } from 'src/app/shop/product/domain/FillterParams';
+import { UtilService } from './util.service';
 
 const state = {
   products: JSON.parse(localStorage['products'] || '[]'),
@@ -17,13 +20,15 @@ const state = {
 })
 export class ProductService {
 
+  public filterParam:FilterParams={};
+  private _filterParams: BehaviorSubject<FilterParams> = new BehaviorSubject<FilterParams>(this.filterParam);
   public Currency = { name: 'Dollar', currency: 'USD', price: 1 } // Default Currency
   public OpenCart: boolean = false;
   public Products
 
   constructor(private http: HttpClient,
-    private toastrService: ToastrService) { }
-
+    private toastrService: ToastrService,
+    private utilService: UtilService) { }
   /*
     ---------------------------------------------
     ---------------  Product  -------------------
@@ -51,7 +56,74 @@ export class ProductService {
     }));
   }
 
+  public getProductsFilter(filters:any, params) {
+    let allParams= this.utilService.generatePageParams(params);
+    allParams = { ...allParams, ...filters };
+    return this.http.get(environment.apiUrl+'/shop/products',{params:allParams});
+  }
 
+  public getProductBrands(){
+    return this.http.get(environment.apiUrl+'/shop/brand');
+  }
+
+  getProductById (productId: string){
+    return this.http.get<any>(environment.apiUrl+'/shop/product/'+productId).pipe(
+      map(product => this.mapApiResponseToProduct(product)))
+    
+  }
+
+  getNewProducts (){
+    return this.http.get(environment.apiUrl+'/shop/product/new-products');
+  }
+
+  public setProductImages (product:any):Images[]{
+    console.log(product)
+    let images:Images[]=[];
+    for (let i=1; i<=6; i++){
+      let img: Images={
+      src:`${environment.publicS3Url}/product/${product[`image${i}FileIdentifier`]}`,
+      alt: `Image ${i}`
+      }
+      images.push(img);
+    }
+
+    return images;
+  }
+
+ public getRelatedProducts (categoryId:string){
+  return this.http.get<Product[]>(environment.apiUrl+'/shop/product/related-products/'+categoryId).pipe(
+    map(products => products.map(product=> this.mapApiResponseToProduct(product))))
+ }
+
+ mapApiResponseToProduct(apiData: any): Product {
+  console.log(apiData)
+  return {
+    id: apiData.id, 
+    title: apiData.name,
+    description: apiData.description,
+    type: null, // Assign appropriate value if available
+    brand: apiData.brand,
+    collection: [], // Assign appropriate collection if available
+    category: apiData.categoryId,
+    price: apiData.price,
+    sale: apiData.discount > 0, // Boolean based on discount
+    discount: apiData.discount,
+    stock: apiData.quantity, // Assign appropriate value if available
+    new: apiData.publish,
+    quantity: apiData.quantity,
+    tags: [{ id: apiData.tagId, title: apiData.tagTitle }], // Example structure
+    variants: [], // Map variants if available
+    images:this.setProductImages(apiData),
+    specifications: this.mapSpecifications(apiData.specifications)
+  };
+}
+private mapSpecifications(specifications: { [key: string]: string }): any[] {
+  console.log(specifications)
+  return Object.entries(specifications).map(([key, value]) => ({
+    key,
+    value
+  }));
+}
   /*
     ---------------------------------------------
     ---------------  Wish List  -----------------
@@ -335,4 +407,32 @@ export class ProductService {
     };
   }
 
+  /*
+   --------------------------------------
+   -------------Category-----------------
+   --------------------------------------
+  */
+
+  getCategories (){
+    return  this.http.get(environment.apiUrl +'/shop/categories')
+  }
+  get filterParams() {
+    return this._filterParams.asObservable();
+  }
+
+  updateFilterParams(newValue: FilterParams) {
+    this._filterParams.next(newValue);
+  }
+  
+  updateCategoryFilter(newCategory: string) {
+    const currentFilter = this._filterParams.value;  
+    const updatedFilter = { ...currentFilter, categoryId: newCategory }; 
+    this._filterParams.next(updatedFilter); 
+  }
+
+  updatePriceFilter(min: number, max:number) {
+    const currentFilter = this._filterParams.value;  
+    const updatedFilter = { ...currentFilter,  minPrice: min, maxPrice:max }; 
+    this._filterParams.next(updatedFilter); 
+  }
 }

@@ -26,6 +26,7 @@ export class ProductBoxOneComponent implements OnInit {
   constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
+    console.log("EAD", this.product)
     if(this.loader) {
       setTimeout(() => { this.loader = false; }, 2000); // Skeleton Loader
     }
@@ -34,25 +35,25 @@ export class ProductBoxOneComponent implements OnInit {
   // Get Product Color
   Color(variants) {
     const uniqColor = [];
-    for (let i = 0; i < Object.keys(variants).length; i++) {
-      if (uniqColor.indexOf(variants[i].color) === -1 && variants[i].color) {
-        uniqColor.push(variants[i].color)
-      }
-    }
+    // for (let i = 0; i < Object.keys(variants).length; i++) {
+    //   if (uniqColor.indexOf(variants[i].color) === -1 && variants[i].color) {
+    //     uniqColor.push(variants[i].color)
+    //   }
+    // }
     return uniqColor
   }
 
   // Change Variants
   ChangeVariants(color, product) {
-    product.variants.map((item) => {
-      if (item.color === color) {
-        product.images.map((img) => {
-          if (img.image_id === item.image_id) {
-            this.ImageSrc = img.src;
-          }
-        })
-      }
-    })
+    // product.variants.map((item) => {
+    //   if (item.color === color) {
+    //     product.images.map((img) => {
+    //       if (img.image_id === item.image_id) {
+    //         this.ImageSrc = img.src;
+    //       }
+    //     })
+    //   }
+    // })
   }
 
   // Change Variants Image

@@ -128,7 +128,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDTO> getAllCategories() {
         return categoryMongoRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(category -> CategoryDTO.builder()
-                .id(category.getId().toString())
+                .id(category.getId())
                 .name(category.getName()).specification(category.getSpecification()).build()).collect(Collectors.toList());
     }
 
@@ -147,5 +147,14 @@ public class CategoryServiceImpl implements CategoryService {
     public Category getOneCategory(String categoryId){
         return categoryMongoRepository.findById(categoryId).orElseThrow(()->new BadRequestException(CATEGORY_NOT_FOUND));
 
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public List<CategoryDTO> getCategoriesForShop() {
+        return categoryMongoRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(category -> CategoryDTO.builder().id(category.getId())
+                .name(category.getName()).build()).collect(Collectors.toList());
     }
 }

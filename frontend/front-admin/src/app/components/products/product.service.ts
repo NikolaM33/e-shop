@@ -81,5 +81,21 @@ export class ProductService {
       return this.http.put(environment.apiUrl+"/product/"+productId,data);
     }
 
-  
+  //Product tags
+
+  addTag(title:string){
+    return this.http.post(environment.apiUrl + "/product-tag/add-tag", title )
+  }
+
+  getAllTags (){
+    return this.http.get(environment.apiUrl + "/product-tag/all-tags")
+  }
+
+  updateTag (tagId:string, title:string) {
+    return this.http.put(environment.apiUrl +"/product-tag/"+tagId, title);
+  }
+
+  deleteTag(tagId: string){
+    return this.http.delete(environment.apiUrl+"/product-tag/"+tagId);
+  }
 }
