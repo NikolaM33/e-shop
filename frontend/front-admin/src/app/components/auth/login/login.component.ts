@@ -25,15 +25,15 @@ export class LoginComponent implements OnInit {
 
   owlcarousel = [
     {
-      title: "Welcome to Multikart",
+      title: "Welcome to SkiZone",
       desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy.",
     },
     {
-      title: "Welcome to Multikart",
+      title: "Welcome to SkiZone",
       desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy.",
     },
     {
-      title: "Welcome to Multikart",
+      title: "Welcome to SkiZone",
       desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy.",
     }
   ]
@@ -66,7 +66,9 @@ export class LoginComponent implements OnInit {
   loginUser(){
     let email=this.loginForm.controls['username'].value;
     let password=this.loginForm.controls['password'].value;
-    const formData = this.loginForm.getRawValue();
+    const formData = {email: email,
+      password: password
+    }
     
     this.authService.login(formData).subscribe((response)=>{
       this.authService.setToken(response.token);
@@ -74,6 +76,7 @@ export class LoginComponent implements OnInit {
      this.router.navigateByUrl("/dashboard/default")
     })
   }
+
   registerUser(){
     let user= new User();
     user.email=this.registerForm.controls['userName'].value;

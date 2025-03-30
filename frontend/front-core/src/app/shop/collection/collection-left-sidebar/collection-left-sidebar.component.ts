@@ -39,30 +39,6 @@ export class CollectionLeftSidebarComponent implements OnInit {
     private viewScroller: ViewportScroller, public productService: ProductService) {   
       // Get Query params..
       this.route.queryParams.subscribe(params => {
-        this.brands = params.brand ? params.brand.split(",") : [];
-        this.colors = params.color ? params.color.split(",") : [];
-        this.size  = params.size ? params.size.split(",")  : [];
-        this.minPrice = params.minPrice ? params.minPrice : this.minPrice;
-        this.maxPrice = params.maxPrice ? params.maxPrice : this.maxPrice;
-        this.tags = [...this.brands, ...this.colors, ...this.size]; // All Tags Array
-        
-        this.category = params.category ? params.category : null;
-        this.sortBy = params.sortBy ? params.sortBy : 'ascending';
-        this.pageNo = params.page ? params.page : this.pageNo;
-
-        // Get Filtered Products..
-        // this.productService.filterProducts(this.tags).subscribe(response => {         
-        //   // Sorting Filter
-        //   this.products = this.productService.sortProducts(response, this.sortBy);
-        //   // Category Filter
-        //   if(params.category)
-        //     this.products = this.products.filter(item => item.type == this.category);
-        //   // Price Filter
-        //   this.products = this.products.filter(item => item.price >= this.minPrice && item.price <= this.maxPrice) 
-        //   // Paginate Products
-        //   this.paginate = this.productService.getPager(this.products.length, +this.pageNo);     // get paginate object from service
-        //   this.products = this.products.slice(this.paginate.startIndex, this.paginate.endIndex + 1); // get current page of items
-        // })
         if(this.category){
           this.productService.updateCategoryFilter(this.category)
         }
@@ -75,35 +51,16 @@ export class CollectionLeftSidebarComponent implements OnInit {
       // Fetch products with the latest filters and sort
       this.fetchProducts(filters, params);
     });
-    // this.productService.filterParams.subscribe(filters=>{
-    //   this.fetchProducts(filters);
     
-    // })
   }
 
   fetchProducts(filters:any, params:any){
 
+    params ={...params,
+      type: 'SALE'
+    }
     this.productService.getProductsFilter(filters, params).subscribe((data:any[])=>{
-
-      const products: Product[] = data.map(item => ({
-        id: item.id,
-        title: item.name,
-        description: item.description,
-        type: item.type,
-        brand: item.brand,
-        collection: item.collection, // Assuming collection is already in the right format
-        category: item.category,
-        price: item.price,
-        sale: item.sale,
-        discount: item.discount,
-        stock: item.stock,
-        new: item.new,
-        quantity: item.quantity,
-        tags: item.tags, // Assuming tags are already in the right format
-        images: this.setProductImages(item)
-    
-    }));
-      this.products=products;
+      this.products=data;
   })
   }
 
@@ -119,20 +76,6 @@ export class CollectionLeftSidebarComponent implements OnInit {
     return images;
   }
 
-  // Append filter value to Url
-  updateFilter(tags: any) {
-    tags.page = null; // Reset Pagination
-    this.router.navigate([], { 
-      relativeTo: this.route,
-      queryParams: tags,
-      queryParamsHandling: 'merge', // preserve the existing query params in the route
-      skipLocationChange: false  // do trigger navigation
-    }).finally(() => {
-      this.viewScroller.setOffset([120, 120]);
-      this.viewScroller.scrollToAnchor('products'); // Anchore Link
-    });
-  }
-
   // SortBy Filter
   sortByFilter(value) {
     
@@ -143,41 +86,6 @@ export class CollectionLeftSidebarComponent implements OnInit {
     this.params.next(sortParams);
   }
 
-  // Remove Tag
-  removeTag(tag) {
-  
-    this.brands = this.brands.filter(val => val !== tag);
-    this.colors = this.colors.filter(val => val !== tag);
-    this.size = this.size.filter(val => val !== tag );
-
-    let params = { 
-      brand: this.brands.length ? this.brands.join(",") : null, 
-      color: this.colors.length ? this.colors.join(",") : null, 
-      size: this.size.length ? this.size.join(",") : null
-    }
-
-    this.router.navigate([], { 
-      relativeTo: this.route,
-      queryParams: params,
-      queryParamsHandling: 'merge', // preserve the existing query params in the route
-      skipLocationChange: false  // do trigger navigation
-    }).finally(() => {
-      this.viewScroller.setOffset([120, 120]);
-      this.viewScroller.scrollToAnchor('products'); // Anchore Link
-    });
-  }
-
-  // Clear Tags
-  removeAllTags() {
-    this.router.navigate([], { 
-      relativeTo: this.route,
-      queryParams: {},
-      skipLocationChange: false  // do trigger navigation
-    }).finally(() => {
-      this.viewScroller.setOffset([120, 120]);
-      this.viewScroller.scrollToAnchor('products'); // Anchore Link
-    });
-  }
 
   // product Pagination
   setPage(page: number) {

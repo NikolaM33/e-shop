@@ -2,6 +2,9 @@ package com.shop.domain.product;
 
 import com.shop.domain.category.Category;
 import com.shop.domain.category.SubCategory;
+import com.shop.domain.dto.product.Color;
+import com.shop.domain.dto.product.ColorSizeMapping;
+import com.shop.domain.dto.product.Size;
 import com.shop.domain.entity.mongo.AbstractMongoStatusEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -59,7 +63,7 @@ public class Product extends AbstractMongoStatusEntity {
     ProductState state;
 
     @DBRef
-    private ProductTag productTag;
+    private ProductTag tag;
 
     private Integer discount;
 
@@ -68,6 +72,14 @@ public class Product extends AbstractMongoStatusEntity {
     private LocalDateTime discountEndDate;
 
     private LocalDateTime publishedDate;
+
+    private ArrayList<Size> sizes;
+
+    private ArrayList<Color> colors;
+
+    private ArrayList<ColorSizeMapping> sizeColorMapping;
+
+    private ProductType type;
 
 
 

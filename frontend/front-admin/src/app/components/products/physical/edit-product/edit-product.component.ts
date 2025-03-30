@@ -10,9 +10,8 @@ import {
 import { ProductService } from "../../product.service";
 import * as ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { ActivatedRoute } from "@angular/router";
-import { element } from "protractor";
-import { environment } from "src/environments/environment";
 import { NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
+import { Product } from "../../product";
 
 @Component({
   selector: "app-edit-product",
@@ -39,7 +38,7 @@ export class EditProductComponent implements OnInit {
   specificationForm: UntypedFormGroup;
   inputArray: FormArray;
   productId: string;
-  product: any;
+  product: Product;
   specificationsArray: any[];
   categoryChanged: boolean = false;
   subCategoryChanged: boolean = false;
@@ -66,12 +65,13 @@ export class EditProductComponent implements OnInit {
   }
   createProductForm() {
     this.productForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z0-9 ]*[a-zA-Z0-9]$')]],
+      name: ['', [Validators.required]],
       price: ['', [Validators.required, Validators.min(0),Validators.max(100000)]],
       code: ['', [Validators.required]],
       brand: ['', Validators.required],
       quantity:[1],
       publish: [false, Validators.required],
+      rent: [false],
       categoryId: ['',Validators.required],
       subCategoryId: ['',Validators.required],
       discount: [Validators.max(100), Validators.min(0)],
@@ -80,6 +80,9 @@ export class EditProductComponent implements OnInit {
       tagId: [''],
       description:[],
       specifications: this.fb.array([]),
+      sizes: this.fb.array([]),
+      colors: this.fb.array([]),
+      sizeColorMapping: this.fb.array([]),
     }, { validator: this.dateRangeValidator });
     this.productForm.get('discount')?.valueChanges.subscribe(value => {
       if (value) {
@@ -104,6 +107,7 @@ export class EditProductComponent implements OnInit {
 
   //FileUpload
   readUrl(event: any, i) {
+    console.log(i)
     if (event.target.files.length === 0) return;
     //Image upload validation
     var mimeType = event.target.files[0].type;
@@ -115,8 +119,8 @@ export class EditProductComponent implements OnInit {
     var reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
     reader.onload = (_event) => {
-      this.url[i].img = reader.result.toString();
-      this.imagePreview = this.url[i].img;
+      this.product.images[i].src = reader.result.toString();
+      this.imagePreview = this.product.images[i].src;
     };
   }
 
@@ -226,9 +230,9 @@ export class EditProductComponent implements OnInit {
     data.discountStartDate=this.formatter.format(data.discountStartDate);
     const specificationObject: { [key: string]: string } = {};
 
-    for (let i = 0; i < this.specificationsArray.length; i++) {
-      this.specificationsArray.at(i).value = this.specifications.at(i).value;
-      const { key, value } = this.specificationsArray[i];
+    for (let i = 0; i < this.product.specifications.length; i++) {
+      this.product.specifications.at(i).value = this.specifications.at(i).value;
+      const { key, value } = this.product.specifications[i];
 
       specificationObject[key] = value;
     }
@@ -245,7 +249,6 @@ export class EditProductComponent implements OnInit {
     this.productService
       .updateProduct(this.product.id, productData)
       .subscribe((data) => {
-        console.log(data);
       });
   }
 
@@ -255,50 +258,39 @@ export class EditProductComponent implements OnInit {
   }
 
   setupForm() {
-    this.categoryId = this.product.categoryId;
-    this.subCategoryId = this.product.subCategoryId;
+    console.log(this.product)
+    this.categoryId = this.product.category;
+    this.subCategoryId = this.product.subCategory;
     this.productService
-      .findSubCateogryOfCategory(this.product.categoryId)
+      .findSubCateogryOfCategory(this.product.category)
       .subscribe((data) => {
         this.subCategories = data;
         this.productForm
           .get("subCategoryId")
-          .setValue(this.product.subCategoryId);
+          .setValue(this.product.subCategory);
       });
 
-    this.productForm.get("categoryId").setValue(this.product.categoryId);
-    this.productForm.get("name").setValue(this.product.name);
+    this.productForm.get("categoryId").setValue(this.product.category);
+    this.productForm.get("name").setValue(this.product.title);
     this.productForm.get("price").setValue(this.product.price);
     this.productForm.get("code").setValue(this.product.code);
     this.productForm.get("quantity").setValue(this.product.quantity);
     this.productForm.get("brand").setValue(this.product.brand);
     this.productForm.get("publish").setValue(this.product.publish);
     this.productForm.get("description").setValue(this.product.description);
-    this.productForm.get("tagId").setValue(this.product.tagId);
+    this.productForm.get("tagId").setValue(this.product.tag?.id);
     this.productForm.get("discount").setValue(this.product.discount);
     this.productForm.get("discountStartDate").setValue(this.formatter.parse(this.product.discountStartDate));
     this.productForm.get("discountEndDate").setValue(this.formatter.parse(this.product.discountEndDate));
 
-
-    this.specificationsArray = Object.entries(this.product.specifications).map(
-      ([key, value]) => ({ key, value })
-    );
-    this.specificationsArray.forEach((element) => {
+ 
+    this.product.specifications.forEach((element) => {
       this.specifications.push(
         this.fb.control(element.value, Validators.required)
       );
     });
-    for (let i = 1; i <= 6; i++) {
-      if (this.product[`image${i}FileIdentifier`] !== null) {
-        this.url.push({
-          ["img"]: `${environment.publicS3Url}/product/${
-            this.product[`image${i}FileIdentifier`]
-          }`,
-        });
-      } else {
-        this.url.push({ ["img"]: "assets/images/user.png" });
-      }
-    }
+    if(this.product.images[0].src)
+      this.imagePreview=this.product.images[0].src;
   };
 
   test(){
@@ -324,5 +316,56 @@ export class EditProductComponent implements OnInit {
     }else {
       this.active=3;
     }
+  }
+
+  get sizeFormArray(): FormArray {
+    return this.productForm.get('sizes') as FormArray;
+  }
+
+  // Add a new size and quantity input group
+  addSize() {
+    const sizeGroup = this.fb.group({
+      size: ['', Validators.required], // Custom size input
+      quantity: [1, [Validators.required, Validators.min(1)]], // Default quantity is 1
+    });
+    this.sizeFormArray.push(sizeGroup);
+  }
+
+  // Remove a size and quantity input group
+  removeSize(index: number) {
+    this.sizeFormArray.removeAt(index);
+  }
+  get colorFormArray(): FormArray {
+    return this.productForm.get('colors') as FormArray;
+  }
+
+  // Add a new size and quantity input group
+  addColor() {
+    const colorGroup = this.fb.group({
+      color: ['', Validators.required], // Custom size input
+      quantity: [1, [Validators.required, Validators.min(1)]], // Default quantity is 1
+    });
+    this.colorFormArray.push(colorGroup);
+  }
+
+  // Remove a size and quantity input group
+  removeColor(index: number) {
+    this.colorFormArray.removeAt(index);
+  }
+  get sizeColorMapping(): FormArray {
+    return this.productForm.get('sizeColorMapping') as FormArray;
+  }
+
+  updateSizeColorMapping() {
+    this.sizeColorMapping.clear();
+    this.sizeFormArray.controls.forEach(sizeControl => {
+      this.colorFormArray.controls.forEach(colorControl => {
+        this.sizeColorMapping.push(this.fb.group({
+          size: sizeControl.get('size')?.value,
+          color: colorControl.get('color')?.value,
+          quantity: [0, [Validators.required, Validators.min(0)]]
+        }));
+      });
+    });
   }
 }

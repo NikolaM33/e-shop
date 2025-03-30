@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { Image } from '@ks89/angular-modal-gallery';
 import { NgbRatingConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../product.service';
-import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { ProductDetailsMainSlider, ProductDetailsThumbSlider } from '../slider';
 
 
 @Component({
@@ -19,15 +18,15 @@ export class ProductDetailComponent implements OnInit {
   currentRate = 8;
   productId:string;
   product: any;
-  active:number=1;
-  public imagesRect: Image[] = [
-    new Image(0, { img: 'assets/images/pro3/2.jpg' }, { img: 'assets/images/pro3/1.jpg' }),
-    new Image(1, { img: 'assets/images/pro3/27.jpg' }, { img: 'assets/images/pro3/27.jpg' }),
-    new Image(2, { img: 'assets/images/pro3/1.jpg' }, { img: 'assets/images/pro3/1.jpg' }),
-    new Image(3, { img: 'assets/images/pro3/2.jpg' }, { img: 'assets/images/pro3/2.jpg' })]
+  active=1;
+  public activeSlide: any = 0;
+
+
+  public ProductDetailsMainSliderConfig: any = ProductDetailsMainSlider;
+  public ProductDetailsThumbConfig: any = ProductDetailsThumbSlider;
 
   constructor(private modalService: NgbModal, config: NgbRatingConfig,
-    private activeRoute: ActivatedRoute, private productService: ProductService) {
+    private activeRoute: ActivatedRoute, public productService: ProductService) {
     config.max = 5;
     config.readonly = false;
       activeRoute.params.subscribe((data)=>{
@@ -35,6 +34,7 @@ export class ProductDetailComponent implements OnInit {
     })
     this.productService.getProduct(this.productId).subscribe((data)=>{
       this.product=data;
+      console.log(this.product)
     })
   }
 
@@ -66,5 +66,6 @@ export class ProductDetailComponent implements OnInit {
 
   ngOnInit() {
   }
+
 
 }

@@ -28,6 +28,8 @@ import { DropzoneModule } from 'ngx-dropzone-wrapper';
 import { ToastrModule } from 'ngx-toastr';
 import { TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { CarouselModule } from 'ngx-owl-carousel-o';
 
 
 // AoT requires an exported function for factories
@@ -63,6 +65,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientModule,
     DropzoneModule,
     TranslateModule,
+    NgbNavModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       progressBar: false,

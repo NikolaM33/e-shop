@@ -13,12 +13,13 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductLeftSidebarComponent implements OnInit {
 
-  public product: Product = {};
+  public product: Product;
   public counter: number = 1;
   public activeSlide: any = 0;
   public selectedSize: any;
   public mobileSidebar: boolean = false;
   public active = 1;
+  public selectedColor: any;
 
   public productId:string;
   @ViewChild("sizeChart") SizeChart: SizeModalComponent;
@@ -87,6 +88,9 @@ export class ProductLeftSidebarComponent implements OnInit {
   // Add to cart
   async addToCart(product: any) {
     product.quantity = this.counter || 1;
+    product.sizes = [this.selectedSize];
+    product.colors = [this.selectedColor]
+    console .log("PRDUCT", product)
     const status = await this.productService.addToCart(product);
     if (status)
       this.router.navigate(['/shop/cart']);
@@ -123,4 +127,9 @@ export class ProductLeftSidebarComponent implements OnInit {
     return images;
   }
 
+
+  selectColor(color, index){
+    this.activeSlide = index;
+    this.selectedColor = color;
+  }
 }

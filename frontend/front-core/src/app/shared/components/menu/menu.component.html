@@ -23,7 +23,7 @@
         <!-- Link -->
         <a [routerLink]="menuItem.path"   class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" 
           *ngIf="menuItem.type === 'link'">
-          {{ menuItem.title }}
+          {{ menuItem.title | translate }}
           <div class="lable-nav" *ngIf="menuItem.badge">{{ menuItem.badgeText | translate }}</div>
           <span class="sub-arrow" *ngIf="menuItem.children"></span>
         </a>

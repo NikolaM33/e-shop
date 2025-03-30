@@ -6,6 +6,12 @@ import { environment } from '../../../environments/environment';
 import { Product } from "../../shared/classes/product";
 import { ProductService } from "../../shared/services/product.service";
 import { OrderService } from "../../shared/services/order.service";
+import { Appearance, loadStripe, StripeElement, StripeElements, StripeElementsOptions } from '@stripe/stripe-js';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PaymentComponent } from './payment/payment/payment.component';
+import { Router } from '@angular/router';
+import { AccountService } from 'src/app/pages/account/account.service';
+import { Order, OrderProduct } from 'src/app/shared/classes/order';
 
 @Component({
   selector: 'app-checkout',
@@ -20,8 +26,13 @@ export class CheckoutComponent implements OnInit {
   public payment: string = 'Stripe';
   public amount:  any;
 
-  constructor(private fb: UntypedFormBuilder,
-    public productService: ProductService,
+  stripe: any;
+  elements: any;
+  card: any;
+  userId: any;
+
+  constructor(private fb: UntypedFormBuilder, private router:Router, private accountService: AccountService,
+    public productService: ProductService, private modalService: NgbModal,
     private orderService: OrderService) { 
     this.checkoutForm = this.fb.group({
       firstname: ['', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+[a-zA-Z]$')]],
@@ -32,19 +43,46 @@ export class CheckoutComponent implements OnInit {
       country: ['', Validators.required],
       town: ['', Validators.required],
       state: ['', Validators.required],
-      postalcode: ['', Validators.required]
+      postalcode: ['', Validators.required],
+      shipping: ['SHIPPING', Validators.required]
     })
   }
 
-  ngOnInit(): void {
+ async ngOnInit() {
+  this.accountService.currentUser.subscribe(user => {
+    this.userId = user?.id;
+  });
+
     this.productService.cartItems.subscribe(response => this.products = response);
     this.getTotal.subscribe(amount => this.amount = amount);
     this.initConfig();
+ this.initializeStripe();
+    
+  }
+
+  async initializeStripe() {
+    this.stripe = await loadStripe(environment.stripe_token); // Replace with your public key
+
+    const elements = this.stripe.elements({
+      appearance: {
+        theme: 'night',
+        variables: {
+          colorBackground: 'red'
+        }
+      }
+    });
+    this.card = elements.create('card');
+    // this.card.mount('#card-element');
+  }
+
+  async handlePayment() {
+    // const stripe = await this.stripePromise;
   }
 
   public get getTotal(): Observable<number> {
     return this.productService.cartTotalAmount();
   }
+
 
   // Stripe Payment Gateway
   stripeCheckout() {
@@ -66,52 +104,63 @@ export class CheckoutComponent implements OnInit {
 
   // Paypal Payment Gateway
   private initConfig(): void {
-    // this.payPalConfig = {
-    //     currency: this.productService.Currency.currency,
-    //     clientId: environment.paypal_token,
-    //     createOrderOnClient: (data) => < ICreateOrderRequest > {
-    //       intent: 'CAPTURE',
-    //       purchase_units: [{
-    //           amount: {
-    //             currency_code: this.productService.Currency.currency,
-    //             value: this.amount,
-    //             breakdown: {
-    //                 item_total: {
-    //                     currency_code: this.productService.Currency.currency,
-    //                     value: this.amount
-    //                 }
-    //             }
-    //           }
-    //       }]
-    //   },
-    //     advanced: {
-    //         commit: 'true'
-    //     },
-    //     style: {
-    //         label: 'paypal',
-    //         size:  'small', // small | medium | large | responsive
-    //         shape: 'rect', // pill | rect
-    //     },
-    //     onApprove: (data, actions) => {
-    //         this.orderService.createOrder(this.products, this.checkoutForm.value, data.orderID, this.getTotal);
-    //         console.log('onApprove - transaction was approved, but not authorized', data, actions);
-    //         actions.order.get().then(details => {
-    //             console.log('onApprove - you can get full order details inside onApprove: ', details);
-    //         });
-    //     },
-    //     onClientAuthorization: (data) => {
-    //         console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
-    //     },
-    //     onCancel: (data, actions) => {
-    //         console.log('OnCancel', data, actions);
-    //     },
-    //     onError: err => {
-    //         console.log('OnError', err);
-    //     },
-    //     onClick: (data, actions) => {
-    //         console.log('onClick', data, actions);
-    //     }
-    // };
+   
   }
 
+ 
+  openPaymentDialog() {
+
+    const order = this.generateOrderFromFormData(this.checkoutForm.value, this.products, this.amount)
+    const modalRef = this.modalService.open(PaymentComponent);
+    modalRef.componentInstance.totalAmount = this.amount;
+    modalRef.componentInstance.orderDetails = order;
+    
+    modalRef.result.then((result) => {
+      if (result?.orderId) {
+        this.productService.clearCart();
+        this.router.navigateByUrl('/shop/checkout/success/'+result?.orderId);
+      } else {
+        // Handle the case where payment is canceled or failed
+        alert('Payment was not completed.');
+      }
+    });
+  }
+
+   generateOrderFromFormData(formData: any, products: Product[], totalAmount: number): Order {
+    // Convert FormData into an object
+      const orderProducts: OrderProduct[] = products.map(product => ({
+        productId: product.id, 
+        quantity: product.quantity, 
+        size: product.sizes && product.sizes.length > 0 ? product.sizes[0].size : undefined, // If sizes exist, take the first size
+        color: product.colors && product.colors.length > 0 ? product.colors[0].color : undefined, // If colors exist, take the first color
+        price: product.price,
+        name: product.title,
+        brand: product.brand,
+        discount: product.discount ? true : false, // If there's a discount, it's true, otherwise false
+        discountPercent: product.discount || undefined, // Discount percent is optional
+        rentDateStart: new Date(product.rentStartDate?.year, product.rentStartDate?.month - 1, product.rentStartDate?.day),
+        rentDurationDays: product.rentDuration
+      }));
+      
+      const order: Order = {
+      userId: this.userId,
+      customerFirstName: formData.firstname,
+      customerLastName: formData.lastname,
+      customerPhone: formData.phone,
+      customerEmail: formData.email,
+      type: formData.shipping,
+      shippingAddress: formData.address,
+      shippingCounty: formData.country,
+      shippingState: formData.state,
+      shippingTown: formData.town,
+      shippingPostalCode: formData.postalcode,
+      paymentMethod: 'CARD',
+      paymentStatus: formData.paymentStatus,
+      paymentId: formData.paymentId,
+      amount: totalAmount, 
+      products: orderProducts
+    };
+  
+    return order;
+  }
 }

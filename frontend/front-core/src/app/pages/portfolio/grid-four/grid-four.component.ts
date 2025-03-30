@@ -46,7 +46,6 @@ export class GridFourComponent implements OnInit {
       this.imageData = WatchImages
     }
 
-    console.log("image", this.imageData);
 
     this.items = this.imageData.map(item => new ImageItem({ src: item.srcUrl, thumb: item.previewUrl }));
 

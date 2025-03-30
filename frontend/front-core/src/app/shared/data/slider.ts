@@ -243,5 +243,5 @@ export let ProductDetailsThumbSlider: any = {
     items: 3,
     loop: true,
     margin: 10,
-    dots:false
+    dots:true
 }

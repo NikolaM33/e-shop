@@ -31,3 +31,91 @@
     
     }
   }
+
+  .container-size-color{
+    display: flex;
+    flex-direction: row; 
+    padding-bottom: 2%;
+  }
+
+  
+  .left, .right {
+    flex: 1; /* Each part takes equal space */
+    padding: 20px;
+  }
+  
+  
+  .right {
+    border-left: 1px solid #dee2e6;
+  }
+
+  @media (max-width: 768px) {
+    .container-size-color {
+      flex-direction: column;
+    }
+  }
+
+  .input-size-group{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+
+  }
+  .size-input{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    padding-top: 1%;
+    gap:4%;
+    width: 95%;
+  }
+
+  .delete-element-btn{
+    width: 15%;
+    font-size: 30px;
+  }
+  
+  .color-input {
+    width: 75px; 
+    height: 60px;
+    border-radius: 50%; 
+    text-align: center; 
+    border: none;
+    outline: none;
+    padding: 0;
+    background: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    
+  }
+  .color-input::-webkit-color-swatch {
+    border: none; /* Removes the default border inside the color input */
+    border-radius: 50%; /* Makes the color swatch circular */
+}
+
+.color-input::-moz-color-swatch {
+    border: none; /* Removes the default border inside the color input */
+    border-radius: 50%; /* Makes the color swatch circular */
+}
+
+.color-size-mapping {
+  display: flex;
+  width: 90%;
+  place-content: center;
+  align-items: center;
+  gap: 2%;
+}
+
+.size-box ul {
+  margin-bottom: 0 !important;
+  border-bottom: none !important;
+}
+
+.mapping-container{
+  display: flex;
+  align-items: center;
+  place-content: center;
+}

@@ -7,6 +7,7 @@ import { Images, Product } from '../classes/product';
 import { environment } from 'src/environments/environment';
 import { FilterParams } from 'src/app/shop/product/domain/FillterParams';
 import { UtilService } from './util.service';
+import { Order } from '../classes/order';
 
 const state = {
   products: JSON.parse(localStorage['products'] || '[]'),
@@ -59,11 +60,17 @@ export class ProductService {
   public getProductsFilter(filters:any, params) {
     let allParams= this.utilService.generatePageParams(params);
     allParams = { ...allParams, ...filters };
-    return this.http.get(environment.apiUrl+'/shop/products',{params:allParams});
+    return this.http.get(environment.apiUrl+'/shop/products',{params:allParams}).pipe(
+      map((response: any) => {
+        // Assuming 'response' is an object with a 'products' array or similar structure
+        return response.map((product: any) => this.mapApiResponseToProduct(product));
+      })
+    );
   }
 
-  public getProductBrands(){
-    return this.http.get(environment.apiUrl+'/shop/brand');
+  public getProductBrands(productType:string){
+    const params = {type: productType}
+    return this.http.get(environment.apiUrl+'/shop/brand', {params: params});
   }
 
   getProductById (productId: string){
@@ -77,7 +84,6 @@ export class ProductService {
   }
 
   public setProductImages (product:any):Images[]{
-    console.log(product)
     let images:Images[]=[];
     for (let i=1; i<=6; i++){
       let img: Images={
@@ -96,34 +102,56 @@ export class ProductService {
  }
 
  mapApiResponseToProduct(apiData: any): Product {
-  console.log(apiData)
   return {
     id: apiData.id, 
     title: apiData.name,
     description: apiData.description,
-    type: null, // Assign appropriate value if available
     brand: apiData.brand,
-    collection: [], // Assign appropriate collection if available
     category: apiData.categoryId,
+    subCategory: apiData.subCategoryId,
     price: apiData.price,
-    sale: apiData.discount > 0, // Boolean based on discount
+    sale: apiData.discount > 0, 
     discount: apiData.discount,
-    stock: apiData.quantity, // Assign appropriate value if available
-    new: apiData.publish,
+    publish: apiData.publish,
+    rent: apiData.rent,
+    code: apiData.code,
     quantity: apiData.quantity,
-    tags: [{ id: apiData.tagId, title: apiData.tagTitle }], // Example structure
-    variants: [], // Map variants if available
+    tag: { id: apiData.tagId, title: apiData.tagTitle }, 
     images:this.setProductImages(apiData),
-    specifications: this.mapSpecifications(apiData.specifications)
+    specifications: this.mapSpecifications(apiData.specifications),
+    colors: apiData.colors,
+    sizes: apiData.sizes,
+    priceWithDiscount: apiData.priceWithDiscount,
+    discountStartDate: apiData.discountStartDate,
+    discountEndDate:  apiData.discountEndDate,
   };
 }
 private mapSpecifications(specifications: { [key: string]: string }): any[] {
-  console.log(specifications)
   return Object.entries(specifications).map(([key, value]) => ({
     key,
     value
   }));
 }
+  /*
+    ---------------------------------------------
+    ---------------  Payment  -----------------
+    ---------------------------------------------
+  */
+public createPaymentIntent (order: Order){
+  return this.http.post<{ clientSecret: string }>(`${environment.apiUrl}/shop/payment/create-payment-intent`, order);
+}
+  /*
+    ---------------------------------------------
+    ---------------  Order  -----------------
+    ---------------------------------------------
+  */
+ public createOrder (order){
+  return this.http.post(`${environment.apiUrl}/shop/order`, order)
+ }
+
+ public getOrderById (orderId: string){
+  return this.http.get(`${environment.apiUrl}/shop/order/${orderId}`)
+ }
   /*
     ---------------------------------------------
     ---------------  Wish List  -----------------
@@ -281,6 +309,12 @@ private mapSpecifications(specifications: { [key: string]: string }): any[] {
     }));
   }
 
+  public clearCart(): boolean {
+    state.cart = [];
+    localStorage.removeItem("cartItems");
+    return true;
+  }
+
   /*
     ---------------------------------------------
     ------------  Filter Product  ---------------
@@ -288,21 +322,21 @@ private mapSpecifications(specifications: { [key: string]: string }): any[] {
   */
 
   // Get Product Filter
-  public filterProducts(filter: any): Observable<Product[]> {
-    return this.products.pipe(map(product => 
-      product.filter((item: Product) => {
-        if (!filter.length) return true
-        const Tags = filter.some((prev) => { // Match Tags
-          if (item.tags) {
-            if (item.tags.includes(prev)) {
-              return prev
-            }
-          }
-        })
-        return Tags
-      })
-    ));
-  }
+  // public filterProducts(filter: any): Observable<Product[]> {
+  //   return this.products.pipe(map(product => 
+  //     product.filter((item: Product) => {
+  //       if (!filter.length) return true
+  //       const Tags = filter.some((prev) => { // Match Tags
+  //         if (item.tags) {
+  //           if (item.tags.includes(prev)) {
+  //             return prev
+  //           }
+  //         }
+  //       })
+  //       return Tags
+  //     })
+  //   ));
+  // }
 
   // Sorting Filter
   public sortProducts(products: Product[], payload: string): any {
@@ -433,6 +467,12 @@ private mapSpecifications(specifications: { [key: string]: string }): any[] {
   updatePriceFilter(min: number, max:number) {
     const currentFilter = this._filterParams.value;  
     const updatedFilter = { ...currentFilter,  minPrice: min, maxPrice:max }; 
+    this._filterParams.next(updatedFilter); 
+  }
+
+  updateBrendFilter(brands: string[]) {
+    const currentFilter = this._filterParams.value;  
+    const updatedFilter = { ...currentFilter, brand: brands}; 
     this._filterParams.next(updatedFilter); 
   }
 }

@@ -1,8 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormGroup, FormArray, FormControl, AbstractControl } from '@angular/forms';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { ProductService } from '../../product.service';
-import { validateHorizontalPosition } from '@angular/cdk/overlay';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 
@@ -61,20 +60,24 @@ export class AddProductComponent implements OnInit {
   }
   createProductForm() {
     this.productForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z0-9 ]*[a-zA-Z0-9]$')]],
+      name: ['', [Validators.required]],
       price: ['', [Validators.required, Validators.min(0),Validators.max(100000)]],
       code: ['', [Validators.required]],
       brand: ['', Validators.required],
-      quantity:[1],
+      quantity:[1, [Validators.required, Validators.min(0)]],
       publish: [false, Validators.required],
       categoryId: ['',Validators.required],
-      subCategoryId: ['',Validators.required],
+      subCategoryId: [''],
       discount: [Validators.max(100), Validators.min(0)],
       discountStartDate: [{value: null, disabled: true}],
       discountEndDate: [{value: null, disabled: true}],
       tagId: [''],
       description:[],
       specifications: this.fb.array([]),
+      sizes: this.fb.array([]),
+      colors: this.fb.array([]),
+      sizeColorMapping: this.fb.array([]),
+      type: ["SALE",Validators.required]
     }, { validator: this.dateRangeValidator })
     this.productForm.get('discount')?.valueChanges.subscribe(value => {
       if (value) {
@@ -86,7 +89,15 @@ export class AddProductComponent implements OnInit {
         this.productForm.get('discountStartDate')?.disable();
         this.productForm.get('discountEndDate')?.disable();
       }
+
+     
     });
+    this.sizeFormArray.valueChanges.subscribe(()=>{
+      this.updateSizeColorMapping();
+    })
+    this.colorFormArray.valueChanges.subscribe(()=>{
+      this.updateSizeColorMapping();
+    })
   }
   increment() {
     this.productForm.get('quantity').setValue(this.productForm.get('quantity').value + 1);
@@ -150,8 +161,7 @@ export class AddProductComponent implements OnInit {
     let category = this.categories.find(element => element.id === categoryId);
 
     // Parse the specification from the category
-    if(this.specifications.length>0){
-      }
+    if(category)
     this.specification = JSON.parse(category.specification);
 
     // If a subcategory is selected, append its specification to the main specification
@@ -182,14 +192,13 @@ export class AddProductComponent implements OnInit {
   }
 
   addNewProduct (){
+    console.log(this.productForm)
     const  productData:FormData = new FormData();
      const data=this.productForm.getRawValue();
      data.discountEndDate=this.formatter.format(data.discountEndDate);
      data.discountStartDate=this.formatter.format(data.discountStartDate);
    
 
-  
-    let specMap = new Map<string, string>();
     let specObject: { [key: string]: string } = {};
 
 for (let i = 0; i < this.specification.length; i++) {
@@ -210,9 +219,9 @@ for (let i = 0; i < this.specification.length; i++) {
    }
 
    this.productService.addProduct(productData).subscribe((data)=>{
-    this.toastrService.success('Product has been added!')
-    console.log(data);
-   })
+    this.toastrService.success('Product has been added!');
+    this.productForm.reset();
+     })
   }
 
   addNewSpecifiaction(){
@@ -220,10 +229,9 @@ for (let i = 0; i < this.specification.length; i++) {
     this.specifications.push(newInput)
   }
 
-  test(){
-    this.toastrService.success('Product has been added!')
-
-    console.log(this.productForm.valid, this.productForm)
+  resetForm(){
+    console.log(this.productForm)
+    // this.productForm.reset();
   }
 
   dateRangeValidator(group: FormGroup) {
@@ -246,4 +254,56 @@ for (let i = 0; i < this.specification.length; i++) {
       this.active=3;
     }
   }
+
+  get sizeFormArray(): FormArray {
+    return this.productForm.get('sizes') as FormArray;
+  }
+
+  // Add a new size and quantity input group
+  addSize() {
+    const sizeGroup = this.fb.group({
+      size: ['', Validators.required], // Custom size input
+      quantity: [1, [Validators.required, Validators.min(1)]], // Default quantity is 1
+    });
+    this.sizeFormArray.push(sizeGroup);
+  }
+
+  // Remove a size and quantity input group
+  removeSize(index: number) {
+    this.sizeFormArray.removeAt(index);
+  }
+  get colorFormArray(): FormArray {
+    return this.productForm.get('colors') as FormArray;
+  }
+
+  // Add a new size and quantity input group
+  addColor() {
+    const colorGroup = this.fb.group({
+      color: ['', Validators.required], // Custom size input
+      quantity: [1, [Validators.required, Validators.min(1)]], // Default quantity is 1
+    });
+    this.colorFormArray.push(colorGroup);
+  }
+
+  // Remove a size and quantity input group
+  removeColor(index: number) {
+    this.colorFormArray.removeAt(index);
+  }
+  get sizeColorMapping(): FormArray {
+    return this.productForm.get('sizeColorMapping') as FormArray;
+  }
+
+  updateSizeColorMapping() {
+    this.sizeColorMapping.clear();
+    this.sizeFormArray.controls.forEach(sizeControl => {
+      this.colorFormArray.controls.forEach(colorControl => {
+        this.sizeColorMapping.push(this.fb.group({
+          size: sizeControl.get('size')?.value,
+          color: colorControl.get('color')?.value,
+          quantity: [0, [Validators.required, Validators.min(0)]]
+        }));
+      });
+    });
+  }
+
 }

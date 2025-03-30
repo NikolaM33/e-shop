@@ -32,6 +32,8 @@ logging:
           mongodb:
             core:
               MongoTemplate=DEBUG:
+stripe:
+  secret-key: ${STRIPE_SECRET-KEY}
 document:
   category.path: src/main/resources/documents/category
   subcategory.path: src/main/resources/documents/subcategory
@@ -41,7 +43,6 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/webshop
-
 
 ---
 spring:

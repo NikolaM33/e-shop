@@ -14,4 +14,6 @@ public class ErrorMessageConstants {
     public static final String PRODUCT_TAG_NOT_FOUND = "PRODUCT_TAG_NOT_FOUND";
 
     public static final String USER_NOT_FOUND = "USER_NOT_FOUND";
+
+    public static final String ORDER_NOT_FOUND = "ORDER_NOT_FOUND";
 }

@@ -20,10 +20,10 @@
                         <!-- side-bar colleps block stat -->
                         <div class="collection-filter-block">
                             <!-- brand filter start -->
-                            <app-brands [products]="products" [brands]="brands" (brandsFilter)="updateFilter($event)">
+                            <app-brands [products]="products" [brands]="brands" [productType]="'SALE'" >
                             </app-brands>
                             <!-- price filter start here -->
-                            <app-price [min]="minPrice" [max]="maxPrice" (priceFilter)="updateFilter($event)">
+                            <app-price [min]="minPrice" [max]="maxPrice" >
                             </app-price>
                         </div>
                         <!-- silde-bar colleps block end here -->
@@ -34,7 +34,7 @@
                         <!-- side-bar banner start here -->
                         <div class="collection-sidebar-banner">
                             <a [routerLink]="['/shop/collection/left/sidebar']">
-                                <img src="assets/images/collection-sidebar-banner.png" class="img-fluid" alt="banner">
+                                <img src="assets/images/side_banner.jpg" class="img-fluid" alt="banner">
                             </a>
                         </div>
                         <!-- side-bar banner end here -->
@@ -68,18 +68,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <ul class="product-filter-tags">
-                                    <li class="me-1" *ngFor="let tag of tags">
-                                        <a href="javascript:void(0)" class="filter_tag">
-                                            {{tag}} <i class="ti-close" (click)="removeTag(tag)"></i>
-                                        </a>
-                                    </li>
-                                    <li class="clear_filter" *ngIf="tags.length > 0">
-                                        <a href="javascript:void(0)" class="clear_filter" (click)="removeAllTags()">
-                                            Clear all
-                                        </a>
-                                    </li>
-                                </ul>
                                 <div class="collection-product-wrapper" id="products">
                                     <app-grid [products]="products" [paginate]="paginate" [layoutView]="layoutView" [sortBy]="sortBy" (setGrid)="updateGridLayout($event)" (setLayout)="updateLayoutView($event)" (sortedBy)="sortByFilter($event)">
                                     </app-grid>
@@ -87,7 +75,7 @@
                                         <div class="row">
                                             <div class="col-grid-box" [ngClass]="grid" *ngFor="let product of products">
                                                 <div class="product-box">
-                                                    <app-product-box-one [product]="product" [currency]="productService?.Currency" [thumbnail]="false" [cartModal]="true" [loader]="true">
+                                                    <app-product-box-one [product]="product" [currency]="productService?.Currency" [thumbnail]="true" [cartModal]="true" [loader]="true" [routerLink]="'/shop/product/left/sidebar/'">
                                                     </app-product-box-one>
                                                 </div>
                                             </div>

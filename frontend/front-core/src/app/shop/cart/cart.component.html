@@ -7,17 +7,20 @@
         <h3><strong>Your Cart is Empty</strong></h3>
         <h4>Add something to make me happy :)</h4>
         </div>
-        <div class="row" *ngIf="products.length">
-        <div class="col-sm-12">
+        <div class="row overflow-auto" *ngIf="products.length">
+        <div class="col-sm-12 pb-2" >
             <table class="table cart-table table-responsive-xs">
                 <thead>
                     <tr class="table-head">
                         <th scope="col">image</th>
                         <th scope="col">product name</th>
                         <th scope="col">price</th>
+                        <th scope="col">specification</th>
+                        <th scope="col" *ngIf="productsForRent">Rent period</th>
                         <th scope="col">quantity</th>
-                        <th scope="col">action</th>
                         <th scope="col">total</th>
+                        <th scope="col">action</th>
+                       
                     </tr>
                 </thead>
                 <tbody *ngFor="let product of products">
@@ -57,6 +60,49 @@
                             </h2>
                         </td>
                         <td>
+                        <div class="specification-cart">
+                            <div class="size-box-cart" *ngIf="product.sizes">
+                                <ul>
+                                    <li [class.active]="true" 
+                                        *ngFor="let size of product.sizes">
+                                        <a href="javascript:void(0)" >
+                                          {{ size.size | titlecase }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                                <ul class="color-variant" *ngIf="product.colors?.length">
+                                    <li [class]="color" 
+                                        *ngFor="let color of product.colors; index as i" 
+                                        [ngStyle]="{'background-color': color.color}"
+                                        >
+                                    </li>
+                                  </ul>
+                            </div>
+
+                        </td>
+                        <td *ngIf="productsForRent ">
+                            <div class="rent-period-col" *ngIf="product.rent">
+                            <div class="product-description border-product"  >
+                                      <div class="col-md-7 width-100 ">
+                                        <div class="input-group input-grp-p d-flex justify-content-center align-items-center">
+                                          <input class="datepicker-here form-control digits" ngbDatepicker
+                                            [(ngModel)]="product.rentStartDate" #f="ngbDatepicker">
+                                          <div class="input-group-append">
+                                            <button class="btn calendar" (click)="f.toggle()" type="button"><i
+                                                class="fa fa-calendar"></i></button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="rent-period-days">
+                                    <span class="me-1">For</span>
+                                    <input class="day-input" type="number" [(ngModel)]="product.rentDuration" step="0.5" [placeholder]="'day'">
+                                    <span class="ps-1">Days</span>
+                                    </div>
+                                </div>
+                        </td>
+                        <td>
                             <div class="qty-box">
                                 <div class="input-group">
                                     <span class="input-group-prepend">
@@ -74,15 +120,16 @@
                             </div>
                         </td>
                         <td>
-                            <a href="javascript:void(0)" (click)="removeItem(product)" class="icon">
-                            <i class="ti-close"></i>
-                        </a>
-                        </td>
-                        <td>
                             <h2 class="td-color">
                                 {{ ((product.price | discount:product) * product.quantity) * productService?.Currency.price | currency:productService?.Currency.currency:'symbol' }}
                             </h2>
                         </td>
+                        <td>
+                            <a href="javascript:void(0)" (click)="removeItem(product)" class="icon">
+                            <i class="ti-close"></i>
+                        </a>
+                        </td>
+                        
                     </tr>
                 </tbody>
             </table>

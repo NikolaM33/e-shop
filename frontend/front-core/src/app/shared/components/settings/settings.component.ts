@@ -14,13 +14,14 @@ export class SettingsComponent implements OnInit {
 
   public products: Product[] = [];
   public search: boolean = false;
-  
+  public currentLang: string;
+
   public languages = [{ 
     name: 'English',
     code: 'en'
   }, {
-    name: 'French',
-    code: 'fr'
+    name: 'Serbian',
+    code: 'sr'
   }];
 
   public currencies = [{
@@ -47,7 +48,8 @@ export class SettingsComponent implements OnInit {
     this.productService.cartItems.subscribe(response => this.products = response);
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
+    this.currentLang = this.translate.currentLang;
   }
 
   searchToggle(){
@@ -57,6 +59,7 @@ export class SettingsComponent implements OnInit {
   changeLanguage(code){
     if (isPlatformBrowser(this.platformId)) {
       this.translate.use(code)
+      this.currentLang = this.translate.currentLang;
     }
   }
 

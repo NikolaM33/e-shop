@@ -628,7 +628,9 @@ ng2-smart-table {
   }
 }
 .product-buttons {
-  padding: 0;
+  display: flex;
+  place-content: center;
+  padding: 2%;
   margin: -5px;
   button {
     margin: 5px;

@@ -6,35 +6,35 @@
         <div class="col-lg-6">
           <div class="header-contact">
             <ul>
-              <li>Welcome to Our store Multikart</li>
-              <li><i class="fa fa-phone" aria-hidden="true"></i>Call Us: 123 - 456 - 7890</li>
+              <li>{{"WELCOME_TO_STORE" | translate}}</li>
+              <li><i class="fa fa-phone" aria-hidden="true"></i>{{"CALL_US" | translate}}: 123 - 456 - 7890</li>
             </ul>
           </div>
         </div>
         <div class="col-lg-6 text-end">
           <ul class="header-dropdown">
             <li class="compare">
-              <a [routerLink]="['/shop/compare']"><i class="fa fa-random" aria-hidden="true"></i>Compare</a>
+              <a [routerLink]="['/shop/compare']"><i class="fa fa-random" aria-hidden="true"></i>{{"COMPARE" | translate}}</a>
             </li>
             <li class="mobile-wishlist">
-              <a [routerLink]="['/shop/wishlist']"><i class="fa fa-heart" aria-hidden="true"></i>Wishlist</a>
+              <a [routerLink]="['/shop/wishlist']"><i class="fa fa-heart" aria-hidden="true"></i>{{"WISHLIST" | translate}}</a>
             </li>
             <li class="onhover-dropdown mobile-account">
-              <i class="fa fa-user" aria-hidden="true"></i> My Account
+              <i class="fa fa-user" aria-hidden="true"></i> {{"ACCOUNT" | translate}}
               <ul class="onhover-show-div">
                 <li *ngIf="!loggedUser">
                   <a data-lng="en" (click)="navigateToLogin()">
-                    Login
+                    {{"LOGIN" | translate}}
                   </a>
                 </li>
                 <li *ngIf="loggedUser">
                   <a data-lng="es" (click)="logoutUser()">
-                    Logout
+                    {{"LOGOUT" | translate}}
                   </a>
                 </li>
                 <li *ngIf="!loggedUser">
                   <a data-lng="es"  (click)="navigateToRegister()" >
-                    Register
+                    {{"REGISTER" | translate}}
                   </a>
                 </li>
               </ul>

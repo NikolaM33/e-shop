@@ -1,22 +1,32 @@
 // Products
 export interface Product {
-    id?: number;
+    id?: string;
     title?: string;
     description?: string;
     type?: string;
     brand?: string;
-    collection?: any[];
-    category?: string;
+    category: string;
+    subCategory: string;
+    code: string;
+    publish: boolean;
+    rent: boolean;
     price?: number;
     sale?: boolean;
     discount?: number;
     stock?: number;
     new?: boolean;
     quantity?: number;
-    tags?: any[];
+    tag: any;
     variants?: Variants[];
     images?: Images[];
     specifications?: any[];
+    colors?: any[];
+    sizes?: any[];
+    priceWithDiscount?: any;
+    discountStartDate?: string;
+    discountEndDate?: string;
+    rentStartDate?: any;
+    rentDuration?: number;
 }
 
 export interface Variants {

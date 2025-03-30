@@ -22,10 +22,10 @@
                               </div>
                               <div class="col-xl-3 xl-50 col-sm-6 col-3">
                                 <ul class="file-upload-product">
-                                  <li *ngFor="let item of url; let i=index">
+                                  <li *ngFor="let item of product?.images; let i=index">
                                     <div class="box-input-file">
                                       <input class="upload" type="file" (change)="readUrl($event,i)"  [accept]="'image/*'">
-                                      <img class="imgUpload" alt="" [src]="item.img">
+                                      <img class="imgUpload" alt="" [src]="item.src">
                                     </div>
                                   </li>
                                 </ul>
@@ -141,6 +141,18 @@
                                 </div>
                               </div>
                               <div class="form-group row">
+                                <div class="col-xl-3 col-sm-4">
+                                  <label class="mb-0">Iznajmljivanje:</label>
+                                </div>
+                                <div class="col-xl-8 col-sm-7">
+                                  <div class="qty-box2">
+                                    <div class="input-group">
+                                      <input class="form-check-input" type="checkbox" id="rentSwitch" [formControl]="productForm.controls['rent']">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="form-group row">
                                 <div class="col-xl-3 col-sm-4"><label>Add Description :</label></div>
                                 <div class="col-xl-8 col-sm-7">
                                   <div class="ps-0 description-sm">
@@ -164,7 +176,7 @@
                         <button type="button" class="btn btn-primary add-specification-btn" (click)="addNewSpecifiaction()">Add Specification</button>
                         <!-- <form [formGroup]="specificationForm"> -->
                           <div *ngFor="let control of specifications.controls; let i = index" class="row-wrapper">
-                            <label class="row-label">{{specificationsArray[i]?.key  }}</label>
+                            <label class="row-label">{{product.specifications[i]?.key  }}</label>
                             <input  class="row-input form-control" type="text"   [formControl]="control" placeholder="Specification {{ i + 1 }}" />
                           </div>
                           
@@ -239,17 +251,62 @@
                   End date must be after start date.
                 </div>
               </div>
-                  
+                  <hr>
+
+               <div class="container-size-color">
+                <div class="left"> 
+                  <div id="sizeInputContainer" class="input-size-group" formArrayName="sizes">
+                    <button type="button"  class="btn btn-primary" (click)="addSize()"> Dodaj Velicinu</button>
+                    <div *ngFor="let sizeGroup of sizeFormArray.controls; let i = index" [formGroupName]="i" class="size-input">
+                      <!-- Input field for custom size -->
+                      <input type="text" class= "form-control" formControlName="size" placeholder="Size" required />
+                      <!-- Input field for quantity -->
+                      <input type="number" class= "form-control" formControlName="quantity" placeholder="Količina" min="1" required />
+                      <!-- Button to remove the size and quantity group -->
+                      <a href="javascript:void(0)" class="delete-element-btn"  (click)="removeSize(i)"><i class="fa fa-trash-o"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="right">
+                  <div id="colorInputContainer" class="input-size-group" formArrayName="colors">
+                    <button type="button"  class="btn btn-primary" (click)="addColor()"> Dodaj Boju</button>
+                    <div *ngFor="let colorGroup of colorFormArray.controls; let i = index" [formGroupName]="i" class="size-input">
+                      <!-- Input field for custom size -->
+                      <input type="color" class= "color-input" formControlName="color" placeholder="Color" value=#D3D3D3 required />
+                      <!-- Input field for quantity -->
+                      <input type="number" class= "form-control" formControlName="quantity" placeholder="Količina" min="1" required />
+                      <!-- Button to remove the size and quantity group -->
+                      <a href="javascript:void(0)" class="delete-element-btn"  (click)="removeColor(i)"><i class="fa fa-trash-o"></i></a>
+                    </div>
+                  </div>
+                </div>
+              
+              </div>
+              <hr>
+              <div formArrayName="sizeColorMapping">
+                <div *ngFor="let mapping of sizeColorMapping.controls; let i = index" [formGroupName]="i" class="product-right mapping-container">
+                  <div class="size-box color-size-mapping">
+                    <ul>
+                      <li class="active"><a href="javascript:void(0)">{{mapping.get('size').value}}</a></li>
+                    </ul>
+                    <ul class="color-variant">
+                      <li [ngStyle]="{'background-color': mapping.get('color').value}"></li>
+                  </ul>
+                  <input type="number" formControlName="quantity" placeholder="Quantity" class="form-control w-25" required />
+                  </div>
+                </div>
+              </div>
                 </ng-template>
-                </li>
-            </ul>
+              </li>
+          </ul>
             <div [ngbNavOutlet]="nav" class="mt-2"></div>
             <div class="form-group row mb-0">
               <div class="col-sm-8 offset-xl-3 offset-sm-4">
                 <div class="product-buttons">
                   <button type="button"  class="btn btn-primary me-1"  *ngIf="active==3" (click)="updateProduct()" [disabled]="!productForm.valid && images.length != 0">Add</button>
                   <button type="button" class="btn btn-light" (click)="test()">Discard</button>
-                  <button *ngIf="active!=3" type="button" class="btn btn-primary" (click)="goToNextTab()" [disabled]="!productForm.valid"> Next</button>
+                  <button *ngIf="active!=3" type="button" class="btn btn-primary" (click)="goToNextTab()"> Next</button>
                 </div>
               </div>
           </div>

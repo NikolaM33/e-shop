@@ -10,7 +10,7 @@ import { AccountService } from 'src/app/pages/account/account.service';
 export class HeaderOneComponent implements OnInit {
   
   @Input() class: string;
-  @Input() themeLogo: string = 'assets/images/icon/logo.png'; // Default Logo
+  @Input() themeLogo: string = 'assets/images/icon/logo-10.png'; // Default Logo
   @Input() topbar: boolean = true; // Default True
   @Input() sticky: boolean = false; // Default false
   

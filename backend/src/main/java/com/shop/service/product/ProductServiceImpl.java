@@ -8,6 +8,7 @@ import com.shop.domain.entity.EntityStatus;
 import com.shop.domain.product.Product;
 import com.shop.domain.product.ProductState;
 import com.shop.domain.product.ProductTag;
+import com.shop.domain.product.ProductType;
 import com.shop.repository.mongo.product.ProductMongoRepository;
 import com.shop.service.category.CategoryService;
 import com.shop.service.category.SubCategoryService;
@@ -28,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,6 +39,7 @@ import static com.shop.config.error.ErrorMessageConstants.FILE_UPLOAD_ERROR;
 import static com.shop.config.error.ErrorMessageConstants.PRODUCT_NOT_FOUND;
 import static com.shop.domain.product.ProductState.DRAFT;
 import static com.shop.domain.product.ProductState.PUBLISHED;
+import static com.shop.domain.product.ProductType.SALE;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -92,7 +96,7 @@ public class ProductServiceImpl implements ProductService{
     public Page<ProductDTO> getProducts(Optional<String> state, Optional<String> categoryId, Pageable pageable) {
         return productMongoRepository.findByEntityStatus(EntityStatus.REGULAR,pageable).map(product -> ProductDTO.builder().id(product.getId())
                 .name(product.getName()).image1FileIdentifier(product.getImage1FileIdentifier()).price(product.getPrice()).code(product.getCode())
-                .tagTitle(product.getProductTag()!=null ? product.getProductTag().getTitle() : null)
+                .tagTitle(product.getTag()!=null ? product.getTag().getTitle() : null)
                 .priceWithDiscount((product.getDiscount() !=null && product.getDiscountStartDate().isBefore(LocalDateTime.now()) && product.getDiscountEndDate().isAfter(LocalDateTime.now()) ? calculatePriceWithDiscount(product.getPrice(), product.getDiscount()) : null) )
                 .build());
     }
@@ -132,7 +136,7 @@ public class ProductServiceImpl implements ProductService{
             productForUpdate.setPublishedDate(LocalDateTime.now());
         }
         productForUpdate.setState(newProduct.getState());
-        productForUpdate.setProductTag(newProduct.getProductTag());
+        productForUpdate.setTag(newProduct.getTag());
         productForUpdate.setBrand(newProduct.getBrand());
         productForUpdate.setDiscount(newProduct.getDiscount());
         productForUpdate.setDiscountStartDate(newProduct.getDiscountStartDate());
@@ -151,7 +155,7 @@ public class ProductServiceImpl implements ProductService{
      * @return
      */
     @Override
-    public Page<ProductDTO> getProductsByFilters (Optional<String> categoryId, Optional<String> brand, Optional<Integer> minPrice, Optional<Integer> maxPrice, Optional<String> filter, Pageable pageable) {
+    public Page<ProductDTO> getProductsByFilters (Optional<String> categoryId, Optional<ArrayList<String>> brand, Optional<Integer> minPrice, Optional<Integer> maxPrice, Optional<String> filter, Optional<String> type, Pageable pageable) {
         Query query = new Query();
 
         query.addCriteria(Criteria.where("entity_status").is(EntityStatus.REGULAR));
@@ -159,11 +163,12 @@ public class ProductServiceImpl implements ProductService{
 
         // Apply filters based on optional parameters
         categoryId.ifPresent(catId -> query.addCriteria(Criteria.where("category.$id").is(new ObjectId(catId))));
-        brand.ifPresent(br -> query.addCriteria(Criteria.where("brand").is(br)));
+        brand.ifPresent(br -> query.addCriteria(Criteria.where("brand").in(br)));
 
         if (minPrice.isPresent() || maxPrice.isPresent()){
             query.addCriteria(Criteria.where("price").gte(minPrice.orElse(0)).lte(maxPrice.orElse(10000)));
         }
+        type.ifPresent(t -> query.addCriteria(Criteria.where("type").is(t)));
 
         filter.ifPresent(fl -> {
             query.addCriteria(Criteria.where("name").regex(fl, "i"));
@@ -177,8 +182,17 @@ public class ProductServiceImpl implements ProductService{
      * @return
      */
     @Override
-    public List<String> getProductBrands() {
-        return  mongoTemplate.findDistinct("brand", Product.class, String.class);
+    public List<String> getProductBrands(Optional<String> type) {
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("brand").exists(true));
+
+        query.addCriteria(Criteria.where("entity_status").is(EntityStatus.REGULAR.name()));
+        query.addCriteria(Criteria.where("state").is(PUBLISHED.name()));
+        type.ifPresent(t->query.addCriteria(Criteria.where("type").is(t.toUpperCase())));
+
+        // Perform the query to find distinct brands
+        return  mongoTemplate.findDistinct(query,"brand", Product.class, String.class);
     }
 
     /**
@@ -204,13 +218,13 @@ public class ProductServiceImpl implements ProductService{
         Product product= new Product();
         product.setName(productDTO.getName());
         product.setCategory(categoryService.getOneCategory(productDTO.getCategoryId()));
-        if (productDTO.getSubCategoryId()!=null) {
+        if (productDTO.getSubCategoryId()!=null && !productDTO.getSubCategoryId().isEmpty()) {
             product.setSubCategory(subCategoryService.getSubCategory(productDTO.getSubCategoryId()));
         }
         product.setCode(productDTO.getCode());
         product.setPrice(productDTO.getPrice());
         product.setDescription(productDTO.getDescription());
-        product.setBrand(productDTO.getBrand());
+        product.setBrand(productDTO.getBrand().toUpperCase());
         product.setQuantity(productDTO.getQuantity());
         product.setSpecification(productDTO.getSpecifications());
         if (productDTO.isPublish()){
@@ -218,10 +232,23 @@ public class ProductServiceImpl implements ProductService{
         }else {
             product.setState(ProductState.DRAFT);
         }
-        product.setDiscount(productDTO.getDiscount());
-        product.setProductTag(productTagService.getProductTagById(productDTO.getTagId()));
-        product.setDiscountStartDate(productDTO.getDiscountStartDate().atStartOfDay());
-        product.setDiscountEndDate(productDTO.getDiscountEndDate().atTime(23,59,59));
+
+        if (productDTO.getDiscount() != null){
+            product.setDiscount(productDTO.getDiscount());
+            product.setDiscountStartDate(productDTO.getDiscountStartDate().atStartOfDay());
+            product.setDiscountEndDate(productDTO.getDiscountEndDate().atTime(23,59,59));
+        }
+
+        product.setTag(productTagService.getProductTagById(productDTO.getTagId()));
+        product.setSizes(productDTO.getSizes());
+        product.setColors(productDTO.getColors());
+        product.setSizeColorMapping(productDTO.getSizeColorMapping());
+        ProductType type = Arrays.stream(ProductType.values())
+                .filter(t -> t.name().equalsIgnoreCase(productDTO.getType()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product type: " + productDTO.getType()));
+
+        product.setType(type);
         return product;
     }
 
@@ -280,10 +307,14 @@ public class ProductServiceImpl implements ProductService{
                 .orElse(null));
 
 
-        productDTO.setTagId(Optional.ofNullable(product.getProductTag()).map(ProductTag::getId).orElse(null));
-        productDTO.setTagTitle(Optional.ofNullable(product.getProductTag()).map(ProductTag::getTitle).orElse(null));
+        productDTO.setTagId(Optional.ofNullable(product.getTag()).map(ProductTag::getId).orElse(null));
+        productDTO.setTagTitle(Optional.ofNullable(product.getTag()).map(ProductTag::getTitle).orElse(null));
 
         productDTO.setPublish(PUBLISHED.equals(product.getState()));
+        productDTO.setColors(product.getColors());
+        productDTO.setSizes(product.getSizes());
+        productDTO.setPriceWithDiscount((product.getDiscount() !=null && product.getDiscountStartDate().isBefore(LocalDateTime.now()) && product.getDiscountEndDate().isAfter(LocalDateTime.now()) ? calculatePriceWithDiscount(product.getPrice(), product.getDiscount()) : null) );
+
         return productDTO;
     }
 

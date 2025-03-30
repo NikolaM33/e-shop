@@ -4,20 +4,18 @@
 <div class="container banner-slider">
     <div class="row">
         <div class="col-md-7">
-            <img src="assets/images/banner/1.jpg" class="img-fluid height-banner" alt="electronics">
+            <img src="assets/images/banner/ski.jpg" class="img-fluid height-banner" alt="electronics">
         </div>
         <div class="col-md-5">
             <div class="row home-banner">
                 <div class="col-12">
-                    <a [routerLink]="['/shop/collection/left/sidebar']" 
-                       [queryParams]="{ category: 'electronics'}">
-                        <img src="assets/images/banner/2.jpg" class="img-fluid" alt="electronics">
+                    <a [routerLink]="['/shop/collection/left/sidebar']">
+                        <img src="assets/images/banner/shop.jpg" class="img-fluid" alt="electronics">
                     </a>
                 </div>
                 <div class="col-12">
-                    <a [routerLink]="['/shop/collection/left/sidebar']"
-                       [queryParams]="{ category: 'electronics'}">
-                        <img src="assets/images/banner/3.jpg" class="img-fluid" alt="electronics">
+                    <a [routerLink]="['/shop/collection/left/sidebar']">
+                        <img src="assets/images/banner/rent-ski.jpg" class="img-fluid" alt="electronics">
                     </a>
                 </div>
             </div>
@@ -31,8 +29,7 @@
     <div class="container">
         <div class="row partition3">
             <div class="col-md-4" *ngFor="let collection of collections">
-                <a [routerLink]="['/shop/collection/left/sidebar']"
-                   [queryParams]="{ category: 'electronics'}">
+                <a [routerLink]="['/shop/collection/left/sidebar']">
                     <div class="collection-banner p-right text-end">
                         <img [src]="collection.image" class="img-fluid" alt="">
                         <div class="contain-banner banner-3">

@@ -38,6 +38,9 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { SuccessComponent } from './checkout/success/success.component';
 
 import {RouterModule} from '@angular/router';
+import { RentCollectionComponent } from './collection/rent-collection/rent-collection.component';
+import { ProductRentComponent } from './product/sidebar/product-rent/product-rent.component';
+import { PaymentComponent } from './checkout/payment/payment/payment.component';
 
 
 @NgModule({
@@ -63,7 +66,10 @@ import {RouterModule} from '@angular/router';
     WishlistComponent,
     CompareComponent,
     CheckoutComponent,
-    SuccessComponent
+    SuccessComponent,
+    RentCollectionComponent,
+    ProductRentComponent,
+    PaymentComponent
   ],
   imports: [
     CommonModule,

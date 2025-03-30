@@ -11,12 +11,13 @@ import { Product } from "../../shared/classes/product";
 export class CartComponent implements OnInit {
 
   public products: Product[] = [];
-
+  public productsForRent: boolean = false;
   constructor(public productService: ProductService) {
     this.productService.cartItems.subscribe(response => this.products = response);
   }
 
   ngOnInit(): void {
+    this.productsForRent = this.products.some(product => product.rent);
   }
 
   public get getTotal(): Observable<number> {

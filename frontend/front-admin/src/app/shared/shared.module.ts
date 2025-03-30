@@ -24,7 +24,7 @@ import { NgbdSortableHeader } from './directives/NgbdSortableHeader';
     ContentLayoutComponent,
     BreadcrumbComponent,
     RightSidebarComponent,
-    NgbdSortableHeader
+    NgbdSortableHeader, 
   ],
   imports: [
     CommonModule,

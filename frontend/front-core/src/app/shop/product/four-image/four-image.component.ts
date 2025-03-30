@@ -11,7 +11,7 @@ import { SizeModalComponent } from "../../../shared/components/modal/size-modal/
 })
 export class FourImageComponent implements OnInit {
 
-  public product: Product = {};
+  public product: Product ;
   public counter: number = 1;
   public activeSlide: any = 0;
   public selectedSize: any;

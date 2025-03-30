@@ -12,7 +12,7 @@ import { SizeModalComponent } from "../../../shared/components/modal/size-modal/
 })
 export class ThreeColumnComponent implements OnInit {
 
-  public product: Product = {};
+  public product: Product ;
   public counter: number = 1;
   public activeSlide: any = 0;
   public selectedSize: any;
@@ -25,7 +25,7 @@ export class ThreeColumnComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router,
     public productService: ProductService) {
-    this.route.data.subscribe(response => this.product = response.data);
+    // this.route.data.subscribe(response => this.product = response.data);
   }
 
   ngOnInit(): void {

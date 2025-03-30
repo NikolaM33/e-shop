@@ -8,7 +8,7 @@ import { ProductService } from './product.service';
 })
 export class Resolver implements Resolve<Product> {
   
-  public product: Product = {};
+  public product: Product;
 
   constructor(
     private router: Router,

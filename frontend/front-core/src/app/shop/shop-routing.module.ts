@@ -21,6 +21,9 @@ import { ProfileComponent } from '../pages/account/profile/profile.component';
 import { RegisterComponent } from '../pages/account/register/register.component';
 import { LoginComponent } from '../pages/account/login/login.component';
 import { DashboardComponent } from '../pages/account/dashboard/dashboard.component';
+import { RentCollectionComponent } from './collection/rent-collection/rent-collection.component';
+import { ProductRentComponent } from './product/sidebar/product-rent/product-rent.component';
+import { OrderSuccessComponent } from '../pages/order-success/order-success.component';
 
 const routes: Routes = [
   {
@@ -30,7 +33,13 @@ const routes: Routes = [
       data: Resolver
     }
   },
- 
+  {
+    path: 'rent/product/:slug',
+    component: ProductRentComponent,
+    resolve: {
+      data: Resolver
+    }
+  },
   {
     path: 'product/four/image/:slug',
     component: FourImageComponent,
@@ -55,6 +64,10 @@ const routes: Routes = [
   {
     path: 'collection/left/sidebar',
     component: CollectionLeftSidebarComponent
+  },
+  {
+    path: 'rent',
+    component: RentCollectionComponent
   },
   { 
     path: 'login', 
@@ -98,7 +111,7 @@ const routes: Routes = [
   },
   {
     path: 'checkout/success/:id',
-    component: SuccessComponent
+    component: OrderSuccessComponent
   }
 ];
 

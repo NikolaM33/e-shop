@@ -20,10 +20,10 @@ export class ElectronicsComponent implements OnInit, OnDestroy {
       this.products = response.filter(item => item.type == 'electronics');
       // Get Product Collection
       this.products.filter((item) => {
-        item.collection.filter((collection) => {
-          const index = this.productCollections.indexOf(collection);
-          if (index === -1) this.productCollections.push(collection);
-        })
+        // item.collection.filter((collection) => {
+        //   const index = this.productCollections.indexOf(collection);
+        //   if (index === -1) this.productCollections.push(collection);
+        // })
       })
     });
   }
@@ -45,6 +45,7 @@ export class ElectronicsComponent implements OnInit, OnDestroy {
   }]
 
   ngOnInit(): void {
+    this.productService.getProducts;
     // Change color for this layout
     document.documentElement.style.setProperty('--theme-deafult', '#ff4c3b');
   }
@@ -56,11 +57,12 @@ export class ElectronicsComponent implements OnInit, OnDestroy {
 
   // Product Tab collection
   getCollectionProducts(collection) {
-    return this.products.filter((item) => {
-      if (item.collection.find(i => i === collection)) {
-        return item
-      }
-    })
+    // return this.products.filter((item) => {
+    //   // if (item.collection.find(i => i === collection)) {
+    //   //   return item
+    //   }
+    // })
+    return '';
   }
 
 }

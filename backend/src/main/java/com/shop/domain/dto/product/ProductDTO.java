@@ -3,6 +3,7 @@ package com.shop.domain.dto.product;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Getter
@@ -59,4 +60,12 @@ public class ProductDTO {
     private String tagTitle;
 
     private Double priceWithDiscount;
+
+    private ArrayList<Size> sizes;
+
+    private ArrayList<Color> colors;
+
+    private ArrayList<ColorSizeMapping> sizeColorMapping;
+
+    private String type;
 }

@@ -29,10 +29,10 @@
       <div><img src="assets/images/icon/setting.png" class="img-fluid" alt="settong">
         <i class="ti-settings"></i></div>
       <div class="show-div setting">
-        <h6>language</h6>
+        <h6>{{"LANGUAGE" | translate}}</h6>
         <ul>
           <li *ngFor="let language of languages">
-            <a href="javascript:void(0)" (click)="changeLanguage(language.code)">{{ language.name }}</a>
+            <a href="javascript:void(0)" (click)="changeLanguage(language.code)" [ngClass]="{'active-lenguage': language.code === currentLang}">{{ language.name }}</a>
           </li>
         </ul>
         <h6>currency</h6>

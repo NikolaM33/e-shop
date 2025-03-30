@@ -35,19 +35,21 @@ export class NavService {
 
 	MENUITEMS: Menu[] = [
 		{
-			title: 'home', type: 'link', path: '/shop/electronics'
+			title: 'HOME', type: 'link', path: '/shop/electronics'
 		},
 		{
-			title: 'Category', type: 'sub', active: false, children: []
+			title: 'CATEGORY', type: 'sub', active: false, children: []
 		},
-		
 		{
-			title: 'Services', type: 'link', badge: true, badgeText: 'new', active: false, path: '/elements/theme/services'		
+			title: 'RENT', type: 'link', badge: true, badgeText: 'new', active: false, path: '/shop/rent'
+		},	
+	
+		{   title: 'CONTACT',type: 'link', path: '/pages/contact' },
+		{
+			title: 'SERVICE', type: 'link', badge: true, badgeText: 'new', active: false, path: '/elements/theme/services'		
 		},
-		{   title: 'contact',type: 'link', path: '/pages/contact' },
-
 		{
-			title: 'about us', type: 'link', active: false, path: "/pages/aboutus"
+			title: 'ABOUT_US', type: 'link', active: false, path: "/pages/aboutus"
 		}
 	];
 

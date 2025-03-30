@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 // import { Ng2SmartTableModule } from 'ng2-smart-table';
 // import { CKEditorModule } from 'ngx-ckeditor';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProductsRoutingModule } from './products-routing.module';
 import { CategoryComponent } from './physical/category/category.component';
@@ -23,12 +23,14 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { EditProductComponent } from './physical/edit-product/edit-product.component';
 import { TagComponent } from './physical/tag/tag.component';
+import { CarouselModule } from 'ngx-owl-carousel-o';
+import { LazyLoadImageModule } from 'ng-lazyload-image';  
 // import { NgbdSortableHeader } from "src/app/shared/directives/NgbdSortableHeader";
 // import {  } from '../../directives/shorting.directive/';
 
 
 @NgModule({
-  declarations: [CategoryComponent, SubCategoryComponent, ProductListComponent, AddProductComponent, ProductDetailComponent, EditProductComponent, TagComponent
+  declarations: [CategoryComponent, SubCategoryComponent, ProductListComponent, AddProductComponent, ProductDetailComponent, EditProductComponent, TagComponent, 
   ],
   imports: [
     Ng2SearchPipeModule,
@@ -41,8 +43,11 @@ import { TagComponent } from './physical/tag/tag.component';
     CKEditorModule,
     NgxDropzoneModule,
     SharedModule,
-    ColorPickerModule
-
+    ColorPickerModule,
+    NgbNavModule,
+    CarouselModule,
+    LazyLoadImageModule,
+  
   ],
   exports: [SubCategoryComponent],
   bootstrap: [SubCategoryComponent],

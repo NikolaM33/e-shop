@@ -11,17 +11,15 @@ export class BrandsComponent implements OnInit {
 
   @Input() products: Product[] = [];
   @Input() brands: any[] = [];
-
-  @Output() brandsFilter: EventEmitter<any> = new EventEmitter<any>();
+  @Input() productType: string;
   
   public collapse: boolean = true;
-
+  selectedBrands: string[] = []; 
   constructor(private productService:ProductService) { 
   }
 
   ngOnInit(): void {
-    this.productService.getProductBrands().subscribe((data:any[])=>{
-      console.log(data)
+    this.productService.getProductBrands(this.productType).subscribe((data:any[])=>{
       this.brands=data;
     })
   }
@@ -29,21 +27,22 @@ export class BrandsComponent implements OnInit {
   
 
   appliedFilter(event) {
-    let index = this.brands.indexOf(event.target.value);  // checked and unchecked value
-    // if (event.target.checked)   
-    //   this.brands.push(event.target.value); // push in array cheked value
-    // else 
-    //   this.brands.splice(index,1);  // removed in array unchecked value  
-    
-    let brands = this.brands.length ? { brand: this.brands.join(",") } : { brand: null };
-    this.brandsFilter.emit(brands);
+    const checkbox = event.target as HTMLInputElement;
+    const brand = checkbox.value;
+  
+    if (checkbox.checked) {
+      if (!this.selectedBrands.includes(brand)) {
+        this.selectedBrands.push(brand);
+      }
+    } else {
+      this.selectedBrands = this.selectedBrands.filter(b => b !== brand);
+    }
+    this.productService.updateBrendFilter(this.selectedBrands);
   }
 
   // check if the item are selected
-  checked(item){
-    if(this.brands.indexOf(item) != -1){
-      return true;
-    }
+  checked(brand: string): boolean {
+      return this.selectedBrands.includes(brand);
   }
 
 }

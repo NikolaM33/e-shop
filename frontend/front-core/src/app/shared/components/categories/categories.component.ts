@@ -25,7 +25,6 @@ export class CategoriesComponent implements OnInit {
 
     this.productService.filterParams.subscribe((filter:FilterParams)=>{
       this.selectedCategoryId=filter.categoryId;
-      console.log("SELECETD CATEGORY", filter.categoryId)
     })
   }
 
