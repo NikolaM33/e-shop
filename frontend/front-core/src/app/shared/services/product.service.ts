@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { FilterParams } from 'src/app/shop/product/domain/FillterParams';
 import { UtilService } from './util.service';
 import { Order } from '../classes/order';
+import { ColorsComponent } from '../../shop/collection/widgets/colors/colors.component';
 
 const state = {
   products: JSON.parse(localStorage['products'] || '[]'),
@@ -23,7 +24,7 @@ export class ProductService {
 
   public filterParam:FilterParams={};
   private _filterParams: BehaviorSubject<FilterParams> = new BehaviorSubject<FilterParams>(this.filterParam);
-  public Currency = { name: 'Dollar', currency: 'USD', price: 1 } // Default Currency
+  public Currency = { name: 'EURO', currency: 'EUR', price: 1 } // Default Currency
   public OpenCart: boolean = false;
   public Products
 
@@ -62,7 +63,6 @@ export class ProductService {
     allParams = { ...allParams, ...filters };
     return this.http.get(environment.apiUrl+'/shop/products',{params:allParams}).pipe(
       map((response: any) => {
-        // Assuming 'response' is an object with a 'products' array or similar structure
         return response.map((product: any) => this.mapApiResponseToProduct(product));
       })
     );
@@ -101,6 +101,11 @@ export class ProductService {
     map(products => products.map(product=> this.mapApiResponseToProduct(product))))
  }
 
+  public getRandomProducts (){
+  return this.http.get<Product[]>(environment.apiUrl+'/shop/product/random').pipe(
+    map(products => products.map(product=> this.mapApiResponseToProduct(product))))
+ }
+
  mapApiResponseToProduct(apiData: any): Product {
   return {
     id: apiData.id, 
@@ -131,6 +136,8 @@ private mapSpecifications(specifications: { [key: string]: string }): any[] {
     key,
     value
   }));
+
+  
 }
   /*
     ---------------------------------------------
@@ -241,7 +248,7 @@ public createPaymentIntent (order: Order){
 
   // Add to Cart
   public addToCart(product): any {
-    const cartItem = state.cart.find(item => item.id === product.id);
+    const cartItem = state.cart.find(item => item.id === product.id && item.sizes[0]?.size === product.sizes[0]?.size && item?.colors[0]?.color === product?.colors[0]?.color);
     const qty = product.quantity ? product.quantity : 1;
     const items = cartItem ? cartItem : product;
     const stock = this.calculateStockCounts(items, qty);

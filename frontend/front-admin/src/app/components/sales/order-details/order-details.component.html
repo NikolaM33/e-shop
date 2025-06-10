@@ -1,0 +1,84 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>{{'MANAGE_ORDER' | translate}}</h5>
+                </div>
+                <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="product-order">
+                                        <h3>{{'ORDER_DETAILS' | translate}}</h3>
+                                        <div class="row product-order-detail" *ngFor="let product of order?.products">
+                                            <div class="col-3">
+                                                <img [src]="envurl +'/product/' + product?.image" alt=""
+                                                    class="img-fluid">
+                                            </div>
+                                            <div class="col-3 order_detail">
+                                                <div>
+                                                    <h4>{{'PRODUCT_NAME' | translate}}</h4>
+                                                    <h5>{{product.name}}</h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 order_detail">
+                                                <div>
+                                                    <h4>{{'QUANTITY' | translate}}</h4>
+                                                    <h5>{{product.quantity}}</h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 order_detail">
+                                                <div>
+                                                    <h4>{{'PRICE' | translate}}</h4>
+                                                    <h5>{{product.price}} &#8364;</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="final-total total-sec">
+                                            <h3>{{'TOTAL' | translate}} <span>{{order?.amount}} &#8364;</span></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="row order-success-sec">
+                                        <div class="col-sm-6">
+                                            <h4>{{'SUMMARY' | translate}}</h4>
+                                            <ul class="order-detail">
+                                                <li>{{'ORDER_ID' | translate}}: {{order?.id}}</li>
+                                                <li>{{'DATE' | translate}}: {{ order?.createdDate | date:
+                                                    'yyyy-MM-dd' }}</li>
+                                                <li>{{'TOTAL' | translate}}: {{order?.amount}} &#8364;</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h4>{{'SHIPPING_ADDRESS' | translate}}</h4>
+                                            <ul class="order-detail">
+                                                <li>{{order?.customerFirstName }} {{order?.customerLastName}}</li>
+                                                <li>{{order?.shippingAddress}}, {{order?.shippingTown}}
+                                                    {{order?.shippingPostalCode}}</li>
+                                                <li>{{order?.shippingCounty}}</li>
+                                                <li>Contact No. {{order?.customerPhone}}</li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="col-sm-12 payment-mode">
+                                            <h4>{{'PAYMENT_METHOD' | translate}}</h4>
+                                            <p>{{order?.paymentMethod | translate}}</p>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="delivery-sec">
+                                                <h3>{{'EXPECTED_DATE_OF_DELIVERY' | translate}}</h3>
+                                                <h2>{{expectedDeliveryDate | date: 'yyyy-MM-dd'}}</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

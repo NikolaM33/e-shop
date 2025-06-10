@@ -31,8 +31,16 @@ public class AuthorizationController {
 
     @PostMapping("/authenticate")
     public AuthResponse login(@RequestBody AuthRequest authRequest) {
-        AuthResponse response = userService.generateAuthResponse(authRequest.getEmail());
+        AuthResponse response = userService.generateAuthResponse(authRequest.getEmail(), false);
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         return response;
     }
+
+    @PostMapping("/authenticate/administration")
+    public AuthResponse loginAdministration(@RequestBody AuthRequest authRequest) {
+        AuthResponse response = userService.generateAuthResponse(authRequest.getEmail(), true);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+        return response;
+    }
+
 }

@@ -66,6 +66,10 @@ public class ShopController {
     public ResponseEntity<List<ProductDTO>> getRelatedProducts (@PathVariable String categoryId){
         return new ResponseEntity<>(productService.getProductsFromCategory(categoryId),HttpStatus.OK);
     }
+    @GetMapping("/product/random")
+    public ResponseEntity<List<ProductDTO>> getRandomProducts (){
+        return new ResponseEntity<>(productService.getRandomProducts(), HttpStatus.OK);
+    }
 
     @PostMapping("/order")
     public ResponseEntity<OrderDTO> createOrder (@RequestBody OrderDTO orderDTO){
@@ -76,4 +80,6 @@ public class ShopController {
     public ResponseEntity<OrderDTO> getOrder (@PathVariable String orderId){
         return new ResponseEntity<>(orderService.getOrder(orderId), HttpStatus.OK);
     }
+
+
 }

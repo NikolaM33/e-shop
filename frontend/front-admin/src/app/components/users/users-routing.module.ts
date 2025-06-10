@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ListUserComponent } from './list-user/list-user.component';
+import { CustomerUserListComponent } from './customer-user-list/customer-user-list.component';
 import { CreateUserComponent } from './create-user/create-user.component';
+import { EmployeeUserListComponent } from './employee-user-list/employee-user-list.component';
 
 const routes: Routes = [
   {
@@ -9,18 +10,34 @@ const routes: Routes = [
     children: [
       {
         path: 'list-user',
-        component: ListUserComponent,
+        component: CustomerUserListComponent,
         data: {
-          title: "User List",
-          breadcrumb: "User List"
+          title: "CUSTOMER_LIST",
+          breadcrumb: "CUSTOMER_LIST"
+        }
+      },
+            {
+        path: 'list-employee',
+        component: EmployeeUserListComponent,
+        data: {
+          title: "EMPLOYEE_LIST",
+          breadcrumb: "EMPLOYEE_LIST"
         }
       },
       {
         path: 'create-user',
         component: CreateUserComponent,
         data: {
-          title: "Create User",
-          breadcrumb: "Create User"
+          title: "CREATE_USER",
+          breadcrumb: "CREATE_USER"
+        }
+      },
+       {
+        path: 'edit-user/:userId',
+        component: CreateUserComponent,
+        data: {
+          title: "CREATE_USER",
+          breadcrumb: "CREATE_USER"
         }
       }
     ]

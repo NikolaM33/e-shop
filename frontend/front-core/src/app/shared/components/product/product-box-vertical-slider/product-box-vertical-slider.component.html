@@ -1,6 +1,6 @@
 <!-- side-bar single product slider start -->
 <div class="theme-card">
-    <h5 class="title-border">{{ title }}</h5>
+    <h5 class="title-border">{{ title | translate }}</h5>
     <owl-carousel-o [options]="NewProductSliderConfig" class="offer-slider">
         <ng-container *ngFor="let product of products | slice:0:3 ">  
             <ng-template carouselSlide>

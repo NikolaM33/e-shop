@@ -41,7 +41,7 @@ export class MenuComponent implements OnInit {
     const menuCategory: Menu[] =[];
 
     categories.forEach(element => {
-      let item:Menu = {path: `/shop/collection/left/sidebar`, queryParams: {category: element.id}, title: element.name, type: 'link'}
+      let item:Menu = {path: `/shop`, queryParams: {category: element.id}, title: element.name, type: 'link'}
       menuCategory.push(item)
     });
     this.menuItems.at(1).children = menuCategory;

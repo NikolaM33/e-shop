@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { OrdersComponent } from './orders/orders.component';
-import { TransactionsComponent } from './transactions/transactions.component';
+import { OrderDetailsComponent } from './order-details/order-details.component';
 
 const routes: Routes = [
   {
@@ -11,18 +11,18 @@ const routes: Routes = [
         path: 'orders',
         component: OrdersComponent,
         data: {
-          title: "Orders",
-          breadcrumb: "Orders"
+          title: "ORDERS",
+          breadcrumb: "ORDERS"
         }
       },
-      {
-        path: 'transactions',
-        component: TransactionsComponent,
+       {
+        path: 'orders/:orderId',
+        component: OrderDetailsComponent,
         data: {
-          title: "Transactions",
-          breadcrumb: "Transactions"
+          title: "ORDER_DETAILS",
+          breadcrumb: "ORDER_DETAILS"
         }
-      }
+      },
     ]
   }
 ];

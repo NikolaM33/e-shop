@@ -14,6 +14,7 @@ export class OrderSuccessComponent implements OnInit {
   orderId: string;
   order: any;
   envurl: string = `${environment.publicS3Url}`
+  expectedDeliveryDate: Date;
   constructor(private productService: ProductService, private route: ActivatedRoute) {    
    }
 
@@ -23,6 +24,8 @@ export class OrderSuccessComponent implements OnInit {
       this.orderId = params.get('id'); 
       this.productService.getOrderById(this.orderId).subscribe((data:any)=>{
         this.order= data;
+        const createdDate = new Date(this.order.createdDate);
+      this.expectedDeliveryDate = new Date(createdDate.setDate(createdDate.getDate() + 5));
       })
     });
 

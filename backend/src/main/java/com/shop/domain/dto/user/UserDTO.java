@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.util.Map;
 
 @Data
 public class UserDTO {
@@ -19,9 +21,13 @@ public class UserDTO {
     @NotBlank
     private String lastName;
 
-    private String userType;
+    private String type;
 
     private String password;
+
+    private Map<String, Boolean> permissions;
+
+    private LocalDate createdDate;
 
 
 }

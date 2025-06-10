@@ -1,51 +1,19 @@
 import * as Chartist from 'chartist';
-import { ChartEvent, ChartType } from 'ng-chartist';
+import { ChartEvent } from 'ng-chartist';
 
 export interface Chart {
-  type: ChartType;
-  data: Chartist.IChartistData;
+  type: string;
+  data: Chartist.Data;
   options?: any;
   responsiveOptions?: any;
   events?: ChartEvent;
 }
 
-export var doughnutData = [
-  {
-    value: 100,
-    name: "Frontend"
 
-  },
-  {
-    value: 150,
-    name: "Backend"
-  },
-  {
-    value: 150,
-    name: "Api"
-  },
-  {
-    value: 100,
-    name: "Issues"
-  }
-];
 
 export var view: any[] = [409, 204];
 
-export var pieData = [
-  {
-    value: 300,
-    name: "Frontend"
 
-  },
-  {
-    value: 50,
-    name: "Backend"
-  },
-  {
-    value: 100,
-    name: "Api"
-  },
-]
 
 //Options
 export var doughnutChartShowLabels = false;
@@ -84,11 +52,12 @@ export var chart5: Chart = {
 
 //line chart
 export var lineChartData: Array<any> = [
-  { data: [20, 5, 80, 10, 100, 15] },
-  { data: [0, 50, 20, 70, 30, 27] },
-  { data: [0, 30, 40, 10, 86, 40] }
+  { data: [20, 30, 50, 80, 20, 150, 120, 180, 160, 140, 110, 130], label: "Revenue" },
+  { data: [5, 15, 25, 60, 90, 130, 110, 160, 80, 120, 90, 100], label: "Orders" },
+  { data: [10, 20, 40, 70, 110, 160, 90, 170, 150, 130, 100, 120], label: "Users" }
 ];
-export var lineChartLabels: Array<any> = ["1 min.", "10 min.", "20 min.", "30 min.", "40 min.", "50 min."];
+export var lineChartLabels: Array<any> = [  "January", "February", "March", "April", "May", "June", 
+  "July", "August", "September", "October", "November", "December"];
 export var lineChartOptions: any = {
   scaleShowGridLines: true,
   scaleGridLineWidth: 1,
@@ -137,7 +106,7 @@ export var lineChartColors: Array<any> = [
     pointHighlightStroke: "rgba(30, 166, 236, 1)",
   }
 ];
-export var lineChartLegend = false;
+export var lineChartLegend = true;
 export var lineChartType = 'line';
 
 
@@ -335,20 +304,18 @@ export var smallLine4ChartType = 'line';
 export var chart3: Chart = {
   type: 'Bar',
   data: {
-    labels: ['100', '200', '300', '400', '500', '600', '700', '800'],
-    series: [
-      [2.5, 3, 3, 0.9, 1.3, 1.8, 3.8, 1.5],
-      [3.8, 1.8, 4.3, 2.3, 3.6, 2.8, 2.8, 2.8]
-    ]
+    labels: [],
+    series: [[]]
+    
   },
   options: {
-    height: 303,
+    height: '100%',
     seriesBarDistance: 12,
     axisX: {
       showGrid: false,
-      labelInterpolationFnc: function (value) {
-        return value[0];
-      }
+      // labelInterpolationFnc: function (value) {
+      //   return value[0];
+      // }
     }
   },
   events: {

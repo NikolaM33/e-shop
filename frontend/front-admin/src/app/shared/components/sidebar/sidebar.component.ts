@@ -1,20 +1,22 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { NavService, Menu } from '../../service/nav.service';
+import { AuthService } from 'src/app/components/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  encapsulation: ViewEncapsulation.None
 })
 export class SidebarComponent {
 
   public menuItems: Menu[];
   public url: any;
   public fileurl: any;
+  public user;
 
-  constructor(private router: Router, public navServices: NavService) {
+  constructor(private router: Router, public navServices: NavService , private authService: AuthService) {
+    this.user = authService.getUser();
     this.navServices.items.subscribe(menuItems => {
       this.menuItems = menuItems
       this.router.events.subscribe((event) => {
@@ -89,5 +91,9 @@ export class SidebarComponent {
       this.url = reader.result;
     }
   }
+
+  logout(){
+		this.authService.logout();
+	}
 
 }

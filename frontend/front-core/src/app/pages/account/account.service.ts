@@ -19,6 +19,12 @@ export class AccountService {
     this.currentUserSubject = new BehaviorSubject<User | null>(parsedUser);
     this.currentUser = this.currentUserSubject.asObservable();
   }
+  
+  setUser(data: any) {
+    localStorage.setItem('user', JSON.stringify(data));
+    const user: User = { ...data };
+    this.currentUserSubject.next(user);
+  }
 
  createUser(user:any){
    return this.http.post(environment.apiUrl+ "/user",user);
@@ -38,11 +44,6 @@ export class AccountService {
     this.router.navigateByUrl("/shop/electronics")
   }
 
-  setUser(data: any) {
-    localStorage.setItem('user', JSON.stringify(data));
-    const user: User = { ...data };
-    this.currentUserSubject.next(user);
-  }
 
   setToken(token: string): void {
     localStorage.setItem('token', token);

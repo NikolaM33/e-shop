@@ -1,0 +1,70 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5>Tags</h5>
+        </div>
+        <div class="card-body">
+            <div class="btn-popup pull-right">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-original-title="test"
+                    data-target="#exampleModal" (click)="open(content)">{{"ADD_TAG" | translate}}</button>
+                <ng-template #content let-modal>
+                    <div class="modal-header">
+                        <h5 class="modal-title f-w-600" id="exampleModalLabel">{{"ADD_TAG" | translate}}</h5>
+                        <button type="button" class="close" aria-label="Close"
+                            (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="needs-validation">
+                            <div class="form">
+                                <div class="base-info">
+                                <div class="form-group">
+                                    <input class="form-control" id="validationCustom01" type="text" placeholder="Tag" name="tagName" [(ngModel)]="tagTitle" required="true">
+                                    <div class="form-group row status-wrapper">
+                                      
+                                    </div>
+                    
+                                </div>
+                            
+                            </div>
+                            
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" (click)="saveNewTag()">{{"SAVE" | translate}}</button>
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal"
+                            (click)="modal.dismiss('Cross click')">{{"CLOSE" | translate}}</button>
+                    </div>
+                </ng-template>
+            </div>
+            <div id="batchDelete" class="category-table custom-datatable">
+                <div class="table-responsive ">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">{{"TAG" | translate}}</th>
+                                <th scope="col" sortable="name" >{{"ACTIONS" | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of tags">
+                                <td scope="row">
+                                   <span>{{item.title}}</span> 
+                                </td>
+                              
+                                <td>
+                                    <a href="javascript:void(0)" (click)="open(content,item)"><i class='fa fa-edit f-12'></i></a>&nbsp;
+                                    <a href="javascript:void(0)" (click)="deleteTag(item.id)"><i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->

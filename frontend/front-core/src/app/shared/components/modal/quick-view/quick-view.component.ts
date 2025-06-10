@@ -21,7 +21,9 @@ export class QuickViewComponent implements OnInit, OnDestroy  {
   public ImageSrc: string;
   public counter: number = 1;
   public modalOpen: boolean = false;
-
+  public selectedSize: any;
+  public selectedColor: any;
+  public activeSlide : any;
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
     private router: Router, private modalService: NgbModal,
     public productService: ProductService) { }
@@ -33,7 +35,7 @@ export class QuickViewComponent implements OnInit, OnDestroy  {
     this.modalOpen = true;
     if (isPlatformBrowser(this.platformId)) { // For SSR 
       this.modalService.open(this.QuickView, { 
-        size: 'lg',
+        size: 'xl',
         ariaLabelledBy: 'modal-basic-title',
         centered: true,
         windowClass: 'Quickview' 
@@ -54,7 +56,9 @@ export class QuickViewComponent implements OnInit, OnDestroy  {
       return `with: ${reason}`;
     }
   }
-
+  selectSize(size) {
+    this.selectedSize = size;
+  }
   // Increament
   increment() {
     this.counter++ ;
@@ -68,6 +72,8 @@ export class QuickViewComponent implements OnInit, OnDestroy  {
   // Add to cart
   async addToCart(product: any) {
     product.quantity = this.counter || 1;
+    product.sizes = [this.selectedSize];
+    product.colors = [this.selectedColor]
     const status = await this.productService.addToCart(product);
     if(status)
       this.router.navigate(['/shop/cart']);
@@ -79,4 +85,8 @@ export class QuickViewComponent implements OnInit, OnDestroy  {
     }
   }
 
+    selectColor(color, index){
+    this.activeSlide = index;
+    this.selectedColor = color;
+  }
 }

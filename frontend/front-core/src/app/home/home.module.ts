@@ -4,15 +4,13 @@ import { SharedModule } from '../shared/shared.module';
 import { HomeRoutingModule } from './home-routing.module';
 
 
-import { ElectronicsComponent } from './electronics/electronics.component';
+import { HomeComponent } from './home.component';
 
 
 
 @NgModule({
   declarations: [
-
-    ElectronicsComponent,
-
+    HomeComponent,
   ],
   imports: [
     CommonModule,

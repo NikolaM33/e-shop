@@ -25,7 +25,6 @@ import java.time.Instant;
         private static final long serialVersionUID = 1L;
 
         @Id
-//        @Field(name = "_id")
         private String id;
 
         @CreatedBy

@@ -15,42 +15,43 @@
                             
                             <thead>
                             <tr class="th-compare">
-                                <td>Action</td>
+                                <td>{{"ACTION" | translate}}</td>
                                 <th class="item-row" *ngFor="let product of products">
-                                  <button type="button" (click)="removeItem(product)" class="remove-compare"> Remove </button>
+                                  <button type="button" (click)="removeItem(product)" class="remove-compare"> {{'REMOVE' | translate}} </button>
                                 </th>
                             </tr>
                             </thead>
                             <tbody id="table-compare">
                             <!-- Product Name -->
                             <tr>
-                                <th class="product-name">Product Name</th>
+                                <th class="product-name">{{"NAME" | translate}}</th>
                                 <td class="grid-link__title" *ngFor="let product of products">{{ product.title | titlecase }}</td>
                             </tr>
                             <!-- Product Image -->
                             <tr>
-                                <th class="product-name ">Product Image</th>
+                                <th class="product-name ">{{"IMAGE" | translate}}</th>
                                 <td class="item-row" *ngFor="let product of products">
                                     <img [src]="product.images[0].src" [alt]="product.images[0].alt" width="185" class="featured-image">
                                     <div class="product-price product_price"> 
-                                    <strong>On Sale: </strong><span> {{ (product.price | discount:product) * productService?.Currency.price | currency:productService?.Currency.currency:'symbol' }}</span></div>
+                                    <strong>{{"PRICE" | translate}}</strong><span> {{ (product.price | discount:product) * productService?.Currency.price | currency:productService?.Currency.currency:'symbol' }}</span></div>
+                                    
                                     <form class="variants clearfix">
-                                      <button title="Add to Cart" (click)="addToCart(product)" class="add-to-cart btn btn-solid">Add to Cart</button>
+                                      <button title="Add to Cart" (click)="addToCart(product)" class="add-to-cart btn btn-solid">{{"ADD_TO_CART" | translate}}</button>
                                     </form>
                                 </td>
                             </tr>
                             <!-- Product Description -->
                             <tr>
-                                <th class="product-name">Product Description</th>
+                                <th class="product-name">{{"DESCRIPTION" | translate}}</th>
                                 <td class="item-row" *ngFor="let product of products">
-                                    <p class="description-compare">{{ product.description.substring(0, 200)+'...' }}</p>
+                                    <p class="description-compare" [innerHTML]="product.description">{{ product.description.substring(0, 200)+'...' }}</p>
                                 </td>
                             </tr>
                             <!-- Product Availability -->
                             <tr>
-                                <th class="product-name"> Availability </th>
+                                <th class="product-name"> {{"AVAILABILITY" | translate}}</th>
                                 <td class="available-stock" *ngFor="let product of products">
-                                    <p> {{ product.stock > 0 ? 'In stock' : 'Out of stock' }} </p>
+                                    <p> {{ (product.quantity > 0 ? 'IN_STOCK' : 'OUT_OF_STOCK') | translate }} </p>
                                 </td>
                             </tr>
                             </tbody>

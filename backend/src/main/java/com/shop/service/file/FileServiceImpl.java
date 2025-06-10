@@ -25,4 +25,13 @@ public class FileServiceImpl implements FileService {
 
         return fileManager.getFileFromSystem(imageIdentifier, fileManager.PRODUCT_IMAGES_FILES_PATH);
     }
+
+    /**
+     * @param imageIdentifier
+     * @return
+     */
+    @Override
+    public byte[] getCategoryImage(String imageIdentifier) {
+        return fileManager.getFileFromSystem(imageIdentifier, fileManager.CATEGORY_FILES_PATH);
+    }
 }

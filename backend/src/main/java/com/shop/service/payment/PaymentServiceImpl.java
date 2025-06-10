@@ -31,7 +31,6 @@ public class PaymentServiceImpl implements PaymentService{
         double totalAmount = orderDTO.getAmount();
 
 
-        // Build metadata with limited product details
         StringBuilder productInfo = new StringBuilder();
         for (OrderProductDTO product : orderDTO.getProducts()) {
             productInfo.append(product.getName())
@@ -43,7 +42,7 @@ public class PaymentServiceImpl implements PaymentService{
         PaymentIntentCreateParams params =
                 PaymentIntentCreateParams.builder()
                         .setAmount((long) totalAmount)
-                        .setCurrency("usd")
+                        .setCurrency("eur")
                         .setReceiptEmail(email)
                         .putMetadata("customer_name", orderDTO.getCustomerFirstName() + " " + orderDTO.getCustomerLastName())
                         .putMetadata("customer_phone", orderDTO.getCustomerPhone())

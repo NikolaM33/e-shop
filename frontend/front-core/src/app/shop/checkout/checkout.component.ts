@@ -23,13 +23,14 @@ export class CheckoutComponent implements OnInit {
   public checkoutForm:  UntypedFormGroup;
   public products: Product[] = [];
   // public payPalConfig ? : IPayPalConfig;
-  public payment: string = 'Stripe';
+  public payment: string = 'CARD';
   public amount:  any;
 
   stripe: any;
   elements: any;
   card: any;
   userId: any;
+  public order: Order;
 
   constructor(private fb: UntypedFormBuilder, private router:Router, private accountService: AccountService,
     public productService: ProductService, private modalService: NgbModal,
@@ -42,7 +43,7 @@ export class CheckoutComponent implements OnInit {
       address: ['', [Validators.required, Validators.maxLength(50)]],
       country: ['', Validators.required],
       town: ['', Validators.required],
-      state: ['', Validators.required],
+      state: [''],
       postalcode: ['', Validators.required],
       shipping: ['SHIPPING', Validators.required]
     })
@@ -96,8 +97,8 @@ export class CheckoutComponent implements OnInit {
       }
     });
     handler.open({
-      name: 'Multikart',
-      description: 'Online Fashion Store',
+      name: 'SkiZone',
+      description: 'Online Store',
       amount: this.amount * 100
     }) 
   }
@@ -132,7 +133,7 @@ export class CheckoutComponent implements OnInit {
         productId: product.id, 
         quantity: product.quantity, 
         size: product.sizes && product.sizes.length > 0 ? product.sizes[0].size : undefined, // If sizes exist, take the first size
-        color: product.colors && product.colors.length > 0 ? product.colors[0].color : undefined, // If colors exist, take the first color
+        color: product.colors && product.colors?.length > 0 ? product.colors[0]?.color : undefined, // If colors exist, take the first color
         price: product.price,
         name: product.title,
         brand: product.brand,
@@ -142,7 +143,7 @@ export class CheckoutComponent implements OnInit {
         rentDurationDays: product.rentDuration
       }));
       
-      const order: Order = {
+      this.order = {
       userId: this.userId,
       customerFirstName: formData.firstname,
       customerLastName: formData.lastname,
@@ -154,13 +155,30 @@ export class CheckoutComponent implements OnInit {
       shippingState: formData.state,
       shippingTown: formData.town,
       shippingPostalCode: formData.postalcode,
-      paymentMethod: 'CARD',
+      paymentMethod: this.payment,
       paymentStatus: formData.paymentStatus,
       paymentId: formData.paymentId,
       amount: totalAmount, 
       products: orderProducts
     };
   
-    return order;
+    return this.order;
+  }
+
+  crateOrder(){
+    const order = this.generateOrderFromFormData(this.checkoutForm.value, this.products, this.amount)
+
+  this.productService.createOrder(order).subscribe((data: any)=>{
+    this.productService.clearCart();
+    this.router.navigateByUrl('/shop/checkout/success/'+data?.id);
+  })
+}
+
+  processOrder(){
+    if (this.payment === 'CARD'){
+      this.openPaymentDialog();
+    }else {
+      this.crateOrder();
+    }
   }
 }

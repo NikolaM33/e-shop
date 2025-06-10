@@ -15,6 +15,7 @@ export class WishlistComponent implements OnInit {
   constructor(private router: Router, 
     public productService: ProductService) {
     this.productService.wishlistItems.subscribe(response => this.products = response);
+    console.log(this.products)
   }
 
   ngOnInit(): void {

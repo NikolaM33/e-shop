@@ -8,11 +8,11 @@ const routes: Routes = [
     path: '',
     children: [
       {
-        path: 'default',
+        path: '',
         component: DashboardComponent,
         data: {
-          title: "Dashboard",
-          breadcrumb: "Dashboard"
+          title: "DASHBOARD",
+          breadcrumb: "DASHBOARD"
         }
       }
     ]

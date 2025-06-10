@@ -57,24 +57,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http
                 .csrf()
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/authenticate").permitAll()
+                .antMatchers("/authenticate/administration").permitAll()
                 .antMatchers("/user/validate-token").permitAll()
                 .antMatchers("/user/reset-password").permitAll()
                 .antMatchers("/user/send-reset-password-email").permitAll()
-                .antMatchers("/local/user-profile-image/**").permitAll()
                 .antMatchers("/user").permitAll()
+                .antMatchers("/administration/**").hasAnyRole("ADMIN","EMPLOYEE")
+                .antMatchers("/customer/**").hasRole("CUSTOMER")
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",
                         "/configuration/security",
                         "/swagger-ui.html",
                         "/webjars/**").permitAll()
-                .antMatchers("/local/logo/**").permitAll()
                 .antMatchers("/shop/**").permitAll()
                 .anyRequest()
                 .authenticated()

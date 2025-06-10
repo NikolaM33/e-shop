@@ -18,8 +18,7 @@ import java.util.function.Function;
  */
 @Service
 public class JwtUtil {
-
-    //    private SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secret));
+    private static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60 * 10;
     private SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String extractUsername(String token) {
@@ -47,8 +46,13 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username) {
+    public String extractUserType(String token) {
+        return extractClaim(token, claims -> claims.get("userType", String.class));
+    }
+
+    public String generateToken(String username, String userType) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userType", userType);
         return createToken(claims, username);
     }
 
@@ -58,7 +62,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(key)
                 .compact();
     }

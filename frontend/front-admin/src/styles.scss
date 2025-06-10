@@ -31,3 +31,8 @@
 .toast-warning {
     background-color: #F89406 !important;
 }
+.toast-bottom-center {
+  left: 50% !important;
+  transform: translateX(-50%) !important; 
+  bottom: 20px !important; 
+}

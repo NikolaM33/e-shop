@@ -792,6 +792,42 @@ ng2-smart-table {
     height: 60px !important;
   }
 }
+
+    .order-success-sec {
+    h4 {
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+    .order-detail {
+        li {
+            display: flex;
+            text-transform: capitalize;
+            line-height: 28px;
+            font-size: 16px;
+        }
+    }
+    .payment-mode {
+        p {
+            font-size: 16px;
+            line-height: 26px;
+            margin-bottom: 0;
+            letter-spacing: 0.05em;
+        }
+    }
+}
+
+.delivery-sec {
+    padding: 30px;
+    text-align: center;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    h2,
+    h3 {
+        color: $black;
+        text-transform: capitalize;
+    }
+}
+
 .order-graph {
   h6 {
     color: $theme-body-font-color;
@@ -998,7 +1034,61 @@ ng2-smart-table {
     }
   }
 }
-
+.product-order {
+    h3 {
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $black;
+        margin-bottom: -2px;
+    }
+    .product-order-detail {
+        margin-top: 15px;
+        img {
+            height: 130px;
+        }
+        .order_detail {
+            display: flex;
+            align-items: center;
+            h4 {
+                margin-bottom: 5px;
+                text-transform: capitalize;
+                font-weight: 700;
+            }
+            h5 {
+                text-transform: capitalize;
+                margin-bottom: 0;
+            }
+        }
+    }
+    .total-sec {
+        border-top: 1px solid $round-border;
+        border-bottom: 1px solid $round-border;
+        margin: 15px 0;
+        padding: 15px 0;
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            li {
+                width: 100%;
+                font-size: 18px;
+                display: block;
+                text-transform: capitalize;
+                span {
+                    float: right;
+                }
+            }
+        }
+    }
+    .final-total {
+        h3 {
+            display: block;
+            span {
+                float: right;
+            }
+        }
+    }
+}
 .card-block{
   .table-responsive{
     .table{
@@ -4255,7 +4345,7 @@ $i:1;
       market-chart CSS Start
 ==========================**/
 .market-chart {
-  height: 303px;
+  height: 350px;
 }
 /*=====================
     radial-bar CSS start
@@ -4823,6 +4913,13 @@ $i:1;
       }
     }
   }
+      .product-order {
+        .product-order-detail {
+            img {
+                height: auto;
+            }
+        }
+    }
   // media
   .media-table {
     table {

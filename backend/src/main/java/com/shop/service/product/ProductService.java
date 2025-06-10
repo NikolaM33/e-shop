@@ -31,4 +31,8 @@ public interface ProductService {
     List<ProductDTO> getNewProducts ();
 
     List<ProductDTO> getProductsFromCategory(String categoryId);
+
+    List<ProductDTO> getRandomProducts();
+
+    List<ProductDTO> getLowStockProducts ();
 }

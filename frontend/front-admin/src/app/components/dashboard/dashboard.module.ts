@@ -7,8 +7,9 @@ import { CountToModule } from 'angular-count-to';
 import { NgChartsModule } from 'ng2-charts';
 import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { ChartistModule } from 'ng-chartist';
 import { SharedModule } from '../../shared/shared.module';
+import { TranslateModule } from '@ngx-translate/core';
+import { ChartistModule } from 'ng-chartist';
 
 @NgModule({
   declarations: [DashboardComponent],
@@ -20,7 +21,10 @@ import { SharedModule } from '../../shared/shared.module';
     NgChartsModule,
     Ng2GoogleChartsModule,
     NgxChartsModule,
-    ChartistModule
-  ]
+    ChartistModule,
+    TranslateModule
+  ],
+  
+
 })
 export class DashboardModule { }

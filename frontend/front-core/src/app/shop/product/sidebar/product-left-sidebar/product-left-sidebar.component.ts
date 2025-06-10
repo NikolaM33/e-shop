@@ -29,17 +29,19 @@ export class ProductLeftSidebarComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router,
     public productService: ProductService) {
-    this.route.paramMap.subscribe(params =>  this.productId = params.get('slug')
+    this.route.paramMap.subscribe(params =>  {this.productId = params.get('slug')
+      this.fetchData();
+    }
   );
     
   }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params=>
-      {this.productId = params.get('slug');
-        this.fetchData();
-      }
-    )
+    // this.route.paramMap.subscribe(params=>
+    //   {this.productId = params.get('slug');
+        
+    //   }
+    // )
 
   }
 
@@ -90,7 +92,6 @@ export class ProductLeftSidebarComponent implements OnInit {
     product.quantity = this.counter || 1;
     product.sizes = [this.selectedSize];
     product.colors = [this.selectedColor]
-    console .log("PRDUCT", product)
     const status = await this.productService.addToCart(product);
     if (status)
       this.router.navigate(['/shop/cart']);

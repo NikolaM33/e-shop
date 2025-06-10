@@ -8,18 +8,17 @@ import lombok.EqualsAndHashCode;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.Entity;
+
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Entity
 @Document(collection = "user")
 public class User extends AbstractMongoStatusEntity {
 
@@ -40,6 +39,8 @@ public class User extends AbstractMongoStatusEntity {
 
     @NotNull
     private UserType userType;
+
+    private Map<String, Boolean> permissions;
 
     private String getFullName (){
        return  this.firstName+ " "+ this.lastName;

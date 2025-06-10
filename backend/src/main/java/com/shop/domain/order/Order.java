@@ -15,7 +15,6 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Entity
 @Document(collection = "order")
 public class Order extends AbstractMongoStatusEntity {
 
@@ -44,13 +43,15 @@ public class Order extends AbstractMongoStatusEntity {
 
     private String shippingPostalCode;
 
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
     private PaymentStatus paymentStatus;
 
     private String paymentId;
 
     private Double amount;
+
+    private OrderStatus status;
 
     private ArrayList<OrderProduct> products;
 

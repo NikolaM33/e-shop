@@ -1,8 +1,8 @@
 <div class="page-main-header" [class.open]="open">
     <div class="main-header-right row">
         <div class="main-header-left d-lg-none col">
-            <div class="logo-wrapper"><a [routerLink]="'/dashboard/default'"><img class="blur-up lazyloaded"
-                        src="assets/images/dashboard/multikart-logo.png" alt=""></a></div>
+            <div class="logo-wrapper"><a [routerLink]="'/dashboard'"><img class="blur-up lazyloaded"
+                        src="assets/images/dashboard/logo-10.png" alt=""></a></div>
         </div>
         <div class="mobile-sidebar col">
             <div class="media-body switch-sm">
@@ -34,20 +34,17 @@
                     </a>
                 </li>
                 <li class="onhover-dropdown"><a class="txt-dark" href="javascript:void(0)">
-                        <h6>EN</h6>
+                        <h6>{{currentLang | uppercase}}</h6>
                     </a>
                     <ul class="language-dropdown onhover-show-div p-20">
-                        <li><a href="javascript:void(0)" data-lng="en"><i class="flag-icon flag-icon-is"></i>
+               
+                        <li><a href="javascript:void(0)" (click)="changeLanguage('en')" data-lng="en"><i class="flag-icon flag-icon-us"></i>
                                 English</a></li>
-                        <li><a href="javascript:void(0)" data-lng="es"><i class="flag-icon flag-icon-um"></i>
-                                Spanish</a></li>
-                        <li><a href="javascript:void(0)" data-lng="pt"><i class="flag-icon flag-icon-uy"></i>
-                                Portuguese</a></li>
-                        <li><a href="javascript:void(0)" data-lng="fr"><i class="flag-icon flag-icon-nz"></i> French</a>
-                        </li>
+                        <li><a href="javascript:void(0)"  (click)="changeLanguage('sr')" data-lng="sr"><i class="flag-icon flag-icon-rs"></i>
+                                Serbian</a></li>
                     </ul>
                 </li>
-                <li class="onhover-dropdown">
+                <!-- <li class="onhover-dropdown">
                     <span class="badge badge-pill badge-primary pull-right notification-badge">3</span>
                     <app-feather-icons [icon]="'bell'"></app-feather-icons><span class="dot"></span>
                     <ul class="notification-dropdown onhover-show-div">
@@ -88,12 +85,12 @@
                         </li>
                         <li class="txt-dark"><a href="javascript:void(0)">All</a> notification</li>
                     </ul>
-                </li>
-                <li><a>
+                </li> -->
+                <!-- <li><a>
                         <app-feather-icons class="right_side_toggle" [icon]="'message-square'"
                             (click)="right_side_bar()">
                         </app-feather-icons><span class="dot"></span>
-                    </a></li>
+                    </a></li> -->
                 <li class="onhover-dropdown">
                     <div class="media align-items-center"><img
                             class="align-self-center pull-right img-50 rounded-circle"
@@ -104,21 +101,18 @@
                     </div>
                     <ul class="profile-dropdown onhover-show-div p-20 profile-dropdown-hover">
                         <li><a [routerLink]="'/settings/profile'">
-                                <app-feather-icons [icon]="'user'"></app-feather-icons>Edit Profile
+                                <app-feather-icons [icon]="'user'"></app-feather-icons>{{'EDIT_PROFILE' | translate}}
                             </a></li>
                         <li><a href="javascript:void(0)">
-                                <app-feather-icons [icon]="'mail'"></app-feather-icons>Inbox
-                            </a></li>
-                        <li><a href="javascript:void(0)">
-                                <app-feather-icons [icon]="'lock'"></app-feather-icons>Lock Screen
+                                <app-feather-icons [icon]="'lock'"></app-feather-icons>{{'LOCK_SCREEN' | translate}}
                             </a></li>
                         <li>
                             <a href="javascript:void(0)">
-                                <app-feather-icons [icon]="'settings'"></app-feather-icons>Settings
+                                <app-feather-icons [icon]="'settings'"></app-feather-icons>{{"SETTINGS" | translate}}
                             </a></li>
                         <li>
                             <a [routerLink]="'/auth/login'">
-                                <app-feather-icons [icon]="'log-out'"></app-feather-icons>Logout
+                                <app-feather-icons [icon]="'log-out'"></app-feather-icons>{{"LOGOUT" | translate}}
                             </a>
                         </li>
                     </ul>

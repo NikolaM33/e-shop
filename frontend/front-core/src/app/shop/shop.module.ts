@@ -20,8 +20,6 @@ import { SocialComponent } from './product/widgets/social/social.component';
 import { StockInventoryComponent } from './product/widgets/stock-inventory/stock-inventory.component';
 import { RelatedProductComponent } from './product/widgets/related-product/related-product.component';
 
-// Collection Components
-import { CollectionLeftSidebarComponent } from './collection/collection-left-sidebar/collection-left-sidebar.component';
 
 // Collection Widgets
 import { GridComponent } from './collection/widgets/grid/grid.component';
@@ -41,6 +39,7 @@ import {RouterModule} from '@angular/router';
 import { RentCollectionComponent } from './collection/rent-collection/rent-collection.component';
 import { ProductRentComponent } from './product/sidebar/product-rent/product-rent.component';
 import { PaymentComponent } from './checkout/payment/payment/payment.component';
+import { CollectionComponent } from './collection/collection-page/collection.component';
 
 
 @NgModule({
@@ -55,7 +54,7 @@ import { PaymentComponent } from './checkout/payment/payment/payment.component';
     SocialComponent,
     StockInventoryComponent,
     RelatedProductComponent,
-    CollectionLeftSidebarComponent,
+    CollectionComponent,
     GridComponent,
     PaginationComponent,
     BrandsComponent,

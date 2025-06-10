@@ -44,6 +44,8 @@ public class OrderDTO {
 
     private Date createdDate;
 
+    private String status;
+
     private ArrayList<OrderProductDTO> products;
 
 

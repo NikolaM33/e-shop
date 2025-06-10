@@ -15,9 +15,10 @@ export class LoginComponent implements OnInit {
   public loginForm: UntypedFormGroup;
   public registerForm: UntypedFormGroup;
   public active = 1;
+  public errorMessage: any;
 
   constructor(private formBuilder: UntypedFormBuilder,
-    private authService:AuthService,
+    private authService: AuthService,
     private router: Router) {
     this.createLoginForm();
     this.createRegisterForm();
@@ -61,29 +62,33 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
-  
 
-  loginUser(){
-    let email=this.loginForm.controls['username'].value;
-    let password=this.loginForm.controls['password'].value;
-    const formData = {email: email,
+
+  loginUser() {
+    let email = this.loginForm.controls['username'].value;
+    let password = this.loginForm.controls['password'].value;
+    const formData = {
+      email: email,
       password: password
     }
-    
-    this.authService.login(formData).subscribe((response)=>{
-      this.authService.setToken(response.token);
-      this.authService.setUser(response.user);
-     this.router.navigateByUrl("/dashboard/default")
-    })
+
+    this.authService.login(formData).subscribe({
+      next: (response) => {
+        this.authService.setToken(response.token);
+        this.authService.setUser(response.user);
+        this.router.navigateByUrl("/dashboard");
+        this.errorMessage = null;
+      },
+      error: (err) => {
+        // on login failure
+        if (err.status === 400) {
+          this.errorMessage = "Access Denied: Invalid username or password.";
+        } else {
+          this.errorMessage = "An unexpected error occurred.";
+        }
+      }
+    });
   }
 
-  registerUser(){
-    let user= new User();
-    user.email=this.registerForm.controls['userName'].value;
-    user.password= this.registerForm.controls['password'].value;
-    // this.authService.registerUser(user).subscribe((res)=>{
-    //   console.log(res)
-    // });
-  }
 
 }

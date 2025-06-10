@@ -19,4 +19,9 @@ public class FileController {
     public ResponseEntity<byte[]> getProductImage (@PathVariable ("imageIdentifier") String imageIdentifier){
      return new ResponseEntity<>(fileService.getProductImage(imageIdentifier), HttpStatus.OK);
     }
+
+    @GetMapping("/category/{imageIdentifier}")
+    public ResponseEntity<byte[]> getCategoryImage (@PathVariable ("imageIdentifier") String imageIdentifier){
+        return new ResponseEntity<>(fileService.getProductImage(imageIdentifier), HttpStatus.OK);
+    }
 }

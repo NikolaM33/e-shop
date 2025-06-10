@@ -10,7 +10,7 @@ import { ProductService } from '../../../services/product.service';
 })
 export class ProductBoxVerticalSliderComponent implements OnInit {
 
-  @Input() title: string = 'New Product'; // Default
+  @Input() title: string = 'NEW_PRODUCTS'; // Default
   @Input() type: string = 'fashion'; // Default Fashion
 
   public products : Product[] ;

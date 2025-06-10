@@ -1,27 +1,27 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { CategoryComponent } from './physical/category/category.component';
-import { SubCategoryComponent } from './physical/sub-category/sub-category.component';
-import { ProductListComponent } from './physical/product-list/product-list.component';
-import { AddProductComponent } from './physical/add-product/add-product.component';
-import { ProductDetailComponent } from './physical/product-detail/product-detail.component';
-import { EditProductComponent } from './physical/edit-product/edit-product.component';
-import { TagComponent } from './physical/tag/tag.component';
+import { CategoryComponent } from './category/category.component';
+import { SubCategoryComponent } from './sub-category/sub-category.component';
+import { ProductListComponent } from './product-list/product-list.component';
+import { AddProductComponent } from './add-product/add-product.component';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { EditProductComponent } from './edit-product/edit-product.component';
+import { TagComponent } from './tag/tag.component';
 
 const routes: Routes = [
   {
     path: '',
     children: [
       {
-        path: 'physical/category',
+        path: 'category',
         component: CategoryComponent,
         data: {
-          title: "Category",
-          breadcrumb: "Category"
+          title: "CATEGORY",
+          breadcrumb: "CATEGORY"
         }
       },
       {
-        path: 'physical/sub-category',
+        path: 'sub-category',
         component: SubCategoryComponent,
         data: {
           title: "Sub Category",
@@ -29,7 +29,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'physical/product-list',
+        path: 'product-list',
         component: ProductListComponent,
         data: {
           title: "Product List",
@@ -37,7 +37,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'physical/product-detail/:id',
+        path: 'product-detail/:id',
         component: ProductDetailComponent,
         data: {
           title: "Product Detail",
@@ -45,15 +45,15 @@ const routes: Routes = [
         }
       },
       {
-        path: 'physical/add-product',
+        path: 'add-product',
         component: AddProductComponent,
         data: {
-          title: "Add Products",
-          breadcrumb: "Add Product"
+          title: "ADD_PRODUCT",
+          breadcrumb: "ADD_PRODUCT"
         }
       },
       {
-        path: 'physical/edit-product/:id',
+        path: 'edit-product/:id',
         component: EditProductComponent,
         data: {
           title: "Edit Product",
@@ -61,7 +61,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'physical/tags',
+        path: 'tags',
         component: TagComponent,
         data: {
           title: "Tags",

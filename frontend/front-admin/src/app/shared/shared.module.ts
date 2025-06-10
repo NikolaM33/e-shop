@@ -13,6 +13,7 @@ import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.componen
 import { RightSidebarComponent } from './components/right-sidebar/right-sidebar.component';
 import { TableService } from './service/table.service';
 import { NgbdSortableHeader } from './directives/NgbdSortableHeader';
+import { TranslateModule, } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { NgbdSortableHeader } from './directives/NgbdSortableHeader';
   ],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    TranslateModule
   ],
   providers: [NavService, TableService, WINDOW_PROVIDERS],
   exports: [FeatherIconsComponent, ToggleFullscreenDirective,NgbdSortableHeader]

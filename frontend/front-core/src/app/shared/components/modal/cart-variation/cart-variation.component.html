@@ -2,7 +2,7 @@
     <a href="javascript:void(0)" class="overlay" (click)="closeCart()"></a>
     <div class="cart-inner">
         <div class="cart_top">
-            <h3>my cart</h3>
+            <h3>{{"CART" | translate}}</h3>
             <div class="close-cart" (click)="closeCart()">
                 <a href="javascript:void(0)">
                     <i class="fa fa-times" aria-hidden="true"></i>
@@ -13,11 +13,11 @@
             <ul class="cart_product">
                 <li *ngFor="let product of products">
                     <div class="media">
-                        <a [routerLink]="['/shop/product/left/sidebar/', product.title.replace(' ', '-')]">
+                        <a [routerLink]="['/shop/product/', product.id]">
                             <img class="me-3" [src]="product.images[0].src" [alt]="product.images[0].alt">
                         </a>
                         <div class="media-body">
-                            <a [routerLink]="['/shop/product/left/sidebar/', product.title.replace(' ', '-')]">
+                            <a [routerLink]="['/shop/product/', product.id]">
                                 <h4>{{ product?.title | titlecase }}</h4>
                             </a>
                             <h4>
@@ -39,24 +39,24 @@
                 <li>
                     <div class="total">
                         <h5>
-                            subtotal :
+                            {{"TOTAL" | translate}} :
                             <span>{{ getTotal | async | currency:productService?.Currency.currency:'symbol' }}</span>
                         </h5>
                     </div>
                 </li>
                 <li>
                     <div class="buttons">
-                        <a [routerLink]="['/shop/cart']" class="btn btn-solid btn-xs view-cart">view cart</a>
-                        <a [routerLink]="['/shop/checkout']" class="btn btn-solid btn-xs checkout">checkout</a>
+                        <a [routerLink]="['/shop/cart']" class="btn btn-solid btn-xs view-cart">{{"VIEW_CART" | translate}}</a>
+                        <a [routerLink]="['/shop/checkout']" class="btn btn-solid btn-xs checkout">{{"CHECKOUT" | translate}}</a>
                     </div>
                 </li>
             </ul>
         </div>
         <div class="col-sm-12 empty-cart-cls text-start" *ngIf="!products.length">
             <h4 class="mt-3">
-              <strong>Your Cart is Empty</strong>
+              <strong>{{"EMPTY_CART_DESCRITPION" | translate}}</strong>
             </h4>
-            <a [routerLink]="['/shop/collection/left/sidebar']" class="btn btn-solid">continue shopping</a>
+            <a [routerLink]="['/shop']" class="btn btn-solid">{{"CONTINUE_SHOPPING" | translate}}</a>
         </div>
     </div>
 </div>

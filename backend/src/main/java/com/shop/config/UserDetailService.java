@@ -28,11 +28,12 @@ public class UserDetailService  implements UserDetailsService {
 
 
 
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getAuthorities(user.getId()));
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getAuthorities(user.getUserType().name()));
     }
 
-    private List<SimpleGrantedAuthority> getAuthorities(String userId) {
-        return Collections.singletonList(new SimpleGrantedAuthority("READ" + "/" + "ALL" + "/" + "ALL"));
+    private List<SimpleGrantedAuthority> getAuthorities(String type) {
+        String role = "ROLE_" + type;
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
 
     }
 }

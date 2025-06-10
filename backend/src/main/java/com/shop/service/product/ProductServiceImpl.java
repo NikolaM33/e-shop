@@ -1,5 +1,6 @@
 package com.shop.service.product;
 
+import com.mongodb.internal.operation.AggregateToCollectionOperation;
 import com.shop.config.error.BadRequestException;
 import com.shop.domain.category.Category;
 import com.shop.domain.category.SubCategory;
@@ -15,12 +16,17 @@ import com.shop.service.category.SubCategoryService;
 import com.shop.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -39,7 +45,6 @@ import static com.shop.config.error.ErrorMessageConstants.FILE_UPLOAD_ERROR;
 import static com.shop.config.error.ErrorMessageConstants.PRODUCT_NOT_FOUND;
 import static com.shop.domain.product.ProductState.DRAFT;
 import static com.shop.domain.product.ProductState.PUBLISHED;
-import static com.shop.domain.product.ProductType.SALE;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -156,26 +161,69 @@ public class ProductServiceImpl implements ProductService{
      */
     @Override
     public Page<ProductDTO> getProductsByFilters (Optional<String> categoryId, Optional<ArrayList<String>> brand, Optional<Integer> minPrice, Optional<Integer> maxPrice, Optional<String> filter, Optional<String> type, Pageable pageable) {
-        Query query = new Query();
+        List<AggregationOperation> operations = new ArrayList<>();
 
-        query.addCriteria(Criteria.where("entity_status").is(EntityStatus.REGULAR));
-        query.addCriteria(Criteria.where("state").is(PUBLISHED));
+        // Base match for product status
+        operations.add(Aggregation.match(Criteria.where("entity_status").is(EntityStatus.REGULAR)
+                .and("state").is(PUBLISHED)));
+        operations.add(Aggregation.match(Criteria.where("publishedDate").exists(true)));
+        // Lookup category with proper DBRef handling
+        operations.add(Aggregation.lookup("categories", "category.$id", "_id", "categoryInfo"));
+        operations.add(Aggregation.unwind("categoryInfo"));
 
-        // Apply filters based on optional parameters
-        categoryId.ifPresent(catId -> query.addCriteria(Criteria.where("category.$id").is(new ObjectId(catId))));
-        brand.ifPresent(br -> query.addCriteria(Criteria.where("brand").in(br)));
 
-        if (minPrice.isPresent() || maxPrice.isPresent()){
-            query.addCriteria(Criteria.where("price").gte(minPrice.orElse(0)).lte(maxPrice.orElse(10000)));
+        // Match category status
+        operations.add(Aggregation.match(Criteria.where("categoryInfo.entity_status").is(EntityStatus.REGULAR)));
+        operations.add(Aggregation.match(Criteria.where("categoryInfo.active").is(true)));
+
+
+        categoryId.ifPresent(catId -> {
+            operations.add(Aggregation.match(Criteria.where("category.$id").is(new ObjectId(catId))));
+        });
+
+        brand.ifPresent(br -> {
+            operations.add(Aggregation.match(Criteria.where("brand").in(br)));
+        });
+
+        if (minPrice.isPresent() || maxPrice.isPresent()) {
+            Criteria priceCriteria = Criteria.where("price");
+            minPrice.ifPresent(min -> priceCriteria.gte(min));
+            maxPrice.ifPresent(max -> priceCriteria.lte(max));
+            operations.add(Aggregation.match(priceCriteria));
         }
-        type.ifPresent(t -> query.addCriteria(Criteria.where("type").is(t)));
+
+        type.ifPresent(t -> {
+            operations.add(Aggregation.match(Criteria.where("type").is(t)));
+        });
 
         filter.ifPresent(fl -> {
-            query.addCriteria(Criteria.where("name").regex(fl, "i"));
+            operations.add(Aggregation.match(Criteria.where("name").regex(fl, "i")));
         });
-        List<ProductDTO> products = mongoTemplate.find(query.with(pageable), Product.class).stream().map(this::convertToDTO).collect(Collectors.toList());
-        long count = mongoTemplate.count(query, Product.class);
-        return  new PageImpl<>(products,pageable,count);
+
+        // Count total matching documents (before pagination)
+        List<AggregationOperation> countOperations = new ArrayList<>(operations);
+        countOperations.add(Aggregation.count().as("total"));
+        Aggregation countAggregation = Aggregation.newAggregation(countOperations);
+        AggregationResults<Document> countResults = mongoTemplate.aggregate(countAggregation, Product.class, Document.class);
+        int total = countResults.getMappedResults().stream()
+                .findFirst()
+                .map(doc -> (Integer) doc.get("total"))
+                .orElse(0); // Default to 0 if no results
+
+
+        // Add pagination
+        operations.add(Aggregation.skip((long) pageable.getOffset()));
+        operations.add(Aggregation.limit(pageable.getPageSize()));
+
+        // Execute query
+        Aggregation aggregation = Aggregation.newAggregation(operations);
+        AggregationResults<Product> results = mongoTemplate.aggregate(aggregation, Product.class, Product.class);
+
+        List<ProductDTO> products = results.getMappedResults().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(products, pageable, total);
     }
 
     /**
@@ -200,7 +248,20 @@ public class ProductServiceImpl implements ProductService{
      */
     @Override
     public List<ProductDTO> getNewProducts() {
-        return productMongoRepository.findTop20ByStateAndEntityStatusOrderByPublishedDateDesc(PUBLISHED,EntityStatus.REGULAR).stream().map(this::convertToDTO).collect(Collectors.toList());
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("state").is(PUBLISHED).and("entity_status").is(EntityStatus.REGULAR)),
+                Aggregation.lookup("categories", "category.$id", "_id", "category"),
+                Aggregation.unwind("category"),
+                Aggregation.match(Criteria.where("category.entity_status").is(EntityStatus.REGULAR)),
+                Aggregation.match(Criteria.where("category.active").is(true)),
+                Aggregation.match(Criteria.where("publishedDate").exists(true)),
+                Aggregation.sort(Sort.by(Sort.Direction.DESC, "publishedDate")),
+                Aggregation.limit(20)
+        );
+
+        List<Product> results = mongoTemplate.aggregate(aggregation, "product", Product.class).getMappedResults();
+
+        return results.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     /**
@@ -211,6 +272,42 @@ public class ProductServiceImpl implements ProductService{
     public List<ProductDTO> getProductsFromCategory(String categoryId) {
         categoryService.getOneCategory(categoryId);
         return productMongoRepository.findTop10ByCategoryIdAndStatePublishedAndStatusRegular(new ObjectId(categoryId)).stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public List<ProductDTO> getRandomProducts() {
+        int limit = 8;
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("state").is(PUBLISHED).and("entity_status").is(EntityStatus.REGULAR)),
+                Aggregation.lookup("categories", "category.$id", "_id", "category"),
+                Aggregation.unwind("category"),
+                Aggregation.match(Criteria.where("category.entity_status").is(EntityStatus.REGULAR)),
+                Aggregation.match(Criteria.where("category.active").is(true)),
+                Aggregation.match(Criteria.where("publishedDate").exists(true)),
+                Aggregation.sample(limit)
+        );
+
+        List<Product> randomProducts = mongoTemplate.aggregate(aggregation, "product", Product.class).getMappedResults();
+        return randomProducts.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public List<ProductDTO> getLowStockProducts() {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("state").is(PUBLISHED).and("entity_status").is(EntityStatus.REGULAR)),
+                Aggregation.sort(Sort.by(Sort.Direction.ASC, "quantity")),
+                Aggregation.limit(10)
+        );
+
+        List<Product> results = mongoTemplate.aggregate(aggregation, "product", Product.class).getMappedResults();
+
+        return results.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
 
@@ -238,8 +335,9 @@ public class ProductServiceImpl implements ProductService{
             product.setDiscountStartDate(productDTO.getDiscountStartDate().atStartOfDay());
             product.setDiscountEndDate(productDTO.getDiscountEndDate().atTime(23,59,59));
         }
-
-        product.setTag(productTagService.getProductTagById(productDTO.getTagId()));
+        if(!productDTO.getTagId().isEmpty()) {
+            product.setTag(productTagService.getProductTagById(productDTO.getTagId()));
+        }
         product.setSizes(productDTO.getSizes());
         product.setColors(productDTO.getColors());
         product.setSizeColorMapping(productDTO.getSizeColorMapping());

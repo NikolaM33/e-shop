@@ -7,12 +7,13 @@
                     <div class="media static-top-widget row">
                         <div class="icons-widgets col-4">
                             <div class="align-self-center text-center">
-                                <app-feather-icons [icon]="'navigation'" class="font-warning"></app-feather-icons>
+                                <app-feather-icons [icon]="'credit-card'" class="font-warning"></app-feather-icons>
                             </div>
                         </div>
-                        <div class="media-body col-8"><span class="m-0">Earnings</span>
-                            <h3 class="mb-0">$ <span class="counter" [CountTo]="6659" [from]="0"
-                                    [duration]="2">6659</span><small> This Month</small></h3>
+                        <div class="media-body col-8"><span class="m-0">{{"EARNINGS" | translate}}</span>
+                            <h3 class="mb-0">&euro; <span class="counter" [CountTo]="monthStatistic?.earnings"
+                                    [from]="0" [duration]="2">{{monthStatistic?.earnings}}</span><small> {{"THIS_MONTH"
+                                    | translate}}</small></h3>
                         </div>
                     </div>
                 </div>
@@ -27,9 +28,10 @@
                                 <app-feather-icons [icon]="'box'" class="font-secondary"></app-feather-icons>
                             </div>
                         </div>
-                        <div class="media-body col-8"><span class="m-0">Products</span>
-                            <h3 class="mb-0">$ <span class="counter" [CountTo]="9856" [from]="0"
-                                    [duration]="2">9856</span><small> This Month</small></h3>
+                        <div class="media-body col-8"><span class="m-0">{{"PUBLISHED_PRODUCTS" | translate}}</span>
+                            <h3 class="mb-0"> <span class="counter" [CountTo]="monthStatistic?.products" [from]="0"
+                                    [duration]="2">{{monthStatistic?.products}}</span><small> {{"THIS_MONTH" |
+                                    translate}}</small></h3>
                         </div>
                     </div>
                 </div>
@@ -41,12 +43,13 @@
                     <div class="media static-top-widget row">
                         <div class="icons-widgets col-4">
                             <div class="align-self-center text-center">
-                                <app-feather-icons [icon]="'message-square'" class="font-primary"></app-feather-icons>
+                                <app-feather-icons [icon]="'shopping-cart'" class="font-primary"></app-feather-icons>
                             </div>
                         </div>
-                        <div class="media-body col-8"><span class="m-0">Messages</span>
-                            <h3 class="mb-0">$ <span class="counter" [CountTo]="893" [from]="0"
-                                    [duration]="2">893</span><small> This Month</small></h3>
+                        <div class="media-body col-8"><span class="m-0">{{"ORDERS" | translate}}</span>
+                            <h3 class="mb-0"><span class="counter" [CountTo]="monthStatistic?.orders" [from]="0"
+                                    [duration]="2">{{monthStatistic?.orders}}</span><small> {{"THIS_MONTH" |
+                                    translate}}</small></h3>
                         </div>
                     </div>
                 </div>
@@ -61,9 +64,10 @@
                                 <app-feather-icons [icon]="'users'" class="font-danger"></app-feather-icons>
                             </div>
                         </div>
-                        <div class="media-body col-8"><span class="m-0">New Vendors</span>
-                            <h3 class="mb-0">$ <span class="counter" [CountTo]="45631" [from]="0"
-                                    [duration]="2">45631</span><small> This Month</small></h3>
+                        <div class="media-body col-8"><span class="m-0">{{"NEW_USERS" | translate}}</span>
+                            <h3 class="mb-0"><span class="counter" [CountTo]="monthStatistic?.users" [from]="0"
+                                    [duration]="2">{{monthStatistic?.users}}</span><small> {{"THIS_MONTH" |
+                                    translate}}</small></h3>
                         </div>
                     </div>
                 </div>
@@ -72,12 +76,12 @@
         <div class="col-xl-6 xl-100">
             <div class="card height-equal">
                 <div class="card-header">
-                    <h5>Market Value</h5>
+                    <h5>{{"MOST_SELLED_PRODUCTS" | translate}}</h5>
                 </div>
                 <div class="card-body">
                     <div class="market-chart">
-                        <x-chartist class="board-chart ct-golden-section" [data]="chart3.data" [type]="chart3.type"
-                            [options]="chart3.options" [events]="chart3.events">
+                        <x-chartist class="board-chart ct-golden-section chart-top-height"  
+                          [configuration]="chart3" [events]="chart3?.events"  >
                         </x-chartist>
                     </div>
                 </div>
@@ -86,53 +90,35 @@
         <div class="col-xl-6 xl-100">
             <div class="card height-equal">
                 <div class="card-header">
-                    <h5>Latest Orders</h5>
+                    <h5>{{"LATEST_ORDERS" | translate}}</h5>
                 </div>
                 <div class="card-body">
                     <div class="user-status table-responsive latest-order-table">
                         <table class="table table-bordernone">
                             <thead>
                                 <tr>
-                                    <th scope="col">Order ID</th>
-                                    <th scope="col">Order Total</th>
-                                    <th scope="col">Payment Method</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">{{"ORDER_ID" | translate}}</th>
+                                    <th scope="col">{{"TOTAL" | translate}}</th>
+                                    <th scope="col">{{"PAYMENT_METHOD" | translate}}</th>
+                                    <th scope="col">{{"ORDER_STATUS" | translate}}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td class="digits">$120.00</td>
-                                    <td class="font-danger">Bank Transfers</td>
-                                    <td class="digits">On Way</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td class="digits">$90.00</td>
-                                    <td class="font-secondary">Ewallets</td>
-                                    <td class="digits">Delivered</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td class="digits">$240.00</td>
-                                    <td class="font-warning">Cash</td>
-                                    <td class="digits">Delivered</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td class="digits">$120.00</td>
-                                    <td class="font-primary">Direct Deposit</td>
-                                    <td class="digits">$6523</td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td class="digits">$50.00</td>
-                                    <td class="font-primary">Bank Transfers</td>
-                                    <td class="digits">Delivered</td>
+                                <tr *ngFor="let order of orders">
+                                    <th scope="row"><a href="javascript:void(0)"
+                                            [routerLink]="['/sales/orders',order.id]">{{ order.id }}</a></th>
+                                    <td class="digits">{{order.amount.toFixed(2) }} &euro;</td>
+                                    <td>{{ order.paymentMethod | translate}}</td>
+                                    <td> <span class="badge 
+                    {{ order.status === 'READY_FOR_PICKUP' || order.status === 'DELIVERED'  ? 'badge-success' : 
+                       order.status === 'CANCELED' ? 'badge-danger' : 
+                       order.status === 'PROCESSING' ? 'badge-warning' : 
+                       order.status === 'SHIPPED' ? 'badge-primary' :
+                       'badge-secondary' }}">{{ order.status | translate}}</span></td>
                                 </tr>
                             </tbody>
                         </table>
-                        <a href="javascript:void(0)" class="btn btn-primary">View All Orders</a>
+                        <a href="javascript:void(0)" class="btn btn-primary" [routerLink]="['/sales/orders']">{{"VIEW_ALL_ORDERS" | translate}}</a>
                     </div>
                 </div>
             </div>
@@ -140,15 +126,15 @@
         <div class="col-xl-3 col-md-6 xl-50">
             <div class="card order-graph sales-carousel">
                 <div class="card-header">
-                    <h6>Total Sales</h6>
+                    <h6>{{"PRODUCTS_SOLD" | translate}}</h6>
                     <div class="row">
                         <div class="col-6">
                             <div class="small-chartjs">
                                 <canvas baseChart id="small-graph-1" height="600" width="400"
                                     [datasets]="smallLineChartData" [labels]="smallLineChartLabels"
-                                    [options]="smallLineChartOptions" 
-                                    [legend]="smallLineChartLegend" [type]="smallLineChartType"
-                                    (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+                                    [options]="smallLineChartOptions" [legend]="smallLineChartLegend"
+                                    [type]="smallLineChartType" (chartHover)="chartHovered($event)"
+                                    (chartClick)="chartClicked($event)"></canvas>
                             </div>
                         </div>
                         <div class="col-6">
@@ -161,10 +147,10 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start">
                         <div class="media-body">
-                            <span>Sales Last Month</span>
-                            <h2 class="mb-0">9054</h2>
+                            <!-- <span>Sales Last Month</span> -->
+                            <h2 class="mb-0">{{lastMonthStasticData?.unitsSold}}</h2>
                             <p>0.25% <span><i class="fa fa-angle-up"></i></span></p>
-                            <h5 class="f-w-600">Gross sales of August</h5>
+                            <h5 class="f-w-600">{{"PRODUCT_SOLD_DESCRIPTION" | translate}} {{lastMonthName}}u</h5>
                             <p>Lorem Ipsum is simply dummy text of the printing and typesetting</p>
                         </div>
                         <div class="bg-primary b-r-8">
@@ -179,15 +165,15 @@
         <div class="col-xl-3 col-md-6 xl-50">
             <div class="card order-graph sales-carousel">
                 <div class="card-header">
-                    <h6>Total purchase</h6>
+                    <h6>{{"RENTED_PRODUCTS" | translate}}</h6>
                     <div class="row">
                         <div class="col-6">
                             <div class="small-chartjs">
                                 <canvas baseChart id="small-graph-2" height="60vw" width="140vw"
                                     [datasets]="smallLine2ChartData" [labels]="smallLine2ChartLabels"
-                                    [options]="smallLine2ChartOptions" 
-                                    [legend]="smallLine2ChartLegend" [type]="smallLine2ChartType"
-                                    (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+                                    [options]="smallLine2ChartOptions" [legend]="smallLine2ChartLegend"
+                                    [type]="smallLine2ChartType" (chartHover)="chartHovered($event)"
+                                    (chartClick)="chartClicked($event)"></canvas>
                             </div>
                         </div>
                         <div class="col-6">
@@ -200,10 +186,9 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start">
                         <div class="media-body">
-                            <span>Monthly purchase</span>
-                            <h2 class="mb-0">2154</h2>
+                            <h2 class="mb-0">{{lastMonthStasticData?.unitsRented}}</h2>
                             <p>0.13% <span><i class="fa fa-angle-up"></i></span></p>
-                            <h5 class="f-w-600">Avg Gross purchase</h5>
+                            <h5 class="f-w-600">{{"RENTED_PRODUCTS_DESCRIPTION" | translate}}{{lastMonthName}}u</h5>
                             <p>Lorem Ipsum is simply dummy text of the printing and typesetting</p>
                         </div>
                         <div class="bg-secondary b-r-8">
@@ -218,15 +203,15 @@
         <div class="col-xl-3 col-md-6 xl-50">
             <div class="card order-graph sales-carousel">
                 <div class="card-header">
-                    <h6>Total cash transaction</h6>
+                    <h6>{{"ORDERS" | translate}}</h6>
                     <div class="row">
                         <div class="col-6">
                             <div class="small-chartjs">
                                 <canvas baseChart id="small-graph-3" height="60vw" width="140vw"
                                     [datasets]="smallLine3ChartData" [labels]="smallLine3ChartLabels"
-                                    [options]="smallLine3ChartOptions" 
-                                    [legend]="smallLine3ChartLegend" [type]="smallLine3ChartType"
-                                    (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+                                    [options]="smallLine3ChartOptions" [legend]="smallLine3ChartLegend"
+                                    [type]="smallLine3ChartType" (chartHover)="chartHovered($event)"
+                                    (chartClick)="chartClicked($event)"></canvas>
                             </div>
                         </div>
                         <div class="col-6">
@@ -239,10 +224,9 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start">
                         <div class="media-body">
-                            <span>Cash on hand</span>
-                            <h2 class="mb-0">4672</h2>
+                            <h2 class="mb-0">{{lastMonthStasticData?.totalOrders}}</h2>
                             <p>0.8% <span><i class="fa fa-angle-up"></i></span></p>
-                            <h5 class="f-w-600">Details about cash</h5>
+                            <h5 class="f-w-600">{{"ORDERS_DESCRIPTION" | translate}}{{lastMonthName}}u</h5>
                             <p>Lorem Ipsum is simply dummy text of the printing and typesetting</p>
                         </div>
                         <div class="bg-warning b-r-8">
@@ -257,15 +241,15 @@
         <div class="col-xl-3 col-md-6 xl-50">
             <div class="card order-graph sales-carousel">
                 <div class="card-header">
-                    <h6>Daily Deposits</h6>
+                    <h6>{{"REVENUE" | translate}}</h6>
                     <div class="row">
                         <div class="col-6">
                             <div class="small-chartjs">
                                 <canvas baseChart id="small-graph-4" height="60vw" width="140vw"
                                     [datasets]="smallLine4ChartData" [labels]="smallLine4ChartLabels"
-                                    [options]="smallLine4ChartOptions"
-                                    [legend]="smallLine4ChartLegend" [type]="smallLine4ChartType"
-                                    (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+                                    [options]="smallLine4ChartOptions" [legend]="smallLine4ChartLegend"
+                                    [type]="smallLine4ChartType" (chartHover)="chartHovered($event)"
+                                    (chartClick)="chartClicked($event)"></canvas>
                             </div>
                         </div>
                         <div class="col-6">
@@ -278,10 +262,9 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start">
                         <div class="media-body">
-                            <span>Security Deposits</span>
-                            <h2 class="mb-0">0782</h2>
+                            <h2 class="mb-0">{{lastMonthStasticData?.revenue}} &euro;</h2>
                             <p>0.25% <span><i class="fa fa-angle-up"></i></span></p>
-                            <h5 class="f-w-600">Gross sales of June</h5>
+                            <h5 class="f-w-600">{{"REVENUE_DESCRIPTION" | translate}} {{lastMonthName}}u</h5>
                             <p>Lorem Ipsum is simply dummy text of the printing and typesetting</p>
                         </div>
                         <div class="bg-danger b-r-8">
@@ -296,77 +279,41 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Buy / Sell</h5>
+                    <h5>{{"BUSINESS_METRICS" | translate}}</h5>
                 </div>
                 <div class="card-body sell-graph">
                     <canvas baseChart id="myGraph" [datasets]="lineChartData" [labels]="lineChartLabels"
-                        [options]="lineChartOptions" [legend]="lineChartLegend"
-                        [type]="lineChartType" (chartHover)="chartHovered($event)"
-                        (chartClick)="chartClicked($event)"></canvas>
+                        [options]="lineChartOptions" [legend]="lineChartLegend" [type]="lineChartType"
+                        (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-xl-6 xl-100">
             <div class="card height-equal">
                 <div class="card-header">
-                    <h5>Products Cart</h5>
+                    <h5>{{"LOW_STOCK_PRODUCTS" | translate}}
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="user-status table-responsive products-table">
-                        <table class="table table-bordernone mb-0">
+                        <table class="table table-bordernone">
                             <thead>
                                 <tr>
-                                    <th scope="col">Details</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Price</th>
+                                    <th scope="col">{{"NAME" | translate}}</th>
+                                    <th scope="col">{{"QUANTITY" | translate}}</th>
+                                    <th scope="col">{{"PRICE" | translate}}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Simply dummy text of the printing</td>
-                                    <td class="digits">1</td>
-                                    <td class="font-primary">Pending</td>
-                                    <td class="digits">$6523</td>
-                                </tr>
-                                <tr>
-                                    <td>Long established</td>
-                                    <td class="digits">5</td>
-                                    <td class="font-secondary">Cancle</td>
-                                    <td class="digits">$6523</td>
-                                </tr>
-                                <tr>
-                                    <td>sometimes by accident</td>
-                                    <td class="digits">10</td>
-                                    <td class="font-secondary">Cancle</td>
-                                    <td class="digits">$6523</td>
-                                </tr>
-                                <tr>
-                                    <td>Classical Latin literature</td>
-                                    <td class="digits">9</td>
-                                    <td class="font-primary">Return</td>
-                                    <td class="digits">$6523</td>
-                                </tr>
-                                <tr>
-                                    <td>keep the site on the Internet</td>
-                                    <td class="digits">8</td>
-                                    <td class="font-primary">Pending</td>
-                                    <td class="digits">$6523</td>
-                                </tr>
-                                <tr>
-                                    <td>Molestiae consequatur</td>
-                                    <td class="digits">3</td>
-                                    <td class="font-secondary">Cancle</td>
-                                    <td class="digits">$6523</td>
-                                </tr>
-                                <tr>
-                                    <td>Pain can procure</td>
-                                    <td class="digits">8</td>
-                                    <td class="font-primary">Return</td>
-                                    <td class="digits">$6523</td>
-                                </tr>
+                                 <tr *ngFor="let product of lowStackProducts">
+                                    <th scope="row" class="width-65"><a href="javascript:void(0)"
+                                            [routerLink]="['/products/physical/edit-product/',product.id]">{{ product?.name }}</a></th>
+                                    <td [ngClass]="{'digits': true, 'font-primary': product?.quantity < 10}">{{product?.quantity}}</td>
+                                    <td class="digits">{{product?.price}} &euro;</td>
                             </tbody>
                         </table>
+
+                        <a href="javascript:void(0)" class="btn btn-primary" [routerLink]="['/products/physical/product-list']">{{"VIEW_ALL_PRODUCTS" | translate}}</a>
                     </div>
                 </div>
             </div>
@@ -374,138 +321,28 @@
         <div class="col-xl-6 xl-100">
             <div class="card height-equal">
                 <div class="card-header">
-                    <h5>Empolyee Status</h5>
+                    <h5>{{"EMPLOYEES" | translate}}</h5>
                 </div>
                 <div class="card-body">
                     <div class="user-status table-responsive products-table">
-                        <table class="table table-bordernone mb-0">
+                        <table class="table table-bordernone">
                             <thead>
                                 <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Designation</th>
-                                    <th scope="col">Skill Level</th>
-                                    <th scope="col">Experience</th>
+                                    <th scope="col">{{"EMPLOYEE_NAME" | translate}}</th>
+                                    <th scope="col">{{"POSITION" | translate}}</th>
+                                    <th scope="col">{{"EXPERIENCE" | translate}}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="bd-t-none u-s-tb">
-                                        <div class="align-middle image-sm-size"><img
-                                                class="img-radius align-top m-r-15 rounded-circle"
-                                                src="assets/images/dashboard/user2.jpg" alt="" data-original-title=""
-                                                title="">
-                                            <div class="d-inline-block">
-                                                <h6>John Deo <span class="text-muted digits">(14+ Online)</span></h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Designer</td>
-                                    <td>
-                                        <div class="progress-showcase">
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar bg-primary" role="progressbar"
-                                                    style="width: 30%" aria-valuenow="50" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="digits">2 Year</td>
-                                </tr>
-                                <tr>
-                                    <td class="bd-t-none u-s-tb">
-                                        <div class="align-middle image-sm-size"><img
-                                                class="img-radius align-top m-r-15 rounded-circle"
-                                                src="assets/images/dashboard/user1.jpg" alt="" data-original-title=""
-                                                title="">
-                                            <div class="d-inline-block">
-                                                <h6>Holio Mako <span class="text-muted digits">(250+ Online)</span></h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Developer</td>
-                                    <td>
-                                        <div class="progress-showcase">
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar bg-secondary" role="progressbar"
-                                                    style="width: 70%" aria-valuenow="50" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="digits">3 Year</td>
-                                </tr>
-                                <tr>
-                                    <td class="bd-t-none u-s-tb">
-                                        <div class="align-middle image-sm-size"><img
-                                                class="img-radius align-top m-r-15 rounded-circle"
-                                                src="assets/images/dashboard/man.png" alt="" data-original-title=""
-                                                title="">
-                                            <div class="d-inline-block">
-                                                <h6>Mohsib lara<span class="text-muted digits">(99+ Online)</span></h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Tester</td>
-                                    <td>
-                                        <div class="progress-showcase">
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar bg-primary" role="progressbar"
-                                                    style="width: 60%" aria-valuenow="50" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="digits">5 Month</td>
-                                </tr>
-                                <tr>
-                                    <td class="bd-t-none u-s-tb">
-                                        <div class="align-middle image-sm-size"><img
-                                                class="img-radius align-top m-r-15 rounded-circle"
-                                                src="assets/images/dashboard/user.png" alt="" data-original-title=""
-                                                title="">
-                                            <div class="d-inline-block">
-                                                <h6>Hileri Soli <span class="text-muted digits">(150+ Online)</span>
-                                                </h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Designer</td>
-                                    <td>
-                                        <div class="progress-showcase">
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar bg-secondary" role="progressbar"
-                                                    style="width: 30%" aria-valuenow="50" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="digits">3 Month</td>
-                                </tr>
-                                <tr>
-                                    <td class="bd-t-none u-s-tb">
-                                        <div class="align-middle image-sm-size"><img
-                                                class="img-radius align-top m-r-15 rounded-circle"
-                                                src="assets/images/dashboard/designer.jpg" alt=""
-                                                data-original-title="" title="">
-                                            <div class="d-inline-block">
-                                                <h6>Pusiz bia <span class="text-muted digits">(14+ Online)</span></h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Designer</td>
-                                    <td>
-                                        <div class="progress-showcase">
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar bg-primary" role="progressbar"
-                                                    style="width: 90%" aria-valuenow="50" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="digits">5 Year</td>
-                                </tr>
-                            </tbody>
+                                   <tr *ngFor="let employee of employees">
+                                    <th scope="row" ><a href="javascript:void(0)"
+                                            [routerLink]="['/users/edit-user/',employee.id]">{{ employee?.firstName}} {{employee?.lastName}}</a></th>
+                                    <td>{{employee?.type | translate}}</td>
+                                    <td> {{ 'EXPERIENCE_IN' | translate: { years: employee?.experience.years, months: employee?.experience.months } }}</td>
+                               
+                            </tbody> 
                         </table>
+                          <a href="javascript:void(0)" class="btn btn-primary" [routerLink]="['/products/physical/product-list']">{{"VIEW_ALL_EMPLOYEES" | translate}}</a>
                     </div>
                 </div>
             </div>
@@ -513,95 +350,60 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Sales Status</h5>
+                    <h5>{{"SALES_STATUS" | translate}}</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-xl-3 col-sm-6 xl-50">
                             <div class="order-graph overflow-hidden">
-                                <h6>Orders By Location</h6>
+                                <h6>{{"ORDERS_BY_PRODUCT_TYPE" | translate}}</h6>
                                 <div class="chart-block chart-vertical-center">
                                     <ngx-charts-pie-chart class="pie-colours-1" [view]="view"
-                                        [scheme]="doughnutChartColorScheme" [results]="pieData" [explodeSlices]="false"
+                                        [scheme]="doughnutChartColorScheme" [results]="saleStatistic" [explodeSlices]="false"
                                         [labels]="doughnutChartShowLabels" [arcWidth]=0.50 [doughnut]="true"
                                         [animations]="false" [tooltipDisabled]="doughnutChartTooltip"
-                                        [gradient]="doughnutChartGradient">
+                                        [gradient]="doughnutChartGradient" [customColors]="doughnutChartCustomColors">
                                     </ngx-charts-pie-chart>
                                 </div>
                                 <div class="order-graph-bottom">
                                     <div class="media">
                                         <div class="order-color-primary"></div>
                                         <div class="media-body">
-                                            <h6 class="mb-0">Saint Lucia <span class="pull-right">$157</span></h6>
+                                            <h6 class="mb-0">{{'SALE' | translate}}<span class="pull-right">{{saleCountValue}}</span></h6>
                                         </div>
                                     </div>
                                     <div class="media">
                                         <div class="order-color-secondary"></div>
                                         <div class="media-body">
-                                            <h6 class="mb-0">Kenya <span class="pull-right">$347</span></h6>
+                                            <h6 class="mb-0">{{'RENT' | translate}} <span class="pull-right">{{rentCountValue}}</span></h6>
                                         </div>
                                     </div>
-                                    <div class="media">
-                                        <div class="order-color-danger"></div>
-                                        <div class="media-body">
-                                            <h6 class="mb-0">Liberia<span class="pull-right">$468</span></h6>
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <div class="order-color-warning"></div>
-                                        <div class="media-body">
-                                            <h6 class="mb-0">Christmas Island<span class="pull-right">$742</span></h6>
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <div class="order-color-success"></div>
-                                        <div class="media-body">
-                                            <h6 class="mb-0">Saint Helena <span class="pull-right">$647</span></h6>
-                                        </div>
-                                    </div>
+                           
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-sm-6 xl-50">
                             <div class="order-graph sm-order-space overflow-hidden">
-                                <h6>Sales By Location</h6>
+                                <h6>{{"ORDERS_BY_TYPE" | translate}}</h6>
                                 <div class="peity-chart-dashboard text-center chart-vertical-center">
                                     <ngx-charts-pie-chart class="pie-colours-1" [view]="view"
-                                        [scheme]="doughnutChartColorScheme" [results]="doughnutData"
+                                        [scheme]="doughnutChartColorScheme" [results]="orderTypeStatistic"
                                         [explodeSlices]="false" [labels]="doughnutChartShowLabels" [arcWidth]=0.99
-                                        [doughnut]="true" [animations]="false" [tooltipDisabled]="doughnutChartTooltip"
+                                        [doughnut]="true" [animations]="false" [tooltipDisabled]="doughnutChartTooltip" [customColors]="orderTypeChartCustomColors"
                                         [gradient]="doughnutChartGradient">
                                     </ngx-charts-pie-chart>
                                 </div>
                                 <div class="order-graph-bottom sales-location">
                                     <div class="media">
-                                        <div class="order-shape-primary"></div>
-                                        <div class="media-body">
-                                            <h6 class="mb-0 me-0">Germany <span class="pull-right">25%</span></h6>
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <div class="order-shape-secondary"></div>
-                                        <div class="media-body">
-                                            <h6 class="mb-0 me-0">Brasil <span class="pull-right">10%</span></h6>
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <div class="order-shape-danger"></div>
-                                        <div class="media-body">
-                                            <h6 class="mb-0 me-0">United Kingdom<span class="pull-right">34%</span></h6>
-                                        </div>
-                                    </div>
-                                    <div class="media">
                                         <div class="order-shape-warning"></div>
                                         <div class="media-body">
-                                            <h6 class="mb-0 me-0">Australia<span class="pull-right">5%</span></h6>
+                                            <h6 class="mb-0 me-0">{{"SHIPPING" | translate}}<span class="pull-right">{{orderTypeShipping}}</span></h6>
                                         </div>
                                     </div>
                                     <div class="media">
                                         <div class="order-shape-success"></div>
                                         <div class="media-body">
-                                            <h6 class="mb-0 me-0">Canada <span class="pull-right">25%</span></h6>
+                                            <h6 class="mb-0 me-0">{{"LOCAL_PICKUP" | translate}} <span class="pull-right">{{orderTypeLocalPickup}}</span></h6>
                                         </div>
                                     </div>
                                 </div>
@@ -609,9 +411,9 @@
                         </div>
                         <div class="col-xl-6 xl-100">
                             <div class="order-graph xl-space">
-                                <h6>Revenue for last month</h6>
+                                <h6>{{"REVENUE_LAST_MONTH" | translate}}</h6>
                                 <div class="ct-4 flot-chart-container">
-                                    <x-chartist [type]="chart5.type" [data]="chart5.data" [options]="chart5.options">
+                                    <x-chartist  [configuration]="chart5" [events]="chart5.events">
                                     </x-chartist>
                                 </div>
                             </div>

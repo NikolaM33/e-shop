@@ -33,24 +33,24 @@ export class CartModalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async openModal(product) {
-    await this.productService.getProducts.subscribe(response => this.products = response);
-    this.products = await this.products.filter(items => items.category == product.category && items.id != product.id);
-    const status = await this.productService.addToCart(product);
-    if(status) {
-      this.modalOpen = true;
-      if (isPlatformBrowser(this.platformId)) { // For SSR 
-        this.modalService.open(this.CartModal, { 
-          size: 'lg',
-          ariaLabelledBy: 'Cart-Modal',
-          centered: true,
-          windowClass: 'theme-modal cart-modal CartModal'
-        }).result.then((result) => {
-          `Result ${result}`
-        }, (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        });
-      }
-    }
+    // await this.productService.getProducts.subscribe(response => this.products = response);
+    // this.products = await this.products.filter(items => items.category == product.category && items.id != product.id);
+    // const status = await this.productService.addToCart(product);
+    // if(status) {
+    //   this.modalOpen = true;
+    //   if (isPlatformBrowser(this.platformId)) { // For SSR 
+    //     this.modalService.open(this.CartModal, { 
+    //       size: 'lg',
+    //       ariaLabelledBy: 'Cart-Modal',
+    //       centered: true,
+    //       windowClass: 'theme-modal cart-modal CartModal'
+    //     }).result.then((result) => {
+    //       `Result ${result}`
+    //     }, (reason) => {
+    //       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    //     });
+    //   }
+    // }
   }
 
   private getDismissReason(reason: any): string {

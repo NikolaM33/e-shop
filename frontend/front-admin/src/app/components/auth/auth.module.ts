@@ -8,6 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import { SharedModule } from '../../shared/shared.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { SharedModule } from '../../shared/shared.module';
     ReactiveFormsModule,
     CarouselModule,
     SharedModule,
-    NgbModule
+    NgbModule,
+    TranslateModule
   ]
 })
 export class AuthModule { }

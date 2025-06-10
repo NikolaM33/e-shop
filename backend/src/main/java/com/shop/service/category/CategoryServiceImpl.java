@@ -155,6 +155,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDTO> getCategoriesForShop() {
         return categoryMongoRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(category -> CategoryDTO.builder().id(category.getId())
-                .name(category.getName()).build()).collect(Collectors.toList());
+                .name(category.getName()).image(category.getImageFileIdentifier()).build()).collect(Collectors.toList());
     }
 }

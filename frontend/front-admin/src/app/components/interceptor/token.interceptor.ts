@@ -22,8 +22,7 @@ export class TokenInterceptor implements HttpInterceptor {
     constructor(
       private authenticationService: AuthService,
       private router: Router,
-    //   private translatePipe: TranslatePipe,
-      private utilService: UtilService
+
     ) {}
   
     addToken(request: HttpRequest<any>): HttpRequest<any> {

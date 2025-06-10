@@ -4,52 +4,97 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <h5>Manage Order</h5>
+          <h5>{{'MANAGE_ORDER' | translate}}</h5>
         </div>
         <div class="card-body">
           <div class="custom-datatable">
-            <form>
-              <div class="mb-3">
-                <input type='text' class="filter-ngx form-control" placeholder='Search...' [(ngModel)]="searchText"
-                  autocomplete="off" />
+            <ng-template #content let-modal>
+              <div class="modal-header justify-content-between">
+                <h5 class="modal-title f-w-600" id="exampleModalLabel">{{"CHANGE_ORDER_STATUS" | translate}}</h5>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
+              <div class="modal-body ">
+                <form class="needs-validation">
+                  <div class="form">
+
+                    <div class="form-group base-info">
+                      <div class="form-group row  px-2">
+
+                        <select #status class="custom-select form-select" required="true"
+                          [(ngModel)]="selectedOrder.status" [ngModelOptions]="{standalone: true}">
+                          <option *ngFor="let status of orderStatusList" [value]="status">{{ status | translate }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="updateOrderStatus()">{{"SAVE" |
+                  translate}}</button>
+                <button class="btn btn-secondary" type="button" data-dismiss="modal"
+                  (click)="modal.dismiss('Cross click')">{{"CLOSE" | translate}}</button>
+              </div>
+            </ng-template>
+            <form>
+              <!-- <div class="mb-3">
+                <input type='text' class="filter-ngx form-control width-100" placeholder='Search...' [(ngModel)]="searchText"  (ngModelChange)="onSearchChange()" [ngModelOptions]="{standalone: true}"
+                  autocomplete="off" />
+              </div> -->
             </form>
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th scope="col" sortable="order_id" (sort)="onSort($event)">Order Id</th>
-                  <th scope="col" sortable="product" (sort)="onSort($event)">Payment</th>
-                  <th scope="col" sortable="payment_status" (sort)="onSort($event)">Payment Status</th>
-                  <th scope="col" sortable="paymeny_method" (sort)="onSort($event)">Payment Mehod</th>
-                  <th scope="col" sortable="order_status" (sort)="onSort($event)">Order Status</th>
-                  <th scope="col" sortable="date" (sort)="onSort($event)">Date</th>
-                  <th scope="col" sortable="total" (sort)="onSort($event)">Total</th>
+                  <th scope="col" sortable="id" (sort)="onSort($event)">{{"ORDER_ID" | translate}}</th>
+                  <th scope="col" sortable="paymentId" (sort)="onSort($event)">{{"PAYMENT_ID" | translate}}</th>
+                  <th scope="col" sortable="paymentStatus" (sort)="onSort($event)">{{"PAYMENT_STATUS" | translate}}</th>
+                  <th scope="col" sortable="paymentMethod" (sort)="onSort($event)">{{"PAYMENT_METHOD" | translate}}</th>
+                  <th scope="col" sortable="status" (sort)="onSort($event)">{{"ORDER_STATUS" | translate}}</th>
+                  <th scope="col" sortable="createdDate" (sort)="onSort($event)">{{"DATE" | translate}}</th>
+                  <th scope="col" sortable="amount" (sort)="onSort($event)">{{"TOTAL" | translate}}</th>
+                  <th scope="col">{{"ACTIONS" | translate}}</th>
+
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let item of tableItem$ | async | filter:searchText">
-                  <th scope="row">{{ item.order_id }}</th>
-                  <td>
-                    <span *ngFor="let image of item.product">
-                      <img [src]="image" class="img-30 me-2">
-                    </span>
-                  </td>
-                  <td><span class='badge {{item.payment_class}}'>{{ item.payment_status }}</span></td>
-                  <td>{{ item.paymeny_method }}</td>
-                  <td><span class='badge {{item.order_class}}'>{{ item.order_status }}</span></td>
-                  <td>{{item.date}}</td>
-                  <td>{{item.total}}</td>
+                  <th scope="row"><a href="javascript:void(0)" [routerLink]="['/sales/orders',item.id]">{{ item.id
+                      }}</a></th>
+                  <td>{{item.paymentId}}</td>
+                  <td> <span class="badge 
+                    {{ item.paymentStatus === 'SUCCEEDED' ? 'badge-success' : 
+                       item.paymentStatus === 'FAILED' ? 'badge-danger' : 
+                       item.paymentStatus === 'PENDING' ? 'badge-secondary' : 
+                       'badge-warning' }}">
+                      {{ item.paymentStatus | translate}}
+                    </span></td>
+                  <td>{{ item.paymentMethod | translate}}</td>
+                  <td> <span class="badge 
+                    {{ item.status === 'READY_FOR_PICKUP' || item.status === 'DELIVERED'  ? 'badge-success' : 
+                       item.status === 'CANCELED' ? 'badge-danger' : 
+                       item.status === 'PROCESSING' ? 'badge-warning' : 
+                       item.status === 'SHIPPED' ? 'badge-primary' :
+                       'badge-secondary' }}">{{ item.status | translate}}</span></td>
+                  <td>{{item.createdDate | date}}</td>
+                  <td>{{item.amount}} &euro;</td>
+                  <td> <a href="javascript:void(0)"><i class='fa fa-edit f-12'
+                        (click)="open(content, item)"></i></a>&nbsp;</td>
                 </tr>
               </tbody>
             </table>
             <div class="d-flex justify-content-between p-2">
-              <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page"
+              <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page "
+                (pageChange)="onPageChange($event)" (pageSizeChange)="onPageChange($event)"
                 [pageSize]="service.pageSize">
               </ngb-pagination>
-              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
-                <option [value]="10" [selected] ="true" [ngValue]="2">2 items per page</option>
-                <option [ngValue]="4">4 items per page</option>
-                <option [ngValue]="6">6 items per page</option>
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize"
+                (ngModelChange)="onPageSizeChange()">
+                <option [value]="10" [selected]="true" [ngValue]="10">10 items per page</option>
+                <option [ngValue]="15">15 items per page</option>
+                <option [ngValue]="20">20 items per page</option>
               </select>
             </div>
           </div>

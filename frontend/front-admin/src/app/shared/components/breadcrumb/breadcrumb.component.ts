@@ -27,6 +27,7 @@ export class BreadcrumbComponent implements OnInit {
       }))
       .pipe(filter(route => route.outlet === PRIMARY_OUTLET))
       .subscribe(route => {
+        console.log(route)
         let snapshot = this.router.routerState.snapshot;
         let title = route.snapshot.data['title'];
         let parent = route.parent.snapshot.data['breadcrumb'];

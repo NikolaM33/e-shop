@@ -1,1 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+.toast-bottom-center {
+  left: 50% !important;
+  transform: translateX(-50%) !important; 
+  bottom: 20px !important; 
+}

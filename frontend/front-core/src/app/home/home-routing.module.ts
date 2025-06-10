@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ElectronicsComponent } from './electronics/electronics.component';
+import { HomeComponent } from './home.component';
 
 
 const routes: Routes = [
 
   {
-    path: 'electronics',
-    component: ElectronicsComponent
+    path: '',
+    component: HomeComponent
   },
 
 

@@ -1,33 +1,33 @@
-<app-breadcrumb [title]="'Register'" [breadcrumb]="'Register'"></app-breadcrumb>
+<app-breadcrumb [title]="'REGISTER'" [breadcrumb]="'REGISTER'"></app-breadcrumb>
 <!-- section start -->
 <section class="register-page section-b-space">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h3>Create Account</h3>
+                <h3>{{'CREATE_ACCOUNT' | translate}}</h3>
                 <div class="theme-card">
                     <form [formGroup]="registerForm" (ngSubmit)="createUser()">
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="fname">First Name</label>
-                                <input type="text" class="form-control" id="fname" formControlName="firstName" placeholder="First Name" required>
+                                <label for="fname">{{'FIRST_NAME' | translate}}</label>
+                                <input type="text" class="form-control" id="fname" formControlName="firstName" placeholder="{{'FIRST_NAME' | translate}}" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="lname">Last Name</label>
-                                <input type="text" class="form-control" id="lname" formControlName="lastName" placeholder="Last Name" required>
+                                <label for="lname">{{"LAST_NAME" | translate}}</label>
+                                <input type="text" class="form-control" id="lname" formControlName="lastName" placeholder="{{'LAST_NAME' | translate}}" required>
                             </div>
                         </div>
-                        <div class="row margin-bottom-10">
+                        <div class="row margin-bottom-10 pt-2">
                             <div class="col-md-6">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email" required>
+                                <label for="email">{{'EMAIL' | translate}}</label>
+                                <input type="email" class="form-control" id="email" formControlName="email" placeholder="{{'EMAIL' | translate}}" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" formControlName="password" placeholder="Enter your password" required>
+                                <label for="password">{{'PASSWORD' | translate}}</label>
+                                <input type="password" class="form-control" id="password" formControlName="password" placeholder="{{'ENTER_PASSWORD' | translate}}" required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-solid" [disabled]="!registerForm.valid">Create Account</button>
+                        <button type="submit" class="btn btn-solid" [disabled]="!registerForm.valid">{{'CREATE_ACCOUNT' | translate}}</button>
                     </form>
                 </div>
             </div>

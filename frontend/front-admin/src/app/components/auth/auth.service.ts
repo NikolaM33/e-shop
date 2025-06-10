@@ -15,7 +15,7 @@ export class AuthService {
   constructor(private httpClient: HttpClient) { }
 
   public login(data: any): any {
-    return this.httpClient.post(`${environment.apiUrl}/authenticate`, data);
+    return this.httpClient.post(`${environment.apiUrl}/authenticate/administration`, data);
   }
 
   public logout(): void {

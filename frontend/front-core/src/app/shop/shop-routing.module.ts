@@ -6,7 +6,7 @@ import { FourImageComponent } from './product/four-image/four-image.component';
 import { BundleProductComponent } from './product/bundle-product/bundle-product.component';
 import { ImageOutsideComponent } from './product/image-outside/image-outside.component';
 
-import { CollectionLeftSidebarComponent } from './collection/collection-left-sidebar/collection-left-sidebar.component';
+import { CollectionComponent } from './collection/collection-page/collection.component';
 
 import { CartComponent } from './cart/cart.component';
 import { WishlistComponent } from './wishlist/wishlist.component';
@@ -27,7 +27,7 @@ import { OrderSuccessComponent } from '../pages/order-success/order-success.comp
 
 const routes: Routes = [
   {
-    path: 'product/left/sidebar/:slug',
+    path: 'product/:slug',
     component: ProductLeftSidebarComponent,
     resolve: {
       data: Resolver
@@ -62,8 +62,8 @@ const routes: Routes = [
     }
   },
   {
-    path: 'collection/left/sidebar',
-    component: CollectionLeftSidebarComponent
+    path: '',
+    component: CollectionComponent
   },
   {
     path: 'rent',
