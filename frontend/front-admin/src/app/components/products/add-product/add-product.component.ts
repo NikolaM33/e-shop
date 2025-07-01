@@ -177,7 +177,6 @@ export class AddProductComponent implements OnInit {
     // Initialize form controls for each specification
     this.specification.forEach(field => {
       if (!oldSpecification.find(f => f === field)) {
-        console.log(field)
         this.specifications.push(this.fb.control('', Validators.required));
       }
     });
@@ -193,7 +192,6 @@ export class AddProductComponent implements OnInit {
   }
 
   addNewProduct() {
-    console.log(this.productForm)
     const productData: FormData = new FormData();
     const data = this.productForm.getRawValue();
     data.discountEndDate = this.formatter.format(data.discountEndDate);

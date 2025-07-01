@@ -47,6 +47,7 @@ import { TapToTopComponent } from './components/tap-to-top/tap-to-top.component'
 
 // Pipes
 import { DiscountPipe } from './pipes/discount.pipe';
+import { QuickProductSpecComponent } from './components/modal/quick-product-spec/quick-product-spec.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import { DiscountPipe } from './pipes/discount.pipe';
     SkeletonProductBoxComponent,
     LayoutBoxComponent,
     TapToTopComponent,
-    DiscountPipe
+    DiscountPipe,
+    QuickProductSpecComponent
   ],
   imports: [
     CommonModule,
@@ -119,7 +121,8 @@ import { DiscountPipe } from './pipes/discount.pipe';
     SkeletonProductBoxComponent,
     LayoutBoxComponent,
     TapToTopComponent,
-    DiscountPipe
+    DiscountPipe,
+    QuickProductSpecComponent
   ]
 })
 export class SharedModule { }

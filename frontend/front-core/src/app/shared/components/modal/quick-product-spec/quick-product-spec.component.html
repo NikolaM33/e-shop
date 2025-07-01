@@ -1,0 +1,34 @@
+<ng-template #content let-modal>
+    <div class="modal-header justify-content-between">
+        <h5 class="modal-title f-w-600" id="exampleModalLabel">{{"CHOSE_SPEC" | translate}}</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body ">
+        <form class="variants clearfix product-right  d-flex flex-column align-items-center justify-content-center">
+            <ul class="color-variant height-30">
+                <li [class]="color" [class.active]="selectedColor === color" *ngFor="let color of product.colors"
+                    [ngStyle]="{'background-color': color?.color}" (click)="selectColor(color)">
+                </li>
+            </ul>
+            <div class="size-box" *ngIf="product?.sizes.length">
+                <ul>
+                    <li [class.active]="selectedSize === size" *ngFor="let size of product.sizes">
+                        <a href="javascript:void(0)" (click)="selectSize(size)">
+                            {{ size?.size | titlecase }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+           
+        </form>
+    </div>
+    <div class="modal-footer">
+       <button title="Add to Cart" (click)="addToCart(product)" class="add-to-cart btn btn-solid" [class.disabled]="(product?.sizes.length && !selectedSize) || 
+                    (product?.colors.length && !selectedColor) ">{{"ADD_TO_CART" |
+                translate}}</button>
+        <button class="btn btn-outline" type="button" data-dismiss="modal"
+            (click)="modal.dismiss('Cross click')">{{"CLOSE" | translate}}</button>
+    </div>
+</ng-template>

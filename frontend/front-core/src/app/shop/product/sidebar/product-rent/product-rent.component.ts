@@ -7,6 +7,7 @@ import { SizeModalComponent } from "../../../../shared/components/modal/size-mod
 import { environment } from 'src/environments/environment';
 import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbDate, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { switchMap, timer } from 'rxjs';
 
 
 @Component({
@@ -32,8 +33,8 @@ export class ProductRentComponent implements OnInit {
   public ProductDetailsThumbConfig: any = ProductDetailsThumbSlider;
   formatter = inject(NgbDateParserFormatter);
   private _currentDate: NgbDateStruct;
-
-
+  availabilityStatus: boolean | null = true;
+  public minDate;
   constructor(private route: ActivatedRoute, private router: Router, fb: FormBuilder,
     public productService: ProductService) {
     this.route.paramMap.subscribe(params =>  this.productId = params.get('slug'));
@@ -58,8 +59,52 @@ export class ProductRentComponent implements OnInit {
       }
     )
 
-  }
+    this.rentForm.valueChanges.subscribe(()=>{
+      this.checkAvailability();
+    })
+ const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    this.minDate = {
+      year: tomorrow.getFullYear(),
+      month: tomorrow.getMonth() + 1,
+      day: tomorrow.getDate()
+    };
 
+
+  }
+ checkAvailability(): void {
+    this.availabilityStatus = null;
+ 
+    const startDate: NgbDate = this.rentForm.get('startDate')?.value;
+    const duration: number = this.rentForm.get('duration')?.value;
+
+    // If either start date or duration is invalid, don't make the API call
+    if (!startDate || duration <= 0) {
+      this.availabilityStatus = null;
+      return;
+    }
+
+   
+   const minLoadingTime = 500; // milliseconds
+  
+  // Combine API call with a minimum delay
+  timer(minLoadingTime).pipe(
+    switchMap(() => 
+      this.productService.checkRentProductAvailability(this.product.id, startDate, duration)
+    )
+  ).subscribe(
+    (response: number) => {
+      this.product.quantity = response;
+      this.availabilityStatus = response > 0;
+    },
+    (error) => {
+      console.error('Error checking availability:', error);
+      this.availabilityStatus = false;
+      this.product.quantity = 0;
+    }
+  );
+  }
   fetchData (){
     this.productService.getProductById(this.productId).subscribe((data:any)=>{
       this.product=data;

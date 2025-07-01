@@ -62,10 +62,10 @@ export class ProductListComponent implements OnInit {
    }
 
    openProductDetail(productId:string){
-    this.router.navigate(['products/physical/product-detail/',productId])
+    this.router.navigate(['products/product-detail/',productId])
    }
    editProduct(productId:string){
-    this.router.navigate(['products/physical/edit-product/',productId])
+    this.router.navigate(['products/edit-product/',productId])
 
    }
 }

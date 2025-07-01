@@ -1,6 +1,7 @@
 package com.shop.contoller.clientapp;
 
 
+import com.shop.domain.dto.PaymentDTO;
 import com.shop.domain.dto.category.CategoryDTO;
 import com.shop.domain.dto.order.OrderDTO;
 import com.shop.domain.dto.product.ProductDTO;
@@ -11,10 +12,12 @@ import com.shop.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +73,11 @@ public class ShopController {
     public ResponseEntity<List<ProductDTO>> getRandomProducts (){
         return new ResponseEntity<>(productService.getRandomProducts(), HttpStatus.OK);
     }
+    @GetMapping ("/product/{productId}/rent-availability")
+    public ResponseEntity<Integer> getQuantityAvailableForRent (@PathVariable String productId, @RequestParam(name = "startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate startDate,
+                                                                @RequestParam(name = "duration") Double duration){
+        return new ResponseEntity<>(productService.getQuantityAvailableForRent(productId,startDate,duration), HttpStatus.OK);
+    }
 
     @PostMapping("/order")
     public ResponseEntity<OrderDTO> createOrder (@RequestBody OrderDTO orderDTO){
@@ -80,6 +88,12 @@ public class ShopController {
     public ResponseEntity<OrderDTO> getOrder (@PathVariable String orderId){
         return new ResponseEntity<>(orderService.getOrder(orderId), HttpStatus.OK);
     }
+
+    @PostMapping ("/order/{orderId}/payment")
+    public ResponseEntity<OrderDTO> updateOrderPayment (@PathVariable String orderId, @RequestBody PaymentDTO paymentDTO){
+        return new ResponseEntity<>(orderService.updateOrderPayment(orderId, paymentDTO), HttpStatus.OK);
+    }
+
 
 
 }

@@ -26,11 +26,11 @@ export class PaymentComponent {
   async ngOnInit() {
     this.stripe = await loadStripe(environment.stripe_token);
     this.elements = this.stripe.elements();
-   
+
 
     this.elements = this.stripe.elements();
 
-    this.card = this.elements.create('card',{
+    this.card = this.elements.create('card', {
       hidePostalCode: true,
     });
     this.card.mount('#card-element');
@@ -42,7 +42,7 @@ export class PaymentComponent {
     this.productService.createPaymentIntent(this.orderDetails,
     ).subscribe(
       async (response) => {
-        const { clientSecret } = response;
+        const { clientSecret, orderId } = response;
 
         const { error, paymentIntent } = await this.stripe.confirmCardPayment(
           clientSecret,
@@ -54,18 +54,29 @@ export class PaymentComponent {
         if (error) {
           alert(error.message);
           this.isProcessing = false;
+          const payment = {
+            paymentId: paymentIntent?.id || null,
+            paymentStatus: 'FAILED',
+            paymentMethod: "CARD",
+          };
+          this.productService.updateOrderPayment(orderId, payment).subscribe();
         } else {
-          if (paymentIntent.status === 'succeeded') {
-            this.orderDetails.paymentId = paymentIntent.id;
-            this.orderDetails.paymentStatus = paymentIntent.status;
-            this.orderDetails.paymentMethod = "CARD";
-            this.productService.createOrder(this.orderDetails).subscribe((data: any) => {
-              this.activeModal.close({ orderId: data.id });
-            })
-          } else {
-            alert(`Payment status: ${paymentIntent.status}`);
-            this.isProcessing = false;
+
+          const payment = {
+            paymentId: paymentIntent.id,
+            paymentStatus: paymentIntent.status,
+            paymentMethod: "CARD",
           }
+
+          this.productService.updateOrderPayment(orderId, payment).subscribe((data: any) => {
+            if (paymentIntent.status === 'succeeded') {
+              this.activeModal.close({ orderId: data.id });
+            } else {
+              alert(`Payment status: ${paymentIntent.status}`);
+              this.isProcessing = false;
+            }
+          });
+
         }
       },
       // ... (rest of error handling)

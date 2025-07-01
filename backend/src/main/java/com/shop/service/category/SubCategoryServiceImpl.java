@@ -4,11 +4,10 @@ import com.shop.config.error.BadRequestException;
 import com.shop.domain.category.SubCategory;
 import com.shop.domain.dto.category.SubCategoryDTO;
 import com.shop.domain.entity.EntityStatus;
-import com.shop.repository.mongo.subcategory.SubCategoryMongoRepository;
+import com.shop.repository.subcategory.SubCategoryRepository;
 import com.shop.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +33,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     private final FileManager fileManager;
 
-    private final SubCategoryMongoRepository subCategoryMongoRepository;
+    private final SubCategoryRepository subCategoryRepository;
 
     /**
      * @param subCategoryDTO
@@ -56,7 +55,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
             log.error(e.getMessage());
         }
         subCategory.setImageType(image.getContentType());
-        subCategoryMongoRepository.save(subCategory);
+        subCategoryRepository.save(subCategory);
         return true;
     }
 
@@ -67,8 +66,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
      */
     @Override
     public Page<SubCategoryDTO> getSubCategories(Optional<String> filter, Pageable pageable) {
-        return filter.map(s -> subCategoryMongoRepository.findByEntityStatusAndNameLikeIgnoreCase(EntityStatus.REGULAR, s, pageable).map(this::convertToSubCategoryDTO))
-                .orElseGet(() -> subCategoryMongoRepository.findByEntityStatus(EntityStatus.REGULAR, pageable).map(this::convertToSubCategoryDTO));
+        return filter.map(s -> subCategoryRepository.findByEntityStatusAndNameLikeIgnoreCase(EntityStatus.REGULAR, s, pageable).map(this::convertToSubCategoryDTO))
+                .orElseGet(() -> subCategoryRepository.findByEntityStatus(EntityStatus.REGULAR, pageable).map(this::convertToSubCategoryDTO));
     }
 
     /**
@@ -94,7 +93,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
             }
 
         }
-        return convertToSubCategoryDTO(subCategoryMongoRepository.save(subCategory));
+        return convertToSubCategoryDTO(subCategoryRepository.save(subCategory));
     }
 
     /**
@@ -103,7 +102,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
      */
     @Override
     public SubCategory getSubCategory(String subCategoryId) {
-        return subCategoryMongoRepository.findByIdAndEntityStatus(subCategoryId,EntityStatus.REGULAR).orElseThrow(()->new BadRequestException(SUBCATEGORY_NOT_FOUND));
+        return subCategoryRepository.findByIdAndEntityStatus(subCategoryId,EntityStatus.REGULAR).orElseThrow(()->new BadRequestException(SUBCATEGORY_NOT_FOUND));
 
     }
 
@@ -116,7 +115,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     public Boolean deleteSubCategory(String subCategoryId) {
         SubCategory subCategory=getSubCategory(subCategoryId);
         subCategory.setEntityStatus(EntityStatus.DELETED);
-        subCategoryMongoRepository.save(subCategory);
+        subCategoryRepository.save(subCategory);
         return true;
     }
 
@@ -126,7 +125,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
      */
     @Override
     public List<SubCategoryDTO> findSubCategoryOfCategory(String categoryId) {
-        return subCategoryMongoRepository.findByCategoryIdAndEntityStatus(categoryId,EntityStatus.REGULAR).stream().map(subCategory -> SubCategoryDTO.builder().name(subCategory.getName())
+        return subCategoryRepository.findByCategoryIdAndEntityStatus(categoryId,EntityStatus.REGULAR).stream().map(subCategory -> SubCategoryDTO.builder().name(subCategory.getName())
                 .id(subCategory.getId()).specification(subCategory.getSpecification()).build()).collect(Collectors.toList());
     }
 

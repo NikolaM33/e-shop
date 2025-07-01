@@ -14,7 +14,7 @@ import { SharedModule } from "../../../shared/shared.module";
   styleUrls: ['./collection.component.scss'],
 })
 export class CollectionComponent implements OnInit {
-  
+
   public grid: string = 'col-xl-3 col-md-6';
   public layoutView: string = 'grid-view';
   public products: Product[] = [];
@@ -34,48 +34,49 @@ export class CollectionComponent implements OnInit {
   filterParams = this.productService.filterParams;
 
   // Assuming sortParams is an Observable that emits the current sort criteria
-  params = new BehaviorSubject<any>({}); 
+  params = new BehaviorSubject<any>({});
 
   constructor(private route: ActivatedRoute, private router: Router,
-    private viewScroller: ViewportScroller, public productService: ProductService) {   
-      // Get Query params..
-      this.route.queryParams.subscribe(params => {
-       
-        this.category =params.category
-        this.productService.updateCategoryFilter(this.category)
-        
-      })
+    private viewScroller: ViewportScroller, public productService: ProductService) {
+    // Get Query params..
+    this.route.queryParams.subscribe(params => {
+
+      this.category = params.category
+      this.productService.updateCategoryFilter(this.category)
+
+    })
   }
 
   ngOnInit(): void {
     combineLatest([this.filterParams, this.params])
-    .subscribe(([filters, params]) => {
-      // Fetch products with the latest filters and sort
-      this.fetchProducts(filters, params);
-    });
-    
+      .subscribe(([filters, params]) => {
+        // Fetch products with the latest filters and sort
+        this.fetchProducts(filters, params);
+      });
+
   }
 
-  fetchProducts(filters:any, params:any){
-    //remove udnefined filters
+  fetchProducts(filters: any, params: any) {
     const cleanedFilters = Object.fromEntries(
       Object.entries(filters).filter(([_, value]) => value !== undefined)
-    );    params ={...params,
+    );
+    params = {
+      ...params,
       type: 'SALE'
     }
-    this.productService.getProductsFilter(cleanedFilters, params).subscribe((data:any[])=>{
-      this.products=data;
-  })
+    this.productService.getProductsFilter(cleanedFilters, params).subscribe((data: any[]) => {
+      this.products = data;
+    })
   }
 
 
 
   // SortBy Filter
   sortByFilter(value) {
-    
-    const sortParams= {
-      sortActive: (value === 'a-z' || value ==='z-a')? 'name': 'price',
-      sortDirection: (value === 'a-z' || value==='low')? 'asc': 'dsc'
+
+    const sortParams = {
+      sortActive: (value === 'a-z' || value === 'z-a') ? 'name' : 'price',
+      sortDirection: (value === 'a-z' || value === 'low') ? 'asc' : 'dsc'
     }
     this.params.next(sortParams);
   }
@@ -83,7 +84,7 @@ export class CollectionComponent implements OnInit {
 
   // product Pagination
   setPage(page: number) {
-    this.router.navigate([], { 
+    this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { page: page },
       queryParamsHandling: 'merge', // preserve the existing query params in the route
@@ -102,7 +103,7 @@ export class CollectionComponent implements OnInit {
   // Change Layout View
   updateLayoutView(value: string) {
     this.layoutView = value;
-    if(value == 'list-view')
+    if (value == 'list-view')
       this.grid = 'col-lg-12';
     else
       this.grid = 'col-xl-3 col-md-6';

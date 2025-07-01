@@ -36,7 +36,6 @@ tagTitle:any;
 
   open(content, model?) {
     if(model){
-      console.log(model);
       this.tagTitle=model.title;
       this.tagIDForEdit=model.id;
     }

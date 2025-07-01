@@ -8,7 +8,7 @@ import com.shop.domain.dto.user.UserDTO;
 import com.shop.domain.entity.EntityStatus;
 import com.shop.domain.user.User;
 import com.shop.domain.user.UserType;
-import com.shop.repository.mongo.user.UserMongoRepository;
+import com.shop.repository.user.UserRepository;
 import com.shop.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.file.AccessDeniedException;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +38,7 @@ import static com.shop.config.error.ErrorMessageConstants.USER_NOT_FOUND;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl  implements UserService {
 
-    private final UserMongoRepository userRepository;
+    private final UserRepository userRepository;
 
     private final JwtUtil jwtUtil;
 

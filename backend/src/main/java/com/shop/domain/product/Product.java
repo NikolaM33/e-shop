@@ -5,14 +5,13 @@ import com.shop.domain.category.SubCategory;
 import com.shop.domain.dto.product.Color;
 import com.shop.domain.dto.product.ColorSizeMapping;
 import com.shop.domain.dto.product.Size;
-import com.shop.domain.entity.mongo.AbstractMongoStatusEntity;
+import com.shop.domain.entity.AbstractStatusEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,9 +19,8 @@ import java.util.HashMap;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Entity
 @Document(collection = "product")
-public class Product extends AbstractMongoStatusEntity {
+public class Product extends AbstractStatusEntity {
 
     private static final long serialVersionUID = 1L;
 

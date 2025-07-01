@@ -47,38 +47,24 @@ export class RentCollectionComponent {
   ngOnInit(): void {
     combineLatest([this.filterParams, this.params])
     .subscribe(([filters, params]) => {
-      // Fetch products with the latest filters and sort
       this.fetchProducts(filters, params);
     });
-    // this.productService.filterParams.subscribe(filters=>{
-    //   this.fetchProducts(filters);
-    
-    // })
+
   }
 
   fetchProducts(filters:any, params:any){
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => value !== undefined)
+    ); 
     params ={...params,
       type: 'RENT'
     }
-
-    this.productService.getProductsFilter(filters, params).subscribe((data:any[])=>{
+    this.productService.getProductsFilter(cleanedFilters, params).subscribe((data:any[])=>{
       this.products=data;
   })
   }
 
-  private setProductImages (product:any):Images[]{
-    let images:Images[]=[];
-    for (let i=1; i<=6; i++){
-      let img: Images={
-      src:`${environment.publicS3Url}/product/${product[`image${i}FileIdentifier`]}`
-      }
-      images.push(img);
-    }
 
-    return images;
-  }
-
-  // Append filter value to Url
   updateFilter(tags: any) {
     tags.page = null; // Reset Pagination
     this.router.navigate([], { 
@@ -92,9 +78,7 @@ export class RentCollectionComponent {
     });
   }
 
-  // SortBy Filter
   sortByFilter(value) {
-    
     const sortParams= {
       sortActive: (value === 'a-z' || value ==='z-a')? 'name': 'price',
       sortDirection: (value === 'a-z' || value==='low')? 'asc': 'dsc'
@@ -102,7 +86,6 @@ export class RentCollectionComponent {
     this.params.next(sortParams);
   }
 
-  // Remove Tag
   removeTag(tag) {
   
     this.brands = this.brands.filter(val => val !== tag);

@@ -1,0 +1,22 @@
+.my-orders-container {
+  padding: 20px;
+  
+  .table {
+    th {
+      font-weight: 500;
+    }
+    
+    .badge {
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+  }
+  
+  .pagination {
+    .page-item {
+      cursor: pointer;
+    }
+  }
+}

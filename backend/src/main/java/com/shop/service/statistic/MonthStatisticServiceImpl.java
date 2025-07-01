@@ -9,7 +9,7 @@ import com.shop.domain.product.ProductType;
 import com.shop.domain.statistic.MonthStatistic;
 import com.shop.domain.user.User;
 import com.shop.domain.user.UserType;
-import com.shop.repository.mongo.statistic.MonthStatisticRepository;
+import com.shop.repository.statistic.MonthStatisticRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;

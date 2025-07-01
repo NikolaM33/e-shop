@@ -82,7 +82,6 @@ export class ProductService {
   }
 
   mapApiResponseToProduct(apiData: any): Product {
-    console.log(apiData)
     return {
       id: apiData.id,
       title: apiData.name,
@@ -106,10 +105,10 @@ export class ProductService {
       priceWithDiscount: apiData.priceWithDiscount,
       discountStartDate: apiData.discountStartDate,
       discountEndDate: apiData.discountEndDate,
+      type: apiData.type
     };
   }
   private mapSpecifications(specifications: { [key: string]: string }): any[] {
-    console.log(specifications)
     return Object.entries(specifications).map(([key, value]) => ({
       key,
       value
@@ -117,7 +116,6 @@ export class ProductService {
   }
 
   public setProductImages(product: any): Images[] {
-    console.log(product)
     let images: Images[] = [];
     for (let i = 1; i <= 6; i++) {
       let img: Images = {

@@ -77,6 +77,7 @@ export class QuickViewComponent implements OnInit, OnDestroy  {
     const status = await this.productService.addToCart(product);
     if(status)
       this.router.navigate(['/shop/cart']);
+
   }
 
   ngOnDestroy() {

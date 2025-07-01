@@ -91,5 +91,19 @@
   "WISHLIST_EMPTY_DESCRIPTION": "Istrazite vise, oznacite neke proizvode",
   "AVAILABILITY": "Dostupnost",
   "REMOVE": "Ukloni",
-  "EMPTY_CART_DESCRIPTION": "Istrazite vise, dodajte proizvode u korpu"
+  "EMPTY_CART_DESCRIPTION": "Istrazite vise, dodajte proizvode u korpu",
+  "COMPARE_LIST_EMPTY": "Lista proizovda za uporedjivanje je prazna",
+  "CHOSE_SPEC": "Izaberi specifikaciju",
+  "CLOSE": "Zatvori",
+  "CHECKING_AVAILABILITY": "Proveravamo dostupnost",
+  "NOT_AVAILABLE" : "Prozivod nije dostupan",
+  "PROCESSING": "OBRADA",
+  "SHIPPED": "POSLATO",
+  "DELIVERED": "DOSTAVLJENO",
+  "READY_FOR_PICKUP": "SPREMNO ZA PREUZIMANJE",
+  "CANCELED": "OTKAZANO",
+  "PENDING_APPROVAL": "ČEKA ODOBRENJE",
+  "STATUS": "Status",
+  "MY_ACCOUNT" :"Moj Nalog",
+  "MY_ORDERS": "Moje narudzbine"
 }

@@ -4,7 +4,9 @@ import com.shop.domain.product.Product;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 @Data
 public class OrderProduct {
@@ -28,7 +30,9 @@ public class OrderProduct {
 
     private Integer discountPercent;
 
-    private Date rentStartDate;
+    private LocalDate rentStartDate;
+
+    private LocalDateTime rentEndDate;
 
     private Double rentDurationDays;
 }

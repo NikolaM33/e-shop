@@ -10,8 +10,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableMongoAuditing(auditorAwareRef = "auditorAware")
-@Primary
-@EnableMongoRepositories(basePackages = "com.shop.repository.mongo")
+@EnableMongoRepositories(basePackages = "com.shop.repository")
 public class MongoConfig {
     @Bean
     public AuditorAware<String> auditorAware() {

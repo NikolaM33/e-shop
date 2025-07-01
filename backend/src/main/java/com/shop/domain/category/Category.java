@@ -1,19 +1,15 @@
 package com.shop.domain.category;
 
-import com.shop.domain.entity.mongo.AbstractMongoStatusEntity;
+import com.shop.domain.entity.AbstractStatusEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
-
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Entity
-//@Table(name = "category")
 @Document(collection = "categories")
-public class Category  extends AbstractMongoStatusEntity {
+public class Category  extends AbstractStatusEntity {
 
     private static final long serialVersionUID = 1L;
 

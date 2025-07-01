@@ -115,20 +115,6 @@ export class ProductLeftSidebarComponent implements OnInit {
     this.mobileSidebar = !this.mobileSidebar;
   }
 
-  private setProductImages (product:any):Images[]{
-    let images:Images[]=[];
-    for (let i=1; i<=6; i++){
-      let img: Images={
-      src:`${environment.publicS3Url}/product/${product[`image${i}FileIdentifier`]}`,
-      alt: `Image ${i}`
-      }
-      images.push(img);
-    }
-
-    return images;
-  }
-
-
   selectColor(color, index){
     this.activeSlide = index;
     this.selectedColor = color;

@@ -1,14 +1,16 @@
 package com.shop.service.order;
 
 import com.shop.config.error.BadRequestException;
+import com.shop.domain.dto.PaymentDTO;
 import com.shop.domain.dto.order.OrderDTO;
 import com.shop.domain.dto.order.OrderProductDTO;
 import com.shop.domain.entity.EntityStatus;
 import com.shop.domain.order.*;
 import com.shop.domain.order.product.OrderProduct;
-import com.shop.repository.mongo.order.OrderMongoRepository;
-import com.shop.repository.mongo.product.ProductMongoRepository;
-import com.shop.repository.mongo.user.UserMongoRepository;
+import com.shop.domain.product.Product;
+import com.shop.repository.order.OrderRepository;
+import com.shop.repository.product.ProductRepository;
+import com.shop.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.shop.config.error.ErrorMessageConstants.*;
@@ -33,11 +38,11 @@ import static com.shop.config.error.ErrorMessageConstants.*;
 @Service
 public class OrderServiceImpl implements OrderService{
 
-    private final UserMongoRepository userMongoRepository;
+    private final UserRepository userRepository;
 
-    private final OrderMongoRepository orderMongoRepository;
+    private final OrderRepository orderRepository;
 
-    private final ProductMongoRepository productMongoRepository;
+    private final ProductRepository productRepository;
     /**
      * @param orderDTO
      * @return
@@ -47,12 +52,14 @@ public class OrderServiceImpl implements OrderService{
     public OrderDTO createOrder(OrderDTO orderDTO) {
         Order order = convertFromDTO(orderDTO);
         order.setEntityStatus(EntityStatus.REGULAR);
-        if (order.getPaymentStatus().equals(PaymentStatus.SUCCEEDED) || order.getPaymentMethod().equals(PaymentMethod.PAY_ON_DELIVERY)){
+        if ((PaymentStatus.SUCCEEDED.equals(order.getPaymentStatus())) ||
+                PaymentMethod.PAY_ON_DELIVERY.equals(order.getPaymentMethod())){
             order.setStatus(OrderStatus.PROCESSING);
         }else {
             order.setStatus(OrderStatus.PENDING_APPROVAL);
         }
-        return convertToDTO(orderMongoRepository.save(order));
+        reduceOrderedProductsStock(order.getProducts());
+        return convertToDTO(orderRepository.save(order));
     }
 
     /**
@@ -61,7 +68,7 @@ public class OrderServiceImpl implements OrderService{
      */
     @Override
     public OrderDTO getOrder(String orderId) {
-        return convertToDTO(orderMongoRepository.findByIdAndEntityStatus(orderId,EntityStatus.REGULAR).orElseThrow(()-> new BadRequestException(ORDER_NOT_FOUND)));
+        return convertToDTO(orderRepository.findByIdAndEntityStatus(orderId,EntityStatus.REGULAR).orElseThrow(()-> new BadRequestException(ORDER_NOT_FOUND)));
     }
 
     /**
@@ -70,7 +77,7 @@ public class OrderServiceImpl implements OrderService{
      */
     @Override
     public Page<OrderDTO> getOrders(Pageable pageable) {
-        return orderMongoRepository.findByEntityStatus(EntityStatus.REGULAR, pageable).map(this::convertToDTO);
+        return orderRepository.findByEntityStatus(EntityStatus.REGULAR, pageable).map(this::convertToDTO);
     }
 
     /**
@@ -81,7 +88,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional
     public OrderDTO updateOrderStatus(String orderId, String status) {
-        Order order = orderMongoRepository.findByIdAndEntityStatus(orderId, EntityStatus.REGULAR).orElseThrow(()-> new  BadRequestException(ORDER_NOT_FOUND));
+        Order order = orderRepository.findByIdAndEntityStatus(orderId, EntityStatus.REGULAR).orElseThrow(()-> new  BadRequestException(ORDER_NOT_FOUND));
         OrderStatus orderStatus;
         try {
             orderStatus = OrderStatus.valueOf(status.toUpperCase());
@@ -90,14 +97,74 @@ public class OrderServiceImpl implements OrderService{
         }
 
         order.setStatus(orderStatus);
-        return convertToDTO(orderMongoRepository.save(order));
+        return convertToDTO(orderRepository.save(order));
     }
 
+    /**
+     * @param orderId
+     * @param paymentIntentId
+     */
+    @Override
+    public void attachPaymentIntent(String orderId, String paymentIntentId) {
+        Order order = orderRepository.findByIdAndEntityStatus(orderId, EntityStatus.REGULAR).orElseThrow(()-> new BadRequestException(ORDER_NOT_FOUND));
+        order.setPaymentId(paymentIntentId);
+        orderRepository.save(order);
+    }
+
+    /**
+     * @param orderId
+     * @param paymentDTO
+     * @return
+     */
+    @Override
+    @Transactional
+    public OrderDTO updateOrderPayment(String orderId, PaymentDTO paymentDTO) {
+        Order order = orderRepository.findByIdAndEntityStatus(orderId,EntityStatus.REGULAR).orElseThrow(()-> new BadRequestException(ORDER_NOT_FOUND));
+        if (!order.getPaymentId().equals(paymentDTO.getPaymentId())) {
+            throw new BadRequestException(PAYMENT_INTENT_ID_MISMATCH);
+        }
+
+        order.setPaymentStatus(PaymentStatus.valueOf(paymentDTO.getPaymentStatus().toUpperCase()));
+        order.setPaymentMethod(PaymentMethod.valueOf(paymentDTO.getPaymentMethod().toUpperCase()));
+        order.setPaymentConfirmedAt(LocalDateTime.now());
+
+        return convertToDTO(orderRepository.save(order));
+    }
+
+    /**
+     * @param userId
+     * @param pageable
+     * @return
+     */
+    @Override
+    public Page<OrderDTO> getUserOrders(String userId, Pageable pageable) {
+        return orderRepository.findByUserIdAndEntityStatus(userId, EntityStatus.REGULAR, pageable).map(this::convertToDTO);
+    }
+
+    @Transactional
+    private void reduceOrderedProductsStock (List<OrderProduct> orderProduct) {
+        for (OrderProduct op : orderProduct) {
+            Product product = op.getProduct();
+            int remaining = product.getQuantity() - op.getQuantity();
+
+            if (remaining < 0) {
+                throw new BadRequestException("Insufficient stock for product: " + product.getName());
+            }
+
+            product.setQuantity(remaining);
+        }
+
+        productRepository.saveAll(
+                orderProduct.stream()
+                        .map(OrderProduct::getProduct)
+                        .collect(Collectors.toList())
+        );
+    }
 
     private Order convertFromDTO(OrderDTO orderDTO){
         Order order =  new Order();
         if(orderDTO.getUserId()!=null){
-            order.setUser(userMongoRepository.findByIdAndEntityStatus(orderDTO.getUserId(), EntityStatus.REGULAR).orElseThrow(()-> new BadRequestException(USER_NOT_FOUND)));
+            order.setUser(userRepository.findByIdAndEntityStatus(orderDTO.getUserId(), EntityStatus.REGULAR).orElseThrow(()-> new BadRequestException(USER_NOT_FOUND)));
         }
         order.setCustomerFirstName(orderDTO.getCustomerFirstName());
         order.setCustomerLastName(orderDTO.getCustomerLastName());
@@ -113,7 +180,7 @@ public class OrderServiceImpl implements OrderService{
         order.setPaymentMethod(PaymentMethod.valueOf(orderDTO.getPaymentMethod().toUpperCase()));
         if (order.getPaymentMethod().equals(PaymentMethod.PAY_ON_DELIVERY)){
             order.setPaymentStatus(PaymentStatus.PENDING);
-        }else {
+        }else if (orderDTO.getPaymentStatus() != null) {
             order.setPaymentStatus(PaymentStatus.valueOf(orderDTO.getPaymentStatus().toUpperCase()));
         }
 
@@ -125,9 +192,27 @@ public class OrderServiceImpl implements OrderService{
         return order;
     }
 
+    public LocalDateTime calculateRentEndDate(LocalDate rentStartDate, double rentDurationDays) {
+        LocalDateTime rentStartDateTime = rentStartDate.atStartOfDay();
+
+        long fullDays = (long) rentDurationDays;
+
+        double fractionalPart = rentDurationDays - fullDays;
+
+        LocalDateTime rentEndDateTime = rentStartDateTime.plusDays(fullDays);
+
+        if (fractionalPart > 0) {
+            long hours = Math.round(fractionalPart * 24);
+            rentEndDateTime = rentEndDateTime.plusHours(hours);
+        }
+
+        return rentEndDateTime;
+    }
+
+
     private OrderProduct convertFromOrderProductDTO (OrderProductDTO orderProductDTO){
         OrderProduct orderProduct =  new OrderProduct();
-        orderProduct.setProduct(productMongoRepository.findByIdAndEntityStatus(orderProductDTO.getProductId(),EntityStatus.REGULAR).orElseThrow(()-> new BadRequestException(PRODUCT_NOT_FOUND)));
+        orderProduct.setProduct(productRepository.findByIdAndEntityStatus(orderProductDTO.getProductId(),EntityStatus.REGULAR).orElseThrow(()-> new BadRequestException(PRODUCT_NOT_FOUND)));
         orderProduct.setBrand(orderProductDTO.getBrand());
         orderProduct.setColor(orderProductDTO.getColor());
         orderProduct.setName(orderProductDTO.getName());
@@ -138,6 +223,10 @@ public class OrderServiceImpl implements OrderService{
         orderProduct.setDiscountPercent(orderProductDTO.getDiscountPercent());
         orderProduct.setRentStartDate(orderProductDTO.getRentDateStart());
         orderProduct.setRentDurationDays(orderProductDTO.getRentDurationDays());
+        if (orderProduct.getRentStartDate()!= null){
+            orderProduct.setRentEndDate(calculateRentEndDate(orderProduct.getRentStartDate(), orderProduct.getRentDurationDays()));
+        }
+
 
         return orderProduct;
     }
@@ -157,7 +246,7 @@ public class OrderServiceImpl implements OrderService{
         orderDTO.setType(order.getType().name());
 
         orderDTO.setPaymentMethod(order.getPaymentMethod().name());
-        orderDTO.setPaymentStatus(order.getPaymentStatus().name());
+        orderDTO.setPaymentStatus(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : null);
         orderDTO.setPaymentId(order.getPaymentId());
         orderDTO.setAmount(order.getAmount());
         orderDTO.setCreatedDate(Date.from(order.getCreatedDate()));

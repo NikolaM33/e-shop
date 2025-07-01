@@ -46,7 +46,7 @@ export class NavService {
 	
 		{   title: 'CONTACT',type: 'link', path: '/pages/contact' },
 		{
-			title: 'SERVICE', type: 'link', badge: true, badgeText: 'NEW', active: false, path: '/elements/theme/services'		
+			title: 'SERVICE', type: 'link', badge: true, badgeText: 'NEW', active: false, path: '/pages/services'		
 		},
 		{
 			title: 'ABOUT_US', type: 'link', active: false, path: "/pages/aboutus"

@@ -1,5 +1,6 @@
 package com.shop.service.order;
 
+import com.shop.domain.dto.PaymentDTO;
 import com.shop.domain.dto.order.OrderDTO;
 import org.springframework.data.domain.Page;
 
@@ -17,4 +18,9 @@ public interface OrderService {
 
     OrderDTO updateOrderStatus (String orderId, String status);
 
+    void attachPaymentIntent (String orderId, String paymentIntentId);
+
+    OrderDTO updateOrderPayment (String orderId, PaymentDTO paymentDTO);
+
+    Page<OrderDTO> getUserOrders (String userId, Pageable pageable);
 }

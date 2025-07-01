@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ProductLeftSidebarComponent } from './product/sidebar/product-left-sidebar/product-left-sidebar.component';
-import { FourImageComponent } from './product/four-image/four-image.component';
-import { BundleProductComponent } from './product/bundle-product/bundle-product.component';
 import { ImageOutsideComponent } from './product/image-outside/image-outside.component';
 
 import { CollectionComponent } from './collection/collection-page/collection.component';
@@ -24,6 +22,7 @@ import { DashboardComponent } from '../pages/account/dashboard/dashboard.compone
 import { RentCollectionComponent } from './collection/rent-collection/rent-collection.component';
 import { ProductRentComponent } from './product/sidebar/product-rent/product-rent.component';
 import { OrderSuccessComponent } from '../pages/order-success/order-success.component';
+import { MyOrdersComponent } from '../pages/account/my-orders/my-orders.component';
 
 const routes: Routes = [
   {
@@ -40,20 +39,7 @@ const routes: Routes = [
       data: Resolver
     }
   },
-  {
-    path: 'product/four/image/:slug',
-    component: FourImageComponent,
-    resolve: {
-      data: Resolver
-    }
-  },
-  {
-    path: 'product/bundle/:slug',
-    component: BundleProductComponent,
-    resolve: {
-      data: Resolver
-    }
-  },
+ 
   {
     path: 'product/image/outside/:slug',
     component: ImageOutsideComponent,
@@ -63,7 +49,8 @@ const routes: Routes = [
   },
   {
     path: '',
-    component: CollectionComponent
+    component: CollectionComponent,
+     pathMatch: 'full'
   },
   {
     path: 'rent',
@@ -76,6 +63,10 @@ const routes: Routes = [
   {
     path: 'dashboard', 
     component: DashboardComponent 
+  },
+  {
+    path:'dashboard/my-orders',
+    component: MyOrdersComponent
   },
   {
     path: 'cart',

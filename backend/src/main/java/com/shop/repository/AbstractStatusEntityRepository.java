@@ -1,17 +1,19 @@
 package com.shop.repository;
 
-import com.shop.domain.entity.AbstractStatusEntity;
+
 import com.shop.domain.entity.EntityStatus;
+import com.shop.domain.entity.AbstractStatusEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface AbstractStatusEntityRepository <T extends AbstractStatusEntity, ID> extends JpaRepository<T, ID> {
+public interface AbstractStatusEntityRepository<T extends AbstractStatusEntity, ID> extends MongoRepository<T, ID> {
+
 
     Page<T> findByEntityStatus(EntityStatus entityStatus, Pageable pageable);
 

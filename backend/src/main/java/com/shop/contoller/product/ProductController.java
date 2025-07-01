@@ -1,9 +1,6 @@
 package com.shop.contoller.product;
 
-
-
 import com.shop.domain.dto.product.ProductDTO;
-import com.shop.domain.dto.product.ProductTagDTO;
 import com.shop.service.product.ProductService;
 import com.shop.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;

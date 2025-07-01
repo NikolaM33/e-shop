@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, observable, Observable } from 'rxjs';
 import { map, startWith, delay } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Images, Product } from '../classes/product';
@@ -9,6 +9,7 @@ import { FilterParams } from 'src/app/shop/product/domain/FillterParams';
 import { UtilService } from './util.service';
 import { Order } from '../classes/order';
 import { ColorsComponent } from '../../shop/collection/widgets/colors/colors.component';
+import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
 
 const state = {
   products: JSON.parse(localStorage['products'] || '[]'),
@@ -106,6 +107,14 @@ export class ProductService {
     map(products => products.map(product=> this.mapApiResponseToProduct(product))))
  }
 
+ public checkRentProductAvailability (productId: string, startDate: NgbDate, duration) {
+ const startDateStr = `${startDate.year}-${startDate.month.toString().padStart(2, '0')}-${startDate.day.toString().padStart(2, '0')}`;
+   const params = {
+    startDate : startDateStr,
+    duration
+  }
+  return this.http.get(`${environment.apiUrl}/shop/product/${productId}/rent-availability`, {params})
+ }
  mapApiResponseToProduct(apiData: any): Product {
   return {
     id: apiData.id, 
@@ -129,6 +138,7 @@ export class ProductService {
     priceWithDiscount: apiData.priceWithDiscount,
     discountStartDate: apiData.discountStartDate,
     discountEndDate:  apiData.discountEndDate,
+    type: apiData.type
   };
 }
 private mapSpecifications(specifications: { [key: string]: string }): any[] {
@@ -145,7 +155,7 @@ private mapSpecifications(specifications: { [key: string]: string }): any[] {
     ---------------------------------------------
   */
 public createPaymentIntent (order: Order){
-  return this.http.post<{ clientSecret: string }>(`${environment.apiUrl}/shop/payment/create-payment-intent`, order);
+  return this.http.post<{ clientSecret: string, orderId: string }>(`${environment.apiUrl}/shop/payment/create-payment-intent`, order);
 }
   /*
     ---------------------------------------------
@@ -158,6 +168,14 @@ public createPaymentIntent (order: Order){
 
  public getOrderById (orderId: string){
   return this.http.get(`${environment.apiUrl}/shop/order/${orderId}`)
+ }
+
+  public updateOrderPayment (orderId: string, payment){
+  return this.http.post(`${environment.apiUrl}/shop/order/${orderId}/payment`, payment)
+ }
+
+ public getUserOrders (userId:string, params){
+  return this.http.get(`${environment.apiUrl}/customer/${userId}/orders`, {params: this.utilService.generatePageParams(params), observe: 'response'} )
  }
   /*
     ---------------------------------------------
@@ -304,17 +322,30 @@ public createPaymentIntent (order: Order){
   }
 
   // Total amount 
-  public cartTotalAmount(): Observable<number> {
-    return this.cartItems.pipe(map((product: Product[]) => {
-      return product.reduce((prev, curr: Product) => {
-        let price = curr.price;
-        if(curr.discount) {
-          price = curr.price - (curr.price * curr.discount / 100)
+ public cartTotalAmount(): Observable<number> {
+  return this.cartItems.pipe(
+    map((products: Product[]) => {
+      const total = products.reduce((sum, product: Product) => {
+        let price = product.price;
+
+        if (product.discount && product.discount > 0) {
+          price -= (product.price * product.discount / 100);
         }
-        return (prev + price * curr.quantity) * this.Currency.price;
+
+        let itemTotal = price * product.quantity;
+
+        if (product.rent && product.rentDuration) {
+          itemTotal *= product.rentDuration;
+        }
+
+        return sum + itemTotal;
       }, 0);
-    }));
-  }
+
+      return total * this.Currency.price; // Apply conversion once
+    })
+  );
+}
+  
 
   public clearCart(): boolean {
     state.cart = [];

@@ -91,5 +91,10 @@
   "WISHLIST_EMPTY_DESCRIPTION": "Explore more shortlist some items",
   "AVAILABILITY": "Availability",
   "REMOVE": "Remove",
-  "EMPTY_CART_DESCRIPTION": "Explore more shortlist some items"
+  "EMPTY_CART_DESCRIPTION": "Explore more shortlist some items",
+  "COMPARE_LIST_EMPTY": "Compare List is Empty",
+  "CHOSE_SPEC": "Choose product specification",
+  "CLOSE": "Close",
+  "CHECKING_AVAILABILITY": "Checking Availability",
+  "NOT_AVAILABLE": "Product is not available"
 }

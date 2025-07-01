@@ -1,6 +1,6 @@
 package com.shop.domain.order;
 
-import com.shop.domain.entity.mongo.AbstractMongoStatusEntity;
+import com.shop.domain.entity.AbstractStatusEntity;
 import com.shop.domain.order.product.OrderProduct;
 import com.shop.domain.user.User;
 import lombok.Data;
@@ -8,15 +8,15 @@ import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "order")
-public class Order extends AbstractMongoStatusEntity {
+public class Order extends AbstractStatusEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,6 +52,8 @@ public class Order extends AbstractMongoStatusEntity {
     private Double amount;
 
     private OrderStatus status;
+
+    private LocalDateTime paymentConfirmedAt;
 
     private ArrayList<OrderProduct> products;
 

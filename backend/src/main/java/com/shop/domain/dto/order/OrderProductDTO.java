@@ -3,8 +3,11 @@ package com.shop.domain.dto.order;
 
 import lombok.Data;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
+
 
 
 @Data
@@ -13,6 +16,7 @@ public class OrderProductDTO {
     @NotNull
     private String productId;
 
+    @Min(value = 1)
     private Integer quantity;
 
     private String size;
@@ -29,7 +33,7 @@ public class OrderProductDTO {
 
     private Integer discountPercent;
 
-    private Date rentDateStart;
+    private LocalDate rentDateStart;
 
     private double rentDurationDays;
 

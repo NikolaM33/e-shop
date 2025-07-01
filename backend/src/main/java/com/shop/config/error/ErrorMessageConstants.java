@@ -16,4 +16,10 @@ public class ErrorMessageConstants {
     public static final String USER_NOT_FOUND = "USER_NOT_FOUND";
 
     public static final String ORDER_NOT_FOUND = "ORDER_NOT_FOUND";
+
+    public static final String PRODUCT_NOT_AVAILABLE_FOR_PURCHASE = "PRODUCT_NOT_AVAILABLE_FOR_PURCHASE";
+
+    public static final String INSUFFICIENT_STOCK_FOR_PRODUCT = "INSUFFICIENT_STOCK_FOR_PRODUCT";
+
+    public static final String PAYMENT_INTENT_ID_MISMATCH= "PAYMENT_INTENT_ID_MISMATCH";
 }

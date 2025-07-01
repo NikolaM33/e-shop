@@ -4,11 +4,10 @@ import com.shop.config.error.BadRequestException;
 import com.shop.domain.category.Category;
 import com.shop.domain.dto.category.CategoryDTO;
 import com.shop.domain.entity.EntityStatus;
-import com.shop.repository.mongo.category.CategoryMongoRepository;
+import com.shop.repository.category.CategoryRepository;
 import com.shop.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final MongoTemplate mongoTemplate;
 
-    private final CategoryMongoRepository categoryMongoRepository;
+    private final CategoryRepository categoryRepository;
     /**
      * @param categoryDTO
      * @param image
@@ -58,7 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new BadRequestException(FILE_UPLOAD_ERROR);
         }
         category.setImageFileIdentifier(fileManager.saveFileToSystem(imageData, fileManager.CATEGORY_FILES_PATH));
-        categoryMongoRepository.save(category);
+        categoryRepository.save(category);
         return true;
     }
 
@@ -69,8 +68,8 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public Page<CategoryDTO> getCategories(Optional<String> filter, Pageable pageable) {
-        return filter.map(s -> categoryMongoRepository.findByEntityStatusAndNameLikeIgnoreCase(EntityStatus.REGULAR, s, pageable).map(this::convertToDTO))
-                .orElseGet(() -> categoryMongoRepository.findByEntityStatus(EntityStatus.REGULAR, pageable).map(this::convertToDTO));
+        return filter.map(s -> categoryRepository.findByEntityStatusAndNameLikeIgnoreCase(EntityStatus.REGULAR, s, pageable).map(this::convertToDTO))
+                .orElseGet(() -> categoryRepository.findByEntityStatus(EntityStatus.REGULAR, pageable).map(this::convertToDTO));
 
     }
 
@@ -105,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
             }
 
         }
-          return convertToDTO(categoryMongoRepository.save(category));
+          return convertToDTO(categoryRepository.save(category));
     }
 
     /**
@@ -118,7 +117,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Boolean deleteCategory(String categoryId) {
         Category category=getOneCategory(categoryId);
         category.setEntityStatus(EntityStatus.DELETED);
-        categoryMongoRepository.save(category);
+        categoryRepository.save(category);
         return true;
     }
 
@@ -127,7 +126,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public List<CategoryDTO> getAllCategories() {
-        return categoryMongoRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(category -> CategoryDTO.builder()
+        return categoryRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(category -> CategoryDTO.builder()
                 .id(category.getId())
                 .name(category.getName()).specification(category.getSpecification()).build()).collect(Collectors.toList());
     }
@@ -145,7 +144,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getOneCategory(String categoryId){
-        return categoryMongoRepository.findById(categoryId).orElseThrow(()->new BadRequestException(CATEGORY_NOT_FOUND));
+        return categoryRepository.findById(categoryId).orElseThrow(()->new BadRequestException(CATEGORY_NOT_FOUND));
 
     }
 
@@ -154,7 +153,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public List<CategoryDTO> getCategoriesForShop() {
-        return categoryMongoRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(category -> CategoryDTO.builder().id(category.getId())
+        return categoryRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(category -> CategoryDTO.builder().id(category.getId())
                 .name(category.getName()).image(category.getImageFileIdentifier()).build()).collect(Collectors.toList());
     }
 }

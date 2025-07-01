@@ -1,31 +1,30 @@
 package com.shop.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.shop.domain.entity.AbstractEntity;
+import com.shop.domain.entity.EntityStatus;
+
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 
-/**
- * Abstract class that should be extended when child
- * entity need information provided by abstract entity class and can be logically deleted .
- *
- */
-@MappedSuperclass
+
 @Data
 @ToString(callSuper = true, exclude = "entityStatus")
 public abstract class AbstractStatusEntity extends AbstractEntity {
 
-        private static final long serialVersionUID = 1L;
-        public AbstractStatusEntity () {}
+    private static final long serialVersionUID = 1L;
 
-        public AbstractStatusEntity (EntityStatus entityStatus) {
-                this.entityStatus = entityStatus;
-        }
+    public AbstractStatusEntity(){};
 
-        @Column(name = "entity_status", nullable = false)
-        @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
-        private EntityStatus entityStatus;
+    public AbstractStatusEntity(EntityStatus entityStatus) {
+        this.entityStatus = entityStatus;
+    }
+
+    @NotNull
+    @Field(name = "entity_status")
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
+    private EntityStatus entityStatus;
 }
-

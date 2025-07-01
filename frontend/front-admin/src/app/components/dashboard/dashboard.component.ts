@@ -115,12 +115,10 @@ export class DashboardComponent implements OnInit {
 
     this.dashboardService.getMonthlyStatistic().subscribe((data: any) => {
       this.statistic = data;
-      console.log("STATS", data)
       this.getLastMonthStatistic();
     });
 
     this.dashboardService.getLowStockProducts().subscribe((data: any) => {
-      console.log("PRODUCTS", data);
       this.lowStackProducts = data;
     });
 

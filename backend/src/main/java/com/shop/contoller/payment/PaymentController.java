@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -28,7 +29,7 @@ public class PaymentController {
     }
 
     @PostMapping("/create-payment-intent")
-    public Map<String, Object> createPaymentIntent(@RequestBody OrderDTO orderDTO) throws StripeException {
-        return paymentService.generatePaymentIntent(orderDTO);
+    public Map<String, Object> createPaymentIntent(@Valid @RequestBody OrderDTO orderDTO) throws StripeException {
+        return paymentService.processOrder(orderDTO);
     }
 }

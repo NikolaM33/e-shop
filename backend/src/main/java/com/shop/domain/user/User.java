@@ -1,7 +1,7 @@
 package com.shop.domain.user;
 
 
-import com.shop.domain.entity.mongo.AbstractMongoStatusEntity;
+import com.shop.domain.entity.AbstractStatusEntity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +20,7 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "user")
-public class User extends AbstractMongoStatusEntity {
+public class User extends AbstractStatusEntity {
 
     private static final long serialVersionUID = 1L;
     @NotBlank

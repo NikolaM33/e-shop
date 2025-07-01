@@ -1,6 +1,6 @@
 package com.shop.domain.statistic;
 
-import com.shop.domain.entity.mongo.AbstractMongoStatusEntity;
+import com.shop.domain.entity.AbstractStatusEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "month_statistic")
-public class MonthStatistic extends AbstractMongoStatusEntity {
+public class MonthStatistic extends AbstractStatusEntity {
 
     private static final long serialVersionUID = 1L;
 

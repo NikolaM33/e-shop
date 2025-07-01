@@ -14399,3 +14399,91 @@ div#loading-bar {
         }
     }
 }
+
+
+$primary-color: #ff8084;
+$secondary-color: #13c9ca;
+$success-color: #81ba00;
+$info-color: #00a8ff;
+$warning-color: #ffbc58;
+$danger-color: #a5a5a5;
+$light-color: #f8f8f9;
+$dark-color: #2a3142;
+
+// Additional colors from your palette
+$semi-dark: #aaaaaa;
+$light-semi-gray: #eff0f1;
+$light-gray: #e8ebf2;
+$dark-gray: #898989;
+$gray-60: #999999;
+$transparent-color: transparent;
+$auth-bg-color: #fafafa;
+$light: #f6f6f6;
+$light-text: #999;
+
+// Badge system
+$badge-name: primary, secondary, success, danger, info, light, dark, warning;
+$badge-color: $primary-color, $secondary-color, $success-color, $danger-color, 
+              $info-color, $light-color, $dark-color, $warning-color;
+
+@each $var in $badge-name {
+  $i: index($badge-name, $var);
+  
+  .badge-#{$var} {
+    background-color: nth($badge-color, $i);
+    color: if($var == light, $dark-color, white);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    // Special case for light badge - dark text
+    @if $var == light {
+      color: $dark-color;
+      border: 1px solid darken($light-color, 10%);
+    }
+    
+    // Special case for dark badge - lighter text
+    @if $var == dark {
+      color: $light-color;
+    }
+  }
+}
+
+// Additional badge variations using your extended color palette
+.badge-gray {
+  background-color: $gray-60;
+  color: white;
+}
+
+.badge-light-gray {
+  background-color: $light-gray;
+  color: $dark-color;
+  border: 1px solid $dark-gray;
+}
+
+.badge-semi-dark {
+  background-color: $semi-dark;
+  color: white;
+}
+
+// Outline version of badges
+@each $var in $badge-name {
+  $i: index($badge-name, $var);
+  
+  .badge-outline-#{$var} {
+    background-color: transparent;
+    color: nth($badge-color, $i);
+    border: 1px solid nth($badge-color, $i);
+    
+    @if $var == light {
+      color: $dark-color;
+    }
+  }
+}

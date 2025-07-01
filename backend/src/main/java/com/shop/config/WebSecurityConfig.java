@@ -2,10 +2,10 @@ package com.shop.config;
 
 import com.shop.config.filter.CorsFilter;
 import com.shop.config.filter.JwtFilter;
+import com.shop.domain.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -67,8 +67,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/reset-password").permitAll()
                 .antMatchers("/user/send-reset-password-email").permitAll()
                 .antMatchers("/user").permitAll()
-                .antMatchers("/administration/**").hasAnyRole("ADMIN","EMPLOYEE")
-                .antMatchers("/customer/**").hasRole("CUSTOMER")
+                .antMatchers("/customer/**").hasRole(UserType.CUSTOMER.name())
+                .antMatchers("/administration/**").hasAnyRole(UserType.ADMIN.name(),UserType.EMPLOYEE.name())
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from "../../shared/services/product.service";
 import { Product } from "../../shared/classes/product";
+import { QuickProductSpecComponent } from 'src/app/shared/components/modal/quick-product-spec/quick-product-spec.component';
 
 @Component({
   selector: 'app-wishlist',
@@ -11,11 +12,11 @@ import { Product } from "../../shared/classes/product";
 export class WishlistComponent implements OnInit {
 
   public products: Product[] = [];
+  @ViewChild("quickProductSpecView") QuickSpecView: QuickProductSpecComponent;
 
-  constructor(private router: Router, 
+  constructor(private router: Router,
     public productService: ProductService) {
     this.productService.wishlistItems.subscribe(response => this.products = response);
-    console.log(this.products)
   }
 
   ngOnInit(): void {
@@ -23,7 +24,7 @@ export class WishlistComponent implements OnInit {
 
   async addToCart(product: any) {
     const status = await this.productService.addToCart(product);
-    if(status) {
+    if (status) {
       this.router.navigate(['/shop/cart']);
       this.removeItem(product);
     }
@@ -33,4 +34,11 @@ export class WishlistComponent implements OnInit {
     this.productService.removeWishlistItem(product);
   }
 
+  selectProductSpec(product) {
+    if (product.sizes.length || product.colors.length) {
+      this.QuickSpecView.openModal(product);
+    } else {
+      this.addToCart(product)
+    }
+  }
 }

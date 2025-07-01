@@ -5,7 +5,7 @@ import com.shop.config.error.BadRequestException;
 import com.shop.domain.dto.product.ProductTagDTO;
 import com.shop.domain.entity.EntityStatus;
 import com.shop.domain.product.ProductTag;
-import com.shop.repository.mongo.product.ProductTagMongoRepository;
+import com.shop.repository.product.ProductTagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import static com.shop.config.error.ErrorMessageConstants.PRODUCT_TAG_NOT_FOUND;
 public class ProductTagServiceImpl  implements  ProductTagService{
 
 
-    private final ProductTagMongoRepository productTagMongoRepository;
+    private final ProductTagRepository productTagRepository;
 
 
     /**
@@ -37,7 +37,7 @@ public class ProductTagServiceImpl  implements  ProductTagService{
         ProductTag tag= new ProductTag();
         tag.setEntityStatus(EntityStatus.REGULAR);
         tag.setTitle(title);
-        productTagMongoRepository.save(tag);
+        productTagRepository.save(tag);
         return true;
     }
 
@@ -46,7 +46,7 @@ public class ProductTagServiceImpl  implements  ProductTagService{
      */
     @Override
     public List<ProductTagDTO> getAllTags() {
-        return productTagMongoRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(this::convertToProductTagDTO).collect(Collectors.toList());
+        return productTagRepository.findByEntityStatus(EntityStatus.REGULAR).stream().map(this::convertToProductTagDTO).collect(Collectors.toList());
     }
 
     /**
@@ -60,7 +60,7 @@ public class ProductTagServiceImpl  implements  ProductTagService{
         ProductTag productTag= getProductTagById(tagId);
         productTag.setTitle(title);
 
-        productTagMongoRepository.save(productTag);
+        productTagRepository.save(productTag);
         return true;
     }
 
@@ -72,7 +72,7 @@ public class ProductTagServiceImpl  implements  ProductTagService{
     public Boolean deleteTag(String tagId) {
         ProductTag productTag =  getProductTagById(tagId);
         productTag.setEntityStatus(EntityStatus.DELETED);
-        productTagMongoRepository.save(productTag);
+        productTagRepository.save(productTag);
         return true;
     }
 
@@ -82,7 +82,7 @@ public class ProductTagServiceImpl  implements  ProductTagService{
      */
     @Override
     public ProductTag getProductTagById(String tagId) {
-        return productTagMongoRepository.findByIdAndEntityStatus(tagId,EntityStatus.REGULAR).orElseThrow(()->new BadRequestException(PRODUCT_TAG_NOT_FOUND));
+        return productTagRepository.findByIdAndEntityStatus(tagId,EntityStatus.REGULAR).orElseThrow(()->new BadRequestException(PRODUCT_TAG_NOT_FOUND));
     }
 
     private ProductTagDTO convertToProductTagDTO (ProductTag tag){

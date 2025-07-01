@@ -1,16 +1,19 @@
 package com.shop.service.product;
 
-import com.mongodb.internal.operation.AggregateToCollectionOperation;
 import com.shop.config.error.BadRequestException;
 import com.shop.domain.category.Category;
 import com.shop.domain.category.SubCategory;
 import com.shop.domain.dto.product.ProductDTO;
 import com.shop.domain.entity.EntityStatus;
+import com.shop.domain.order.Order;
+import com.shop.domain.order.OrderStatus;
+import com.shop.domain.order.product.OrderProduct;
 import com.shop.domain.product.Product;
 import com.shop.domain.product.ProductState;
 import com.shop.domain.product.ProductTag;
 import com.shop.domain.product.ProductType;
-import com.shop.repository.mongo.product.ProductMongoRepository;
+import com.shop.repository.order.OrderRepository;
+import com.shop.repository.product.ProductRepository;
 import com.shop.service.category.CategoryService;
 import com.shop.service.category.SubCategoryService;
 import com.shop.util.FileManager;
@@ -34,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,12 +62,13 @@ public class ProductServiceImpl implements ProductService{
 
     private final FileManager fileManager;
 
-    private final ProductMongoRepository productMongoRepository;
+    private final ProductRepository productRepository;
 
     private final MongoTemplate mongoTemplate;
 
     private final ProductTagService productTagService;
 
+    private final OrderRepository orderRepository;
 
     /**
      * @param productDTO
@@ -87,7 +92,7 @@ public class ProductServiceImpl implements ProductService{
             }
             setProductImages(product,i+1,fileManager.saveFileToSystem(imageData, fileManager.PRODUCT_IMAGES_FILES_PATH));
         }
-        productMongoRepository.save(product);
+        productRepository.save(product);
         return true;
     }
 
@@ -99,7 +104,7 @@ public class ProductServiceImpl implements ProductService{
      */
     @Override
     public Page<ProductDTO> getProducts(Optional<String> state, Optional<String> categoryId, Pageable pageable) {
-        return productMongoRepository.findByEntityStatus(EntityStatus.REGULAR,pageable).map(product -> ProductDTO.builder().id(product.getId())
+        return productRepository.findByEntityStatus(EntityStatus.REGULAR,pageable).map(product -> ProductDTO.builder().id(product.getId())
                 .name(product.getName()).image1FileIdentifier(product.getImage1FileIdentifier()).price(product.getPrice()).code(product.getCode())
                 .tagTitle(product.getTag()!=null ? product.getTag().getTitle() : null)
                 .priceWithDiscount((product.getDiscount() !=null && product.getDiscountStartDate().isBefore(LocalDateTime.now()) && product.getDiscountEndDate().isAfter(LocalDateTime.now()) ? calculatePriceWithDiscount(product.getPrice(), product.getDiscount()) : null) )
@@ -112,7 +117,7 @@ public class ProductServiceImpl implements ProductService{
      */
     @Override
     public ProductDTO getProduct(String productId) {
-        return productMongoRepository.findByIdAndEntityStatus(productId,EntityStatus.REGULAR).map(this::convertToDTO).orElseThrow(()->new BadRequestException(PRODUCT_NOT_FOUND));
+        return productRepository.findByIdAndEntityStatus(productId,EntityStatus.REGULAR).map(this::convertToDTO).orElseThrow(()->new BadRequestException(PRODUCT_NOT_FOUND));
     }
 
     /**
@@ -124,7 +129,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public ProductDTO updateProduct(String productId, ProductDTO productDTO, List<MultipartFile> images) {
-        Product productForUpdate= productMongoRepository.findByIdAndEntityStatus(productId,EntityStatus.REGULAR).orElseThrow(()->new BadRequestException(PRODUCT_NOT_FOUND));
+        Product productForUpdate= productRepository.findByIdAndEntityStatus(productId,EntityStatus.REGULAR).orElseThrow(()->new BadRequestException(PRODUCT_NOT_FOUND));
 
         Product newProduct= convertFromDTO(productDTO);
 
@@ -137,6 +142,7 @@ public class ProductServiceImpl implements ProductService{
         productForUpdate.setSpecification(newProduct.getSpecification());
         productForUpdate.setCategory(newProduct.getCategory());
         productForUpdate.setSubCategory(newProduct.getSubCategory());
+        productForUpdate.setType(newProduct.getType());
         if (productForUpdate.getState().equals(DRAFT) && newProduct.getState().equals(PUBLISHED)){
             productForUpdate.setPublishedDate(LocalDateTime.now());
         }
@@ -147,7 +153,7 @@ public class ProductServiceImpl implements ProductService{
         productForUpdate.setDiscountStartDate(newProduct.getDiscountStartDate());
         productForUpdate.setDiscountEndDate(newProduct.getDiscountEndDate());
 
-        return convertToDTO(productMongoRepository.save(productForUpdate));
+        return convertToDTO(productRepository.save(productForUpdate));
     }
 
     /**
@@ -271,7 +277,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<ProductDTO> getProductsFromCategory(String categoryId) {
         categoryService.getOneCategory(categoryId);
-        return productMongoRepository.findTop10ByCategoryIdAndStatePublishedAndStatusRegular(new ObjectId(categoryId)).stream().map(this::convertToDTO).collect(Collectors.toList());
+        return productRepository.findTop10ByCategoryIdAndStatePublishedAndStatusRegular(new ObjectId(categoryId)).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     /**
@@ -310,6 +316,45 @@ public class ProductServiceImpl implements ProductService{
         return results.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    /**
+     * @param productId
+     * @param startDate
+     * @param duration
+     * @return
+     */
+    @Override
+    public Integer getQuantityAvailableForRent(String productId, LocalDate startDate, double duration) {
+        Product product = productRepository.findByIdAndEntityStatus(productId, EntityStatus.REGULAR)
+                .orElseThrow(() -> new BadRequestException(PRODUCT_NOT_FOUND));
+
+        LocalDateTime rentStartDateTime = startDate.atStartOfDay();
+        long fullDays = (long) duration;
+        double fractionalPart = duration - fullDays;
+
+        LocalDateTime rentEndDateTime = rentStartDateTime.plusDays(fullDays);
+
+        if (fractionalPart > 0) {
+            long hours = Math.round(fractionalPart * 24);
+            rentEndDateTime = rentEndDateTime.plusHours(hours);
+        }
+
+        List<Order> overlappingOrders = orderRepository.findOrdersWithProductAndOverlappingDates(
+                productId, OrderStatus.CANCELED, rentStartDateTime, rentEndDateTime);
+
+        int rentedQuantity = 0;
+        for (Order order : overlappingOrders) {
+            for (OrderProduct orderProduct : order.getProducts()) {
+                if (orderProduct.getProduct().getId().equals(productId)) {
+                    rentedQuantity += orderProduct.getQuantity();
+                }
+            }
+        }
+
+        int availableQuantity = product.getQuantity() - rentedQuantity;
+
+        return Math.max(availableQuantity, 0);
+    }
+
 
     private Product convertFromDTO (ProductDTO productDTO){
         Product product= new Product();
@@ -335,7 +380,7 @@ public class ProductServiceImpl implements ProductService{
             product.setDiscountStartDate(productDTO.getDiscountStartDate().atStartOfDay());
             product.setDiscountEndDate(productDTO.getDiscountEndDate().atTime(23,59,59));
         }
-        if(!productDTO.getTagId().isEmpty()) {
+        if(productDTO.getTagId()!= null && !productDTO.getTagId().isEmpty()) {
             product.setTag(productTagService.getProductTagById(productDTO.getTagId()));
         }
         product.setSizes(productDTO.getSizes());
@@ -392,7 +437,7 @@ public class ProductServiceImpl implements ProductService{
         productDTO.setImage5FileIdentifier(product.getImage5FileIdentifier());
         productDTO.setImage6FileIdentifier(product.getImage6FileIdentifier());
         productDTO.setSpecifications(product.getSpecification());
-
+        productDTO.setType(product.getType().name());
 
         productDTO.setCategoryId(Optional.ofNullable(product.getCategory()).map(Category::getId).orElse(null));
         productDTO.setSubCategoryId(Optional.ofNullable(product.getSubCategory()).map(SubCategory::getId).orElse(null));

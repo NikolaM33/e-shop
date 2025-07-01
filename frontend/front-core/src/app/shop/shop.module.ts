@@ -8,9 +8,6 @@ import { ShopRoutingModule } from './shop-routing.module';
 
 // Product Details Components
 import { ProductLeftSidebarComponent } from './product/sidebar/product-left-sidebar/product-left-sidebar.component';
-import { FourImageComponent } from './product/four-image/four-image.component';
-import { ThreeColumnComponent } from './product/three-column/three-column.component';
-import { BundleProductComponent } from './product/bundle-product/bundle-product.component';
 import { ImageOutsideComponent } from './product/image-outside/image-outside.component';
 
 // Product Details Widgest Components
@@ -40,14 +37,12 @@ import { RentCollectionComponent } from './collection/rent-collection/rent-colle
 import { ProductRentComponent } from './product/sidebar/product-rent/product-rent.component';
 import { PaymentComponent } from './checkout/payment/payment/payment.component';
 import { CollectionComponent } from './collection/collection-page/collection.component';
+import { QuickProductSpecComponent } from '../shared/components/modal/quick-product-spec/quick-product-spec.component';
 
 
 @NgModule({
   declarations: [
     ProductLeftSidebarComponent, 
-    ThreeColumnComponent,
-    FourImageComponent,
-    BundleProductComponent,
     ImageOutsideComponent,
     ServicesComponent,
     CountdownComponent,
@@ -77,7 +72,7 @@ import { CollectionComponent } from './collection/collection-page/collection.com
     InfiniteScrollModule,
     SharedModule,
     ShopRoutingModule,
-    RouterModule
+    RouterModule,
   ]
 })
 export class ShopModule { }

@@ -1,7 +1,7 @@
 <div class="img-wrapper">
     <div class="lable-block" *ngIf="product.tag?.title"><span class="lable3">{{product.tag?.title | translate}}</span></div>
     <div class="front">
-        <a [routerLink]="['/shop/product/', product.id]">
+        <a [routerLink]="product.type =='RENT'? ['/shop/rent/product/', product.id]: ['/shop/product/', product.id]">
             <img  [defaultImage]="'assets/images/product/placeholder.jpg'"
                   [lazyLoad]="product.images[0].src" class="img-fluid"
                   alt="{{ product.images[0].alt }}">
@@ -11,7 +11,7 @@
         <button title="Add to cart" (click)="CartModal.openModal(product)" *ngIf="cartModal">
         	<i class="ti-shopping-cart"></i> 
         </button>
-        <button title="Add to cart" (click)="addToCart(product)" *ngIf="!cartModal">
+        <button title="Add to cart" (click)="selectProductSpec(product)" *ngIf="!cartModal">
         	<i class="ti-shopping-cart"></i> 
         </button>
         <a href="javascript:void(0)" (click)="addToWishlist(product)" title="Add to Wishlist">
@@ -32,7 +32,7 @@
 </div>
 <div class="product-info">
     <bar-rating [rate]="5" [readOnly]="true"></bar-rating>
-    <a [routerLink]="['/shop/product/', product?.id]">
+    <a [routerLink]="product.type =='RENT'? ['/shop/rent/product/', product.id]: ['/shop/product/', product.id]">
     	<h6>{{ product?.title | titlecase }}</h6>
     </a>
     <h4>  {{ product?.price * currency?.price | discount:product | currency:currency?.currency:'symbol' }}
@@ -41,3 +41,4 @@
 
 <app-quick-view #quickView [product]="product" [currency]="currency"></app-quick-view>
 <app-cart-modal #cartModal [product]="product" [currency]="currency" *ngIf="cartModal"></app-cart-modal>
+<app-quick-product-spec  #quickProductSpecView [source]="'product-box'" ></app-quick-product-spec>

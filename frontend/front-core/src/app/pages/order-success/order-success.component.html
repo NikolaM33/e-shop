@@ -40,12 +40,16 @@
                         <div class="col-3 order_detail">
                             <div>
                                 <h4>{{'PRICE' | translate}}</h4>
-                                <h5>{{product.price}} &#8364;</h5>
+                                <h5> {{
+                                    product.discount && product.discountPercent > 0
+                                    ? (product.price * (1 - product.discountPercent / 100)).toFixed(2)
+                                    : product.price
+                                    }} &#8364;</h5>
                             </div>
                         </div>
                     </div>
                     <div class="final-total total-sec">
-                        <h3>{{'TOTAL' | translate}} <span>{{order?.amount}}  &#8364;</span></h3>
+                        <h3>{{'TOTAL' | translate}} <span>{{order?.amount}} &#8364;</span></h3>
                     </div>
                 </div>
             </div>
@@ -76,7 +80,7 @@
                     <div class="col-md-12">
                         <div class="delivery-sec">
                             <h3>{{'EXPECTED_DATE_OF_DELIVERY' | translate}}</h3>
-                            <h2>{{expectedDeliveryDate  | date: 'yyyy-MM-dd'}}</h2>
+                            <h2>{{expectedDeliveryDate | date: 'yyyy-MM-dd'}}</h2>
                         </div>
                     </div>
                 </div>

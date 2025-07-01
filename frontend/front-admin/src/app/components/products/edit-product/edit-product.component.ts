@@ -9,9 +9,11 @@ import {
 } from "@angular/forms";
 import { ProductService } from "../product.service";
 import * as ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { Product } from "../product";
+import { ToastrService } from "ngx-toastr";
+import { quantity } from "chartist";
 
 @Component({
   selector: "app-edit-product",
@@ -43,13 +45,13 @@ export class EditProductComponent implements OnInit {
   categoryChanged: boolean = false;
   subCategoryChanged: boolean = false;
   oldSubCateogryId: any;
-  tags:any[]=[];
+  tags: any[] = [];
   formatter = inject(NgbDateParserFormatter);
 
   constructor(
     private fb: UntypedFormBuilder,
     private productService: ProductService,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute, private toastrService: ToastrService, private router: Router
   ) {
     activeRoute.params.subscribe((data) => {
       this.productId = data.id;
@@ -59,30 +61,31 @@ export class EditProductComponent implements OnInit {
     this.productService.getAllCategories().subscribe((data) => {
       this.categories = data;
     });
-    this.productService.getAllTags().subscribe((data:any[])=>{
-      this.tags=data;
-   })
+    this.productService.getAllTags().subscribe((data: any[]) => {
+      this.tags = data;
+    })
   }
   createProductForm() {
     this.productForm = this.fb.group({
       name: ['', [Validators.required]],
-      price: ['', [Validators.required, Validators.min(0),Validators.max(100000)]],
+      price: ['', [Validators.required, Validators.min(0), Validators.max(100000)]],
       code: ['', [Validators.required]],
       brand: ['', Validators.required],
-      quantity:[1],
+      quantity: [1],
       publish: [false, Validators.required],
-      rent: [false],
-      categoryId: ['',Validators.required],
-      subCategoryId: ['',Validators.required],
+      categoryId: ['', Validators.required],
+      subCategoryId: ['', Validators.required],
       discount: [Validators.max(100), Validators.min(0)],
-      discountStartDate: [{value: null, disabled: true}],
-      discountEndDate: [{value: null, disabled: true}],
-      tagId: [''],
-      description:[],
+      discountStartDate: [{ value: null, disabled: true }],
+      discountEndDate: [{ value: null, disabled: true }],
+      tagId: [],
+      description: [],
       specifications: this.fb.array([]),
       sizes: this.fb.array([]),
       colors: this.fb.array([]),
       sizeColorMapping: this.fb.array([]),
+      type: ["SALE", Validators.required]
+
     }, { validator: this.dateRangeValidator });
     this.productForm.get('discount')?.valueChanges.subscribe(value => {
       if (value) {
@@ -107,7 +110,6 @@ export class EditProductComponent implements OnInit {
 
   //FileUpload
   readUrl(event: any, i) {
-    console.log(i)
     if (event.target.files.length === 0) return;
     //Image upload validation
     var mimeType = event.target.files[0].type;
@@ -226,8 +228,8 @@ export class EditProductComponent implements OnInit {
     const productData: FormData = new FormData();
     const data = this.productForm.getRawValue();
 
-    data.discountEndDate=this.formatter.format(data.discountEndDate);
-    data.discountStartDate=this.formatter.format(data.discountStartDate);
+    data.discountEndDate = this.formatter.format(data.discountEndDate);
+    data.discountStartDate = this.formatter.format(data.discountStartDate);
     const specificationObject: { [key: string]: string } = {};
 
     for (let i = 0; i < this.product.specifications.length; i++) {
@@ -241,14 +243,13 @@ export class EditProductComponent implements OnInit {
     // Append product data as a JSON string
     productData.append("productData", JSON.stringify(data));
 
-    // Append each image file
-    //   for (let i = 0; i < this.url.length; i++) {
-    //     productData.append('images', this.images[i]);
-    //  }
+
 
     this.productService
       .updateProduct(this.product.id, productData)
       .subscribe((data) => {
+        this.toastrService.success('Product has been updated!');
+        this.router.navigate(['/products/product-list'])
       });
   }
 
@@ -258,7 +259,6 @@ export class EditProductComponent implements OnInit {
   }
 
   setupForm() {
-    console.log(this.product)
     this.categoryId = this.product.category;
     this.subCategoryId = this.product.subCategory;
     this.productService
@@ -269,7 +269,6 @@ export class EditProductComponent implements OnInit {
           .get("subCategoryId")
           .setValue(this.product.subCategory);
       });
-
     this.productForm.get("categoryId").setValue(this.product.category);
     this.productForm.get("name").setValue(this.product.title);
     this.productForm.get("price").setValue(this.product.price);
@@ -282,20 +281,40 @@ export class EditProductComponent implements OnInit {
     this.productForm.get("discount").setValue(this.product.discount);
     this.productForm.get("discountStartDate").setValue(this.formatter.parse(this.product.discountStartDate));
     this.productForm.get("discountEndDate").setValue(this.formatter.parse(this.product.discountEndDate));
+    this.productForm.get("type").setValue(this.product.type)
 
- 
     this.product.specifications.forEach((element) => {
       this.specifications.push(
         this.fb.control(element.value, Validators.required)
       );
     });
-    if(this.product.images[0].src)
-      this.imagePreview=this.product.images[0].src;
+    if (this.product.images[0].src)
+      this.imagePreview = this.product.images[0].src;
+
+    this.setupSize();
+    this.setupColor();
   };
 
-  test(){
-    console.log(this.productForm.valid, this.productForm)
-  };
+  setupSize() {
+    this.product.sizes.forEach(productSize => {
+      const sizeGroup = this.fb.group({
+        size: [productSize.size, Validators.required],
+        quantity: [productSize.quantity, [Validators.required, Validators.min(1)]]
+      })
+      this.sizeFormArray.push(sizeGroup);
+    })
+
+  }
+
+  setupColor () {
+    this.product.colors.forEach(productColor=> {
+       const colorGroup = this.fb.group({
+      color: [productColor.color, Validators.required], // Custom size input
+      quantity: [productColor.quantity, [Validators.required, Validators.min(1)]], // Default quantity is 1
+    });
+    this.colorFormArray.push(colorGroup);
+    })
+  }
 
   dateRangeValidator(group: FormGroup) {
     const startDate = group.get('discountStartDate')?.value;
@@ -310,11 +329,11 @@ export class EditProductComponent implements OnInit {
     return null;
   }
 
-  goToNextTab (){
-    if (this.active==1){
+  goToNextTab() {
+    if (this.active == 1) {
       this.setupSpecification();
-    }else {
-      this.active=3;
+    } else {
+      this.active = 3;
     }
   }
 

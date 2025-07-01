@@ -3,6 +3,7 @@ import { AccountService } from '../account.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -11,7 +12,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
-
+ errorMessage: string | null = null;
   constructor(private accountService: AccountService,
     private router: Router, private fb: FormBuilder ) {
       
@@ -25,11 +26,24 @@ export class LoginComponent implements OnInit {
   }
 
   loginUser(){
-    this.accountService.login(this.loginForm.value).subscribe((response)=>{
+    this.accountService.login(this.loginForm.value).subscribe({
+      next: (response) =>{
       this.accountService.setToken(response.token);
       this.accountService.setUser(response.user);
       this.router.navigateByUrl("/shop/dashboard")
-    })
+      },
+      error: (err) =>{
+         if (err.status === 403) {
+          this.errorMessage = "Access Denied: Invalid username or password.";
+        } else {
+          this.errorMessage = "An unexpected error occurred.";
+      }
+    }
+    });
+  
   }
+
+
+
 
 }

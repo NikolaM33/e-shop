@@ -8,10 +8,13 @@ import { User } from '../User';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-
+ activeTab: string = 'account-info'
   public openDashboard: boolean = false;
   public currentUser:User;
   constructor(private accountService:AccountService) {
+        this.accountService.currentUser.subscribe(user => {
+      this.currentUser = user;
+    });
  
   }
 
@@ -27,5 +30,9 @@ export class DashboardComponent implements OnInit {
 
   logout(){
     this.accountService.logout();
+  }
+
+   showTab(tabName: string) {
+    this.activeTab = tabName;
   }
 }
